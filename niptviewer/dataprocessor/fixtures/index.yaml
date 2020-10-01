@@ -1,0 +1,77 @@
+---
+
+- model: dataprocessor.index
+  pks: 1
+  fields:
+    index_id: A002
+    index: CGATGT
+- model: dataprocessor.index
+  pks: 2
+  fields:
+    index_id: A005
+    index: ACAGTG
+- model: dataprocessor.index
+  pks: 3
+  fields:
+    index_id: A007
+    index: CAGATC
+- model: dataprocessor.index
+  pks: 4
+  fields:
+    index_id: A012
+    index: CTTGTA
+- model: dataprocessor.index
+  pks: 5
+  fields:
+    index_id: A013
+    index: AGTCAA
+- model: dataprocessor.index
+  pks: 6
+  fields:
+    index_id: A014
+    index: AGTTCC
+- model: dataprocessor.index
+  pks: 7
+  fields:
+    index_id: A018
+    index: GTCCGC
+- model: dataprocessor.index
+  pks: 8
+  fields:
+    index_id: A019
+    index: GTGAAA
+- model: dataprocessor.index
+  pks: 9
+  fields:
+    index_id: A001
+    index: ATCACG
+- model: dataprocessor.index
+  pks: 10
+  fields:
+    index_id: A003
+    index: TTAGGC
+- model: dataprocessor.index
+  pks: 11
+  fields:
+    index_id: A008
+    index: ACTTGA
+- model: dataprocessor.index
+  pks: 12
+  fields:
+    index_id: A010
+    index: TAGCTT
+- model: dataprocessor.index
+  pks: 13
+  fields:
+    index_id: A020
+    index: GTGGCC
+- model: dataprocessor.index
+  pks: 14
+  fields:
+    index_id: A022
+    index: CGTACG
+- model: dataprocessor.index
+  pks: 15
+  fields:
+    index_id: A025
+    index: ACTGAT
