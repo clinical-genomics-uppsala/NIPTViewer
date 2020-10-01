@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load tz %}
+{% load percentformat %}
+{% load static %}
+
+{% block head_js %}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
+  <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
+
+{% endblock %}
+
+{% block head_css %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
+
+{% endblock %}
+
+
+{% block content %}
+<!--<div class="container">-->
+  <div class="section">
+    <div class="row">
+      <ul class="collapsible">
+        <li>
+          <div class="collapsible-header"><i class="material-icons">folder</i>Run data</div>
+        <div class="collapsible-body white"><span>
+        <table class="striped highlight responsive-table" id="run_data">
+          <thead>
+            <tr>
+                <th>Sample ID</th>
+                <th>NCV 13</th>
+                <th>NCV 18</th>
+                <th>NCV 21</th>
+                <th>NCV X</th>
+                <th>NCV Y</th>
+                <th>FF</th>
+                <th class="right-align"><button class="btn-floating btn-small" id="copy-hidden-table-button" data-clipboard-target="#hidden_run_data" onclick="copy_table()" ><i class="material-icons">content_copy</i></button></th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for row in flowcell_data %}
+            <tr>
+              <td>{{ row.sample_id }}</td>
+              <td>{{ row.ncv_13|floatformat:3 }}</td>
+              <td>{{ row.ncv_18|floatformat:3 }}</td>
+              <td>{{ row.ncv_21|floatformat:3 }}</td>
+              <td>{{ row.ncv_X|floatformat:3 }}</td>
+              <td>{{ row.ncv_Y|floatformat:3 }}</td>
+              <td colspan="2">{{ row.ff_formatted|percentformat:1 }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table></span></div>
+        <table id="hidden_run_data" class="offscreen">
+          <thead>
+            <tr>
+                <th>Sample ID</th>
+                <th>NCV 13</th>
+                <th>NCV 18</th>
+                <th>NCV 21</th>
+                <th>NCV X</th>
+                <th>NCV Y</th>
+                <th>FF</th>
+                <th class="right-align"> </th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for row in flowcell_data %}
+            <tr><td>{{ row.sample_id }}</td><td>{{ row.ncv_13 }}</td><td>{{ row.ncv_18 }}</td><td>{{ row.ncv_21 }}</td><td>{{ row.ncv_X }}</td><td>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div>
+<!--</div>
+<div class="container">-->
+  <div class="section">
+    <div class="row white ">
+      <div id="scatter_chart_x_vs_y">
+        <div class=center-align>
+          <h4> X vs Y</h4>
+        </div>
+        <svg class="materialboxed" style="width:100%;height:400px"></svg>
+      </div>
+      <script>scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'ChrY', 'ChrX', '0.02f', '0.02f');</script>
+    </div>
+  </div>
+  <!--</div>
+  <div class="container">-->
+  <div class="section">
+    <div class="row white">
+      <div id="scatter_chart_x_vs_ff">
+        <div class=center-align>
+          <h4> X vs ff</h4>
+        </div>
+        <svg style="width:100%;height:400px"></svg>
+      </div>
+      <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'ChrX', 'FF', '0.02f', '%');</script>
+    </div>
+  </div>
+  <!--</div>
+  <div class="container">-->
+  <div class="section">
+    <div class="row white">
+      <div id="scatter_chart_y_vs_ff">
+        <div class=center-align>
+          <h4> Y vs ff</h4>
+        </div>
+        <svg style="width:100%;height:400px"></svg>
+      </div>
+      <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'ChrY', 'FF', '0.02f', '%');</script>
+    </div>
+  </div>
+  <!--</div>
+  <div class="container">-->
+  <div class="section">
+    <div class="row white">
+      <div id="scatter_chart_chr13_vs_ff">
+        <div class=center-align>
+          <h4> chr13 vs ff</h4>
+        </div>
+        <svg style="width:100%;height:400px"></svg>
+      </div>
+      <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'Chr13', 'FF', '0.02f', '%');</script>
+    </div>
+  </div>
+</div>
+<!--</div>
+<div class="container">-->
+  <div class="section">
+    <div class="row white">
+      <div id="scatter_chart_chr18_vs_ff">
+        <div class=center-align>
+          <h4> chr18 vs ff</h4>
+        </div>
+        <svg style="width:100%;height:400px"></svg>
+      </div>
+      <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'Chr18', 'FF', '0.02f', '%');</script>
+    </div>
+  </div>
+  <!--</div>
+  <div class="container">-->
+  <div class="section">
+    <div class="row white">
+      <div id="scatter_chart_chr21_vs_ff">
+        <div class=center-align>
+          <h4> chr21 vs ff</h4>
+        </div>
+        <svg style="width:100%;height:400px"></svg>
+      </div>
+      <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'Chr21', 'FF', '0.02f', '%');</script>
+    </div>
+  </div>
+<!--</div>-->
+{% endblock %}
+
+{% block footer_js %}
+<script src="{% static "js/clipboard.min.js" %}"></script>
+<script>
+  function copy_table() {
+    new Clipboard('#copy-hidden-table-button');
+    }
+
+  </script>
+
+  <script>
+  $(document).ready(function(){
+    $('.materialboxed').materialbox();
+  });
+  </script>
+
+{% endblock %}

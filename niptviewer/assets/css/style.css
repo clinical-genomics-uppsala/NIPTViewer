@@ -1,0 +1,19 @@
+.offscreen {
+    position: absolute;
+    left: -999em;
+}
+
+@media only screen and (max-width : 1200px) {
+  .container .section {
+    position: absolute;
+    top: 40%;
+
+  }
+  #index-banner .section {
+    top: 10;
+    margin: 0px;
+  }
+}
+
+.section {margin-top:10px; margin-bottom:10px;}
+.row {padding-top:20px;padding-bottom:20px;padding-left:40px;padding-right:40px;}

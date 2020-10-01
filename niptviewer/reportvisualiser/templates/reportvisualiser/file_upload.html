@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load tz %}
+
+{% block title %}
+NIPTViewer: Flowcells run
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <div class="row white">
+    <form name="csv_file" id="csv_file_upload" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% if file_validation %}
+      <blockquote>
+        <div class="text-red text-darken-4">
+          <br />
+          Flowcell barcode must be unique, the provided flowcell barcode <a class="text-teal text-darken-4" href="{% url 'viewer:report' barcode=file_validation.0 %}">{{ file_validation.0 }}</a> was uploaded
+          {% timezone "Europe/Paris" %}
+          {{ file_validation.1 }}
+          {% endtimezone %}
+          <br /><br />
+        </div>
+       </blockquote>
+      {% endif %}
+      <div class="col l12 m12  s12">
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>File</span>
+            {{ form_data.file }}
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+          {{ form_data.file.errors }}
+          {% if form_data.file.help_text %}
+          { form_data.file.help_text|safe }}
+          {% endif %}
+
+        </div>
+      </div>
+      <div class="col l12 m12 s12 center-align">
+        <button class="btn-large waves-effect waves-light " type="submit" value="Upload" name="upload_csv" ><i class="material-icons right">file_upload</i>Upload</button>
+      </div>
+      </form>
+    </div>
+</div>
+</div>
+{% endblock %}

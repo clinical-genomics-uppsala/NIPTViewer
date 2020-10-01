@@ -1,0 +1,18 @@
+---
+
+- model: dataprocessor.sampletype
+  pk: 1
+  fields:
+    name: Control
+- model: dataprocessor.sampletype
+  pk: 2
+  fields:
+    name: Test
+- model: dataprocessor.sampletype
+  pk: 3
+  fields:
+    name: Patient
+- model: dataprocessor.sampletype
+  pk: 4
+  fields:
+    name: Normal

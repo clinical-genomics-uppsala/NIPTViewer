@@ -1,0 +1,275 @@
+from django.db import models
+
+# Create your models here.
+
+class Flowcell(models.Model):
+    flowcell_barcode = models.CharField(max_length=9, help_text="Flowcell identification.", blank=False, unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    run_date = models.DateTimeField(blank=False)
+
+    def __str__(self):
+        return "{} {}".format(self.flowcell_barcode, self.created.strftime("%Y-%m-%d %H:%M") )
+
+    def create_flowcell(flowcell_barcode, run_date=None):
+        return Flowcell.objects.create(flowcell_barcode=flowcell_barcode, run_date=run_date)
+
+    def get_flowcell(flowcell_barcode):
+        return Flowcell.objects.get(flowcell_barcode=flowcell_barcode)
+
+    def save(self, *args, **kwargs):
+        if not self.id and not self.run_date:
+                self.run_date = timezone.now()
+        return super(Flowcell, self).save(*args, **kwargs)
+
+class SampleType(models.Model):
+    name = models.CharField(max_length=9, help_text="Sample type.", blank=False, unique=True)
+
+    def create_sample_type(name=name):
+        return SampleType.objects.create(name=name)
+
+    def get_sample_type(name):
+        return SampleType.objects.filter(name=name)[0]
+
+
+class Index(models.Model):
+    index_id = models.CharField(max_length=6, help_text="Index id.", blank=False, unique=True)
+    index = models.CharField(max_length=6, help_text="Index sequence.", blank=False, unique=True)
+
+    def create_index(index_id, index):
+        return Index.objects.create(index_id=index_id, index=index)
+
+    def get_index(index_id, index):
+        return Index.objects.get(index_id=index_id, index=index)
+
+from decimal import *
+class BatchRun(models.Model):
+    __help_text_median="Batch median of chromosomal ratios for putative diploid samples. ChrX and chrY are based on putative female samples only."
+    __help_text_stdev="Batch standard deviation of chromosomal ratios for putative diploid samples. ChrX and chrY based on putative female samples only"
+    flowcell_id = models.ForeignKey(Flowcell, on_delete=models.CASCADE, help_text="Flowcell ID")
+    median_13 = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=15, decimal_places=10)
+    median_18 = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=15, decimal_places=10)
+    median_21 = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=15, decimal_places=10)
+    median_x = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=15, decimal_places=10)
+    median_y = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=15, decimal_places=10)
+    stdev_13 = models.FloatField(blank=False, help_text=__help_text_stdev)
+    stdev_18 = models.FloatField(blank=False, help_text=__help_text_stdev)
+    stdev_21 = models.FloatField(blank=False, help_text=__help_text_stdev)
+    stdev_X = models.FloatField(blank=False, help_text=__help_text_stdev)
+    stdev_Y = models.FloatField(blank=False, help_text=__help_text_stdev)
+    software_version = models.CharField(help_text="Illumina analysis software version", max_length=10, blank=False)
+
+    def create_batch_run(flowcell_entry, median_13, median_18, median_21,
+                            median_x, median_y, stdev_13, stdev_18, stdev_21,
+                            stdev_X, stdev_Y, software_version):
+        return BatchRun.objects.create(flowcell_id=flowcell_entry,
+                                       median_13=median_13,
+                                       median_18=median_18,
+                                       median_21=median_21,
+                                       median_x=median_x,
+                                       median_y=median_y,
+                                       stdev_13=stdev_13,
+                                       stdev_18=stdev_18,
+                                       stdev_21=stdev_21,
+                                       stdev_X=stdev_X,
+                                       stdev_Y=stdev_Y,
+                                       software_version=software_version)
+
+
+class SamplesRunData(models.Model):
+    __help_text_chr="Total number of NonExcludedSites used for analysis of a corresponding chromosome (integer value)"
+    __help_text_chr_coverage="Normalized coverage of each chromosome used in evaluation of chromosomal ratios"
+    flowcell_id = models.ForeignKey(Flowcell, on_delete=models.CASCADE, help_text="Flowcell ID")
+    sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE, help_text="Flowcell ID")
+    sample_id = models.CharField(help_text="SampleID", max_length=10)
+    index = models.ForeignKey(Index, on_delete=models.CASCADE, help_text="Index used")
+    well = models.CharField(help_text="Well id", max_length=10)
+    description = models.TextField(help_text="Description.", blank=False, unique=False)
+    library_nm = models.DecimalField(blank=False, max_digits=15, decimal_places=10)
+    qc_flag = models.IntegerField(choices=((0, 'Pass'), (1, 'Warning'), (2, 'Failure')), blank=False, unique=False)
+    qc_failure = models.TextField(help_text="Description.", blank=False, unique=False)
+    qc_warning = models.TextField(help_text="Description.", blank=False, unique=False)
+    ncv_13 = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) 13", max_digits=15, decimal_places=10)
+    ncv_18 = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) 18", max_digits=15, decimal_places=10)
+    ncv_21 = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) 21", max_digits=15, decimal_places=10)
+    ncv_X = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) X", max_digits=15, decimal_places=10)
+    ncv_Y = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) Y", max_digits=15, decimal_places=10)
+    ratio_13 = models.DecimalField(blank=False, help_text="Chromosomal Ratio 13", max_digits=15, decimal_places=10)
+    ratio_18 = models.DecimalField(blank=False, help_text="Chromosomal Ratio 18", max_digits=15, decimal_places=10)
+    ratio_21 = models.DecimalField(blank=False, help_text="Chromosomal Ratio 21", max_digits=15, decimal_places=10)
+    ratio_X = models.DecimalField(blank=False, help_text="Chromosomal Ratio X", max_digits=15, decimal_places=10)
+    ratio_y = models.DecimalField(blank=False, help_text="Chromosomal Ratio Y", max_digits=15, decimal_places=10)
+    clusters = models.IntegerField(blank=False, help_text="Total number of clusters across lanes (Reported per flow cell)")
+    total_reads_2_clusters = models.IntegerField(blank=False, help_text="Ratio of recovered reads to number of clusters across lanes (Reported per flow cell)")
+    max_misindexed_reads_2_clusters = models.FloatField(blank=False, help_text="Ratio of misindexed reads across lanes to clusters in a virtual lane (Reported per flow cell)")
+    indexed_reads = models.IntegerField(blank=False, help_text="Total number of indexed reads per sample across lanes")
+    total_indexed_reads_2_clusters = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Ratio of indexed reads to clusters (Reported per flow cell)")
+    tags = models.IntegerField(blank=False, help_text="Number of reads mapped to a unique place in the genome")
+    non_excluded_sites = models.IntegerField(blank=False, help_text="Number of tags excluding filtered genome regions and duplicate reads mapping to the same location")
+    non_excluded_sites_2_tags = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Ratio of NonExcludedSites to tags")
+    tags_2_indexed_reads = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Ratio of tags to indexed reads")
+    perfect_match_tags_2_tags = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Ratio of perfectly mapped tags to all tags")
+    gc_bias = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Residual GC bias in the read distribution after correction")
+    gcr2 = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="R2 of the GC correction (percentage of variance explained by GC correction)")
+    ncd_13 = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Likelihood score for chromosome 13 denominators")
+    ncd_18 = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Likelihood score for chromosome 18 denominators")
+    ncd_21 = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Likelihood score for chromosome 21 denominators")
+    ncd_x = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Likelihood score for chromosome X denominators")
+    ncd_y = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Likelihood score for chromosome Y denominators")
+    chr1_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr2_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr3_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr4_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr5_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr6_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr7_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr8_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr9_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr10_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr11_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr12_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr13_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr14_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr15_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr16_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr17_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr18_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr19_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr20_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr21_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr22_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chrx_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chry_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=15, decimal_places=10)
+    chr1 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr2 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr3 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr4 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr5 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr6 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr7 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr8 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr9 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr10 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr11 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr12 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr13 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr14 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr15 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr16 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr17 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr18 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr19 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr20 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr21 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chr22 = models.IntegerField(blank=False, help_text=__help_text_chr)
+    Chrx = models.IntegerField(blank=False, help_text=__help_text_chr)
+    chry = models.IntegerField(blank=False, help_text=__help_text_chr)
+    ff_formatted = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Estimated fetal component of cfDNA recovered by the assay. Reported as a discreet, rounded percentage that provides additional information for each sample.")
+
+    def __str__(self):
+        return str(self.index)
+
+    def create_sample_data(flowcell_id_entry, sample_type_entry, sample_id, index, well, description, library_nm, qc_flag, qc_failure, qc_warning,
+                            ncv_13, ncv_18, ncv_21, ncv_x, ncv_y, ratio_13, ratio_18, ratio_21, ratio_X, ratio_y,
+                            clusters, total_reads_2_clusters, max_misindexed_reads_2_clusters, indexed_reads, total_indexed_reads_2_clusters, tags,
+                            non_excluded_sites, non_excluded_sites_2_tags, tags_2_indexed_reads, perfect_match_tags_2_tags, gc_bias, gcr2,
+                            ncd_13, ncd_18, ncd_21, ncd_x, ncd_y,
+                            chr1_coverage, chr2_coverage, chr3_coverage, chr4_coverage, chr5_coverage, chr6_coverage, chr7_coverage,
+                            chr8_coverage, chr9_coverage, chr10_coverage, chr11_coverage, chr12_coverage, chr13_coverage, chr14_coverage,
+                            chr15_coverage, chr16_coverage, chr17_coverage, chr18_coverage, chr19_coverage, chr20_coverage,
+                            chr21_coverage, chr22_coverage, chrx_coverage, chry_coverage,
+                            chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9,
+                            chr10, chr11, chr12, chr13, chr14, chr15, chr16, chr17,
+                            chr18, chr19, chr20, chr21, chr22, chrx, chry, ff_formatted):
+        return SamplesRunData.objects.create(
+                flowcell_id=flowcell_id_entry,
+                sample_type=sample_type_entry,
+                sample_id=sample_id,
+                index=index,
+                well=well,
+                description=description,
+                library_nm=library_nm,
+                qc_flag=qc_flag,
+                qc_failure=qc_failure,
+                qc_warning=qc_warning,
+                ncv_13=ncv_13,
+                ncv_18=ncv_18,
+                ncv_21=ncv_21,
+                ncv_X=ncv_x,
+                ncv_Y=ncv_y,
+                ratio_13=ratio_13,
+                ratio_18=ratio_18,
+                ratio_21=ratio_21,
+                ratio_X=ratio_X,
+                ratio_y=ratio_y,
+                clusters=clusters,
+                total_reads_2_clusters=total_reads_2_clusters,
+                max_misindexed_reads_2_clusters=max_misindexed_reads_2_clusters,
+                indexed_reads=indexed_reads,
+                total_indexed_reads_2_clusters=total_indexed_reads_2_clusters,
+                tags=tags,
+                non_excluded_sites=non_excluded_sites,
+                non_excluded_sites_2_tags=non_excluded_sites_2_tags,
+                tags_2_indexed_reads=tags_2_indexed_reads,
+                perfect_match_tags_2_tags=perfect_match_tags_2_tags,
+                gc_bias=gc_bias,
+                gcr2=gcr2,
+                ncd_13=ncd_13,
+                ncd_18=ncd_18,
+                ncd_21=ncd_21,
+                ncd_x=ncd_x,
+                ncd_y=ncd_y,
+                chr1_coverage=chr1_coverage,
+                chr2_coverage=chr2_coverage,
+                chr3_coverage=chr3_coverage,
+                chr4_coverage=chr4_coverage,
+                chr5_coverage=chr5_coverage,
+                chr6_coverage=chr6_coverage,
+                chr7_coverage=chr7_coverage,
+                chr8_coverage=chr8_coverage,
+                chr9_coverage=chr9_coverage,
+                chr10_coverage=chr10_coverage,
+                chr11_coverage=chr11_coverage,
+                chr12_coverage=chr12_coverage,
+                chr13_coverage=chr13_coverage,
+                chr14_coverage=chr14_coverage,
+                chr15_coverage=chr15_coverage,
+                chr16_coverage=chr16_coverage,
+                chr17_coverage=chr17_coverage,
+                chr18_coverage=chr18_coverage,
+                chr19_coverage=chr19_coverage,
+                chr20_coverage=chr20_coverage,
+                chr21_coverage=chr21_coverage,
+                chr22_coverage=chr22_coverage,
+                chrx_coverage=chrx_coverage,
+                chry_coverage=chry_coverage,
+                chr1=chr1,
+                chr2=chr2,
+                chr3=chr3,
+                chr4=chr4,
+                chr5=chr5,
+                chr6=chr6,
+                chr7=chr7,
+                chr8=chr8,
+                chr9=chr9,
+                chr10=chr10,
+                chr11=chr11,
+                chr12=chr12,
+                chr13=chr13,
+                chr14=chr14,
+                chr15=chr15,
+                chr16=chr16,
+                chr17=chr17,
+                chr18=chr18,
+                chr19=chr19,
+                chr20=chr20,
+                chr21=chr21,
+                chr22=chr22,
+                Chrx=chrx,
+                chry=chry,
+                ff_formatted=ff_formatted)
+
+    def get_samples(flowcell):
+        return SamplesRunData.objects.filter(flowcell_id=flowcell)
+
+    def get_samples_not_included(flowcell):
+        return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)

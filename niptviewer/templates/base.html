@@ -1,0 +1,125 @@
+{% load static tz %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>{% block title %}NIPTViewer{% endblock %}</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="{% static "css/materialize.min.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{% static "css/style.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+  {% block head_css %}{% endblock %}
+
+  {% block head_js %}{% endblock %}
+</head>
+<body class="grey lighten-4 ">
+  <nav class="cyan darken-4" role="navigation">
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">CGU</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="{% url "viewer:index" %}"><i class="material-icons">home</i></a></li>
+        <li><a href="{% url "viewer:upload" %}"><i class="material-icons">library_add</i></a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="sidenav">
+        <li><a href="{% url "viewer:index" %}"><i class="material-icons">home</i></a></li>
+        <li><a href="{% url "viewer:upload" %}"><i class="material-icons">library_add</i></a></li>
+      </ul>
+      <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+  <div class="section no-pad-bot white" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center black-text">NIPT Viewer</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">A tool used to visualise Illumina NIPT data</h5>
+      </div>
+      <br><br>
+
+    </div>
+  </div>
+
+
+<div<img src="{% static "img/CGU.png"}" alt="Unsplashed background img 1"><img> </div>
+    {% block content %}
+<div class="container">
+    <div class="section">
+
+      <!--   Icon Section   -->
+      <div class="row">
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="material-icons">flash_on</i></h2>
+            <h5 class="center">Speeds up development</h5>
+
+            <p class="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="material-icons">group</i></h2>
+            <h5 class="center">User Experience Focused</h5>
+
+            <p class="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms allow for a more unified user experience.</p>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center light-blue-text"><i class="material-icons">settings</i></h2>
+            <h5 class="center">Easy to work with</h5>
+
+            <p class="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <br><br>
+  </div>
+    {% endblock %}
+
+
+  <footer class="page-footer cyan darken-4">
+    <div class="container">
+      <div class="row">
+        <div class="col l10 s12">
+          <h5 class="white-text">Clinical Genomics Uppsala</h5>
+          <p class="grey-text text-lighten-4">Clinical Genomics Uppsala is jointly set up by Uppsala University, Uppsala University Hospital and SciLifeLab with the aim to catalyze the transition of novel research findings into molecular diagnostics for clinical use. The facility is fully integrated within the Uppsala University Hospital and has extensive experience in development and implementation of state-of-the-art next-generation sequencing (NGS) technology in routine diagnostics. The facility takes on research and development projects with a clear translational profile. With our team of facility associated geneticists, bioinformaticians and medical doctors, we can deliver clinical assessments of the detected variants with the aim to truly provide bench-to-bedside service.</p>
+
+
+        </div>
+
+        <div class="col l2 s12 right-align">
+          <h5 class="white-text">Connect</h5>
+          <ul>
+            <li><a class="white-text" href="https://twitter.com/scilifelab">Twitter</a></li>
+            <li><a class="white-text" href="https://www.facebook.com/scilifelab">Facebook</a></li>
+            <li><a class="white-text" href="https://www.linkedin.com/company/science-for-life-laboratory">Linkedin</a></li>
+            <li><a class="white-text" href="#">GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Made by <a class="white-text" href="https://www.scilifelab.se/facilities/clinical-genomics-uppsala/"><b>Clinical Genomics Uppsala</b></a>, styled by <a class="white-text" href="http://materializecss.com"><b>Materialize</b></a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!--  Scripts-->
+  <script src="{% static "js/jquery-2.1.1.min.js" %}"></script>
+  <script src="{% static "js/materialize.min.js" %}"></script>
+  <script src="{% static "js/init.js" %}"></script>
+  {% block footer_js %}
+  {% endblock %}
+  </body>
+</html>
