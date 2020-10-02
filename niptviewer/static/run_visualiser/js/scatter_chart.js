@@ -5,7 +5,7 @@ function scatterChart(data,id, x_label, y_label,x_format, y_format) {
                               .showDistY(true)
                               .useVoronoi(true)
                               .color(d3.scale.category10().range())
-                            //  .duration(300)
+                              .duration(300)
                               //.xDomain([-40,10])
                               //.yDomain([-200,800])
 
