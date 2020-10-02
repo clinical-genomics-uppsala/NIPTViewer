@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'reportvisualiser',
-    'dataprocessor'
+    'dataprocessor',
+    'wkhtmltopdf'
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+
+WKHTMLTOPDF_CMD_OPTIONS = {
+    'quiet': True,
+}

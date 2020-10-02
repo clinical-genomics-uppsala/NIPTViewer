@@ -3,21 +3,14 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import loader
 import random
-from decimal import Decimal
+
 from dataprocessor.models import Flowcell, SamplesRunData, BatchRun
 from dataprocessor.utils.data import import_data_into_database
 # Create your views here.
 
 from .forms import UploadFileForm
 
-def decimal_default(obj):
-    if isinstance(obj, Decimal) or isinstance(obj,int):
-        return float(obj)
-    elif isinstance(obj,float):
-        return obj
-    else:
-        print(type(obj))
-        raise TypeError
+from reportvisualiser.utils.plots import extract_data, data_structur_generator, decimal_default
 
 
 def index(request):
@@ -37,6 +30,37 @@ def index(request):
     template = loader.get_template("reportvisualiser/index.html")
     return HttpResponse(template.render(context, request))
 
+def sample_report(request, barcode, sample):
+    #from reportvisualiser.utils.pdf import render_to_pdf
+    import datetime
+
+    samples_info = {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
+               'x_vs_ff': {'data': {}, 'fields': ('ncv_X', 'ff_formatted')},
+               'y_vs_ff': {'data': {}, 'fields': ('ncv_Y', 'ff_formatted')},
+               'chr13_vs_ff': {'data': {}, 'fields': ('ncv_13', 'ff_formatted')},
+               'chr18_vs_ff': {'data': {}, 'fields': ('ncv_18', 'ff_formatted')},
+               'chr21_vs_ff': {'data': {}, 'fields': ('ncv_21', 'ff_formatted')}}
+
+    flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
+    sample_flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
+    flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(sample_id=sample)
+    samples_info = extract_data('other', SamplesRunData.get_samples_not_included(flowcell=flowcell,sample=sample), samples_info, only_prefix=True)
+
+    samples_info = extract_data(barcode, flowcell_run_data, samples_info, only_prefix=True)
+    samples_info = extract_data(sample, sample_flowcell_run_data, samples_info, only_prefix=True)
+
+    data = {
+             'today': datetime.date.today().strftime("%Y-%m-%d"),
+             'sample': sample,
+             'flowcell_barcode': barcode,
+             'run_date': flowcell.run_date.strftime("%Y-%m-%d")}
+    data = data_structur_generator(samples_info, data)
+    #pdf = render_to_pdf('reportvisualiser/sample_report.html', data)
+    #return HttpResponse(pdf, content_type='application/pdf')
+    template = loader.get_template("reportvisualiser/sample_report.html")
+    return HttpResponse(template.render(data, request))
+
+
 def report(request, barcode):
     samples_info = {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
                'x_vs_ff': {'data': {}, 'fields': ('ncv_X', 'ff_formatted')},
@@ -44,15 +68,6 @@ def report(request, barcode):
                'chr13_vs_ff': {'data': {}, 'fields': ('ncv_13', 'ff_formatted')},
                'chr18_vs_ff': {'data': {}, 'fields': ('ncv_18', 'ff_formatted')},
                'chr21_vs_ff': {'data': {}, 'fields': ('ncv_21', 'ff_formatted')}}
-    def extract_data(prefix, data, info):
-        for item in data:
-            for key in info:
-                type_with_prefix = prefix + "_" + item.sample_type.name
-                if type_with_prefix in info[key]['data']:
-                    info[key]['data'][type_with_prefix].append({'type': item.sample_type.name, 'flowcell': item.flowcell_id.flowcell_barcode, 'sample': item.sample_id, 'x': decimal_default(getattr(item, info[key]['fields'][0])), 'y': decimal_default(getattr(item, info[key]['fields'][1]))})
-                else:
-                    info[key]['data'][type_with_prefix] = [{'type': item.sample_type.name, 'flowcell': item.flowcell_id.flowcell_barcode, 'sample': item.sample_id, 'x': decimal_default(getattr(item, info[key]['fields'][0])),'y': decimal_default(getattr(item, info[key]['fields'][1]))}]
-        return info
 
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
 
@@ -60,12 +75,7 @@ def report(request, barcode):
     samples_info = extract_data('hist', SamplesRunData.get_samples_not_included(flowcell=flowcell), samples_info)
     samples_info = extract_data(barcode, flowcell_run_data, samples_info)
 
-    context = {'flowcell_data': flowcell_run_data}
-    for comparison in samples_info.keys():
-        data = []
-        for type in samples_info[comparison]['data']:
-            data.append({'key': type, 'values': samples_info[comparison]['data'][type]})
-        context['data_' + comparison] = data
+    context = data_structur_generator(samples_info, {'flowcell_data': flowcell_run_data})
 
     template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))
