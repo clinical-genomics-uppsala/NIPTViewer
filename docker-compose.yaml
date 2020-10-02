@@ -1,0 +1,10 @@
+version: '3'
+services:
+  niptviewer:
+    build:
+      context: .
+      dockerfile: dockerfiles/dockerfile
+    volumes:
+      - ./niptviewer:/srv/app
+    ports:
+      - 8001:8001

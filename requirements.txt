@@ -1,4 +1,5 @@
 django==3.1.1
 pandas==1.1.2
-#django-enumfield=2.0.2
 pyaml==20.4.0
+#reportlib==3.4.0
+django-wkhtmltopdf==3.3.0

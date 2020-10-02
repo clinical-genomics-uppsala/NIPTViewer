@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>NIPT Sample Report</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
+        <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
+        <style type="text/css">
+            body {
+                font-weight: 200;
+                font-size: 14px;
+            }
+
+            .header {
+                font-size: 20px;
+                font-weight: 100;
+                text-align: center;
+                color: #007cae;
+            }
+            .title {
+                font-size: 22px;
+                font-weight: 100;
+               /* text-align: right;*/
+               padding: 10px 20px 0px 20px;
+            }
+            .title span {
+                color: #007cae;
+            }
+            .details {
+                padding: 10px 20px 0px 20px;
+                text-align: left !important;
+                /*margin-left: 40%;*/
+            }
+            .hrItem {
+                border: none;
+                height: 1px;
+                /* Set the hr color */
+                color: #333; /* old IE */
+                background-color: #fff; /* Modern Browsers */
+            }
+            .footer {
+              float: right
+            }
+        </style>
+    </head>
+    <body>
+        <div class='wrapper'>
+            <div class='header'>
+                <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+
+        <div>
+
+        <div class='details'>
+            Flowcell: {{ flowcell_barcode }}<br/>
+            Sample: {{ flowcell_barcode }}<br/>
+            Run Data: {{ run_date }}
+            <hr class='hrItem' />
+        </div>
+
+        <div id="chart"><svg style="width:900px;height:400px;"></svg></div>
+
+        <script>
+            nv.addGraph(function() {
+            data = {{ data_x_vs_y|safe }};
+            var chart = nv.models.scatterChart()
+                            .useVoronoi(true).color( d3.scale.category10().range() );
+
+            d3.select('#chart svg')
+              .datum(data)
+              .attr('width', 600)
+              .attr('height', 400)
+              .call(chart);
+          });
+
+        </script>
+
+
+    </div>
+    </body>
+</html>

@@ -268,8 +268,14 @@ class SamplesRunData(models.Model):
                 chry=chry,
                 ff_formatted=ff_formatted)
 
-    def get_samples(flowcell):
-        return SamplesRunData.objects.filter(flowcell_id=flowcell)
+    def get_samples(flowcell,sample=None):
+        if sample is None:
+            return SamplesRunData.objects.filter(flowcell_id=flowcell)
+        else:
+            return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
 
-    def get_samples_not_included(flowcell):
-        return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+    def get_samples_not_included(flowcell,sample=None):
+        if sample is None:
+            return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+        else:
+            return SamplesRunData.objects.all().exclude(flowcell_id=flowcell,sample_id=sample)

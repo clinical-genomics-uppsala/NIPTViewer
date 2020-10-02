@@ -17,13 +17,16 @@
 
   {% block head_js %}{% endblock %}
 </head>
-<body class="grey lighten-4 ">
+<body class="grey lighten-4 " >
   <nav class="cyan darken-4" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">CGU</a>
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo">CGU</a>
       <ul class="right hide-on-med-and-down">
         <li><a href="{% url "viewer:index" %}"><i class="material-icons">home</i></a></li>
         <li><a href="{% url "viewer:upload" %}"><i class="material-icons">library_add</i></a></li>
       </ul>
+
+      <div class="center appname" >NIPT Viewer</div>
 
       <ul id="nav-mobile" class="sidenav">
         <li><a href="{% url "viewer:index" %}"><i class="material-icons">home</i></a></li>
@@ -32,20 +35,13 @@
       <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
   </nav>
-  <div class="section no-pad-bot white" id="index-banner">
-    <div class="container">
-      <br><br>
-      <h1 class="header center black-text">NIPT Viewer</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">A tool used to visualise Illumina NIPT data</h5>
-      </div>
-      <br><br>
-
+  <div class="section no-pad-bot white" id="index-banner" >
+    <div class="container containerbg">
     </div>
   </div>
 
 
-<div<img src="{% static "img/CGU.png"}" alt="Unsplashed background img 1"><img> </div>
+
     {% block content %}
 <div class="container">
     <div class="section">
