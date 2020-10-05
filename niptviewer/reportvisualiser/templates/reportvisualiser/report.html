@@ -17,7 +17,17 @@
 
 {% endblock %}
 
+{% block navbar %}
+<div class="nav-content">
+      <ul class="tabs tabs-transparent">
+  <li class="tab"><a href="{% url "viewer:report" barcode=flowcell %}" class="active">{{ flowcell }}</a></li>
+  {% for sample in samples %}
+  <li class="tab"><a href="{% url "viewer:sample_report" barcode=flowcell sample=sample %}">{{ sample }}</a></li>
+  {% endfor%}
+  </ul>
+</div>
 
+{% endblock %}
 {% block content %}
 <!--<div class="container">-->
   <div class="section">
@@ -82,9 +92,9 @@
         <div class=center-align>
           <h4> X vs Y</h4>
         </div>
-        <svg class="materialboxed" style="width:100%;height:400px"></svg>
+        <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'ChrY', 'ChrX', '0.02f', '0.02f');</script>
+      <script>scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'NVC ChrY', 'ChrX', '0.02f', '0.02f');</script>
     </div>
   </div>
   <!--</div>
@@ -97,7 +107,7 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'ChrX', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'NVC ChrX', 'FF', '0.02f', '%');</script>
     </div>
   </div>
   <!--</div>
@@ -110,7 +120,7 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'ChrY', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'NVC ChrY', 'FF', '0.02f', '%');</script>
     </div>
   </div>
   <!--</div>
@@ -123,7 +133,7 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'Chr13', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'NVC Chr13', 'FF', '0.02f', '%');</script>
     </div>
   </div>
 </div>
@@ -137,7 +147,7 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'Chr18', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'NVC Chr18', 'FF', '0.02f', '%');</script>
     </div>
   </div>
   <!--</div>
@@ -150,7 +160,7 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'Chr21', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'NVC Chr21', 'FF', '0.02f', '%');</script>
     </div>
   </div>
 <!--</div>-->
