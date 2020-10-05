@@ -27,11 +27,11 @@ def index(request):
         if comparison.startswith("median"):
             data.append({'key': comparison, 'values': batch_data[comparison][::-1]})
     context['median_coverage'] = data
+    context['page_type'] = "pdf"
     template = loader.get_template("reportvisualiser/index.html")
     return HttpResponse(template.render(context, request))
 
 def sample_report(request, barcode, sample):
-    #from reportvisualiser.utils.pdf import render_to_pdf
     import datetime
 
     samples_info = {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
@@ -40,7 +40,6 @@ def sample_report(request, barcode, sample):
                'chr13_vs_ff': {'data': {}, 'fields': ('ncv_13', 'ff_formatted')},
                'chr18_vs_ff': {'data': {}, 'fields': ('ncv_18', 'ff_formatted')},
                'chr21_vs_ff': {'data': {}, 'fields': ('ncv_21', 'ff_formatted')}}
-
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     sample_flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
     flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(sample_id=sample)
@@ -48,12 +47,12 @@ def sample_report(request, barcode, sample):
 
     samples_info = extract_data(barcode, flowcell_run_data, samples_info, only_prefix=True)
     samples_info = extract_data(sample, sample_flowcell_run_data, samples_info, only_prefix=True)
-
     data = {
              'today': datetime.date.today().strftime("%Y-%m-%d"),
-             'sample': sample,
+             'sample': sample_flowcell_run_data,
              'flowcell_barcode': barcode,
-             'run_date': flowcell.run_date.strftime("%Y-%m-%d")}
+             'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
+             'page_type': "html"}
     data = data_structur_generator(samples_info, data)
     #pdf = render_to_pdf('reportvisualiser/sample_report.html', data)
     #return HttpResponse(pdf, content_type='application/pdf')
@@ -74,9 +73,10 @@ def report(request, barcode):
     flowcell_run_data = SamplesRunData.get_samples(flowcell=flowcell)
     samples_info = extract_data('hist', SamplesRunData.get_samples_not_included(flowcell=flowcell), samples_info)
     samples_info = extract_data(barcode, flowcell_run_data, samples_info)
-
     context = data_structur_generator(samples_info, {'flowcell_data': flowcell_run_data})
+    context['samples'] = [d.sample_id for d in flowcell_run_data]
 
+    context['flowcell'] = barcode
     template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))
 

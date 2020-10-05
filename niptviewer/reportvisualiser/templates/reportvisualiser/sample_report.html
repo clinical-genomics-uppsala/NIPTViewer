@@ -1,13 +1,16 @@
 {% load static %}
+{% load percentformat %}
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
         <title>NIPT Sample Report</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="http://127.0.0.1:8001{% static "css/materialize.min.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
-        <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
+        <script src="http://127.0.0.1:8001{% static "run_visualiser/js/scatter_chart.js" %}"></script>
         <style type="text/css">
             body {
                 font-weight: 200;
@@ -47,6 +50,14 @@
         </style>
     </head>
     <body>
+    {% if page_type != 'pdf' %}
+      <div class="fixed-action-btn">
+        <a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode sample=sample.0.sample_id %}" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">file_download</i></a>
+      </div>
+
+
+        {% endif %}
+        <div class="container">
         <div class='wrapper'>
             <div class='header'>
                 <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
@@ -60,25 +71,277 @@
             Run Data: {{ run_date }}
             <hr class='hrItem' />
         </div>
-
-        <div id="chart"><svg style="width:900px;height:400px;"></svg></div>
-
+        <div class="row">
+        <p>
+          <div id="scatter_chart_x_vs_y" style="width:100%;height:400px;">
+            <svg style="width:100%;height:400px;"></svg>
+          </div>
+        </div>
         <script>
-            nv.addGraph(function() {
-            data = {{ data_x_vs_y|safe }};
-            var chart = nv.models.scatterChart()
-                            .useVoronoi(true).color( d3.scale.category10().range() );
+          scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'NVC ChrY', 'NVC ChrX', '0.02f', '0.02f');</script>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Variable
+              </th>
+              <th>
+                  Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for s in sample %}
+              <td>
+                Normalized Chromosome Value Chromosome X
+              </td>
+              <td>
+                {{ s.ncv_X}}
+              </td>
+            </tr>
+            <td>
+              Normalized Chromosome Value Chromosome Y
+            </td>
+            <td>
+              {{ s.ncv_Y }}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br /><hr style="border: 1px solid #5698c2" /><br />
+        </p>
+        <p>
+        <div id="scatter_chart_x_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
 
-            d3.select('#chart svg')
-              .datum(data)
-              .attr('width', 600)
-              .attr('height', 400)
-              .call(chart);
-          });
 
-        </script>
+        <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'NVC ChrX', 'FF', '0.02f', '%');</script>
 
 
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Variable
+              </th>
+              <th>
+                  Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for s in sample %}
+              <td>
+                Normalized Chromosome Value Chromosome X
+              </td>
+              <td>
+                {{ s.ncv_X}}
+              </td>
+            </tr>
+            <td>
+              Fetal fraction
+            </td>
+            <td>
+              {{ s.ff_formatted|percentformat:1 }}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br /><hr style="border: 1px solid #5698c2" /><br />
+        {% if page_type == 'html' %}
+        <div id="scatter_chart_y_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+        {% else %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        <div id="scatter_chart_y_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+        {% endif %}
+
+        <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'NVC ChrY', 'FF', '0.02f', '%');</script>
+        </p>
+        <p>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Variable
+              </th>
+              <th>
+                  Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for s in sample %}
+              <td>
+                Normalized Chromosome Value Chromosome Y
+              </td>
+              <td>
+                {{ s.ncv_Y}}
+              </td>
+            </tr>
+            <td>
+              Fetal fraction
+            </td>
+            <td>
+              {{ s.ff_formatted|percentformat:1 }}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br /><hr style="border: 1px solid #5698c2" /><br />
+        <div id="scatter_chart_chr13_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+
+        <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'NVC Chr13', 'FF', '0.02f', '%');</script>
+        </p>
+        <p>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Variable
+              </th>
+              <th>
+                  Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for s in sample %}
+              <td>
+                Normalized Chromosome Value Chromosome 13
+              </td>
+              <td>
+                {{ s.ncv_13}}
+              </td>
+            </tr>
+            <td>
+              Fetal fraction
+            </td>
+            <td>
+              {{ s.ff_formatted|percentformat:1 }}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br /><hr style="border: 1px solid #5698c2" /><br />
+        {% if page_type == 'html' %}
+        <div id="scatter_chart_chr18_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+        {% else %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        <div id="scatter_chart_chr18_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+        {% endif %}
+
+        <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'NVC NVC Chr18', 'FF', '0.02f', '%');</script>
+        </p>
+        <p>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Variable
+              </th>
+              <th>
+                  Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for s in sample %}
+              <td>
+                Normalized Chromosome Value Chromosome 18
+              </td>
+              <td>
+                {{ s.ncv_18}}
+              </td>
+            </tr>
+            <td>
+              Fetal fraction
+            </td>
+            <td>
+              {{ s.ff_formatted|percentformat:1 }}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br /><hr style="border: 1px solid #5698c2" /><br />
+        <div id="scatter_chart_chr21_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+
+        <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'NVC Chr21', 'FF', '0.02f', '%');</script>
+        </p>
+        <p>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Variable
+              </th>
+              <th>
+                  Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for s in sample %}
+              <td>
+                Normalized Chromosome Value Chromosome 21
+              </td>
+              <td>
+                {{ s.ncv_21}}
+              </td>
+            </tr>
+            <td>
+              Fetal fraction
+            </td>
+            <td>
+              {{ s.ff_formatted|percentformat:1 }}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </p>
     </div>
-    </body>
+  {% if page_type != 'pdf' %}</div>
+  {% endif %}
+  <script src="http://127.0.0.1:8001{% static "js/jquery-2.1.1.min.js" %}"></script>
+  <script src="http://127.0.0.1:8001{% static "js/materialize.min.js" %}"></script>
+  <script src="http://127.0.0.1:8001{% static "js/init.js" %}"></script>
+  <script>
+    $(document).ready(function(){
+      $('.fixed-action-btn').floatingActionButton();
+    });
+  </script>
+  </body>
+
 </html>

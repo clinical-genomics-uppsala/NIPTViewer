@@ -9,7 +9,8 @@ class SampleReportPDF(PDFTemplateView):
     cmd_options = {
         'margin-top': 3,
         'javascript-delay': 2000,
-        "no-stop-slow-scripts": True
+        "no-stop-slow-scripts": True,
+        'debug-javascript': True,
     }
     def get_context_data(self, **kwargs):
         context = super(SampleReportPDF, self).get_context_data(**kwargs)
@@ -24,12 +25,13 @@ class SampleReportPDF(PDFTemplateView):
         flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(sample_id=context['sample'])
         samples_info = extract_data('other', SamplesRunData.get_samples_not_included(flowcell=flowcell,sample=context['sample']), samples_info, only_prefix=True)
 
-        samples_info = extract_data(context['barcode'], flowcell_run_data, samples_info, only_prefix=True)
-        samples_info = extract_data(context['sample'], sample_flowcell_run_data, samples_info, only_prefix=True)
+        samples_info = extract_data(context['barcode'], flowcell_run_data, samples_info, only_prefix=True, shape='diamond',size=5)
+        samples_info = extract_data(context['sample'], sample_flowcell_run_data, samples_info, only_prefix=True, shape='cross',size=10)
         context.update({
                  'today': datetime.date.today().strftime("%Y-%m-%d"),
-                 'sample': context['sample'],
+                 'sample': sample_flowcell_run_data,
                  'flowcell_barcode': context['barcode'],
-                 'run_date': flowcell.run_date.strftime("%Y-%m-%d")})
+                 'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
+                 'page_type': "pdf"})
         context = data_structur_generator(samples_info, context)
         return context

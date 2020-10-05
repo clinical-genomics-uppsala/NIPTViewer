@@ -9,16 +9,29 @@ def decimal_default(obj):
         print(type(obj))
         raise TypeError
 
-def extract_data(prefix, data, info, only_prefix=False):
+
+def extract_data(prefix, data, info, only_prefix=False, shape='circle', size=1, x_format=decimal_default, y_format=decimal_default):
     label = lambda f: prefix + "_"  + item.sample_type.name
     if only_prefix:
         label = lambda f: prefix
     for item in data:
         for key in info:
             if label(item) in info[key]['data']:
-                info[key]['data'][label(item)].append({'type': item.sample_type.name, 'flowcell': item.flowcell_id.flowcell_barcode, 'sample': item.sample_id, 'x': decimal_default(getattr(item, info[key]['fields'][0])), 'y': decimal_default(getattr(item, info[key]['fields'][1]))})
+                info[key]['data'][label(item)].append(
+                    {'type': item.sample_type.name,
+                        'flowcell': item.flowcell_id.flowcell_barcode,
+                            'sample': item.sample_id,
+                                'x': x_format(getattr(item, info[key]['fields'][0])),
+                                    'y': y_format(getattr(item, info[key]['fields'][1])),
+                                        'shape': shape, 'size': size})
             else:
-                info[key]['data'][label(item)] = [{'type': item.sample_type.name, 'flowcell': item.flowcell_id.flowcell_barcode, 'sample': item.sample_id, 'x': decimal_default(getattr(item, info[key]['fields'][0])),'y': decimal_default(getattr(item, info[key]['fields'][1]))}]
+                info[key]['data'][label(item)] = [{
+                        'type': item.sample_type.name,
+                            'flowcell': item.flowcell_id.flowcell_barcode,
+                                'sample': item.sample_id,
+                                    'x': x_format(getattr(item, info[key]['fields'][0])),
+                                        'y': y_format(getattr(item, info[key]['fields'][1])),
+                                            'shape': shape, 'size': size}]
     return info
 
 def data_structur_generator(samples_info, context=None):
