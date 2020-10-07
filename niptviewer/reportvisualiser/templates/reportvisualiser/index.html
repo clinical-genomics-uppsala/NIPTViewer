@@ -18,6 +18,16 @@ NIPTViewer: Flowcells run
 {% block content %}
 <div class="section">
   <div class="row white">
+    <div id="scatter_chart_ff" style="width:100%;height:400px;">
+      <div class=center-align>
+        <h4> Fetal fraction</h4>
+      </div>
+        <svg style="width:100%;height:400px;"></svg>
+    </div>
+    <script>
+      scatterChartTime({{ data_ff_time|safe }},'#scatter_chart_ff svg', 'Date', 'Fetal fraction', '0.02f', '0.02%');
+    </script>
+    <br /><br />
     <div id="median_coverage">
       <div class=center-align>
         <h4> Median Coverage</h4>

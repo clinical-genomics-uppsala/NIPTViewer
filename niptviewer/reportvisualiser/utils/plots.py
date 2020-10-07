@@ -10,28 +10,17 @@ def decimal_default(obj):
         raise TypeError
 
 
-def extract_data(prefix, data, info, only_prefix=False, shape='circle', size=1, x_format=decimal_default, y_format=decimal_default):
-    label = lambda f: prefix + "_"  + item.sample_type.name
-    if only_prefix:
-        label = lambda f: prefix
+def extract_data(data, info, label=lambda x: x.sample_type.name,  shape='circle', size=1, x_format=decimal_default, y_format=decimal_default, extra_info=lambda x: {"type": x.sample_type.name, "flowcell": x.flowcell_id.flowcell_barcode, "sample": x.sample_id}):
     for item in data:
         for key in info:
+            entry = {'x': x_format(getattr(item, info[key]['fields'][0])),
+                        'y': y_format(getattr(item, info[key]['fields'][1])),
+                            'shape': shape, 'size': size}
+            entry.update(extra_info(item))
             if label(item) in info[key]['data']:
-                info[key]['data'][label(item)].append(
-                    {'type': item.sample_type.name,
-                        'flowcell': item.flowcell_id.flowcell_barcode,
-                            'sample': item.sample_id,
-                                'x': x_format(getattr(item, info[key]['fields'][0])),
-                                    'y': y_format(getattr(item, info[key]['fields'][1])),
-                                        'shape': shape, 'size': size})
+                info[key]['data'][label(item)].append(entry)
             else:
-                info[key]['data'][label(item)] = [{
-                        'type': item.sample_type.name,
-                            'flowcell': item.flowcell_id.flowcell_barcode,
-                                'sample': item.sample_id,
-                                    'x': x_format(getattr(item, info[key]['fields'][0])),
-                                        'y': y_format(getattr(item, info[key]['fields'][1])),
-                                            'shape': shape, 'size': size}]
+                info[key]['data'][label(item)] = [entry]
     return info
 
 def data_structur_generator(samples_info, context=None):
