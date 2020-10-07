@@ -17,7 +17,7 @@ function lineChart(data,id, x_label, y_label) {
         chart.xAxis.tickFormat(function(d) { return d3.time.format('%y-%m-%d')(new Date(d));});
         //chart.xAxis.ticks(20);
         chart.xAxis.axisLabel(x_label);
-        chart.yAxis.tickFormat(d3.format('.08f'));;
+        chart.yAxis.tickFormat(d3.format('.03f'));;
         //chart.yAxis.ticks(20);
         chart.yAxis.axisLabel(y_label);
         //We want to show shapes other than circles.

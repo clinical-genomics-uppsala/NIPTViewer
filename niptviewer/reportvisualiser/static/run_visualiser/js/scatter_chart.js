@@ -61,8 +61,6 @@ function scatterChartTime(data,id, x_label, y_label, x_format, y_format, x_ticks
 
   d3.select(id)
     .datum(data)
-      //.attr('width', 600)
-      //.attr('hieght', 400)
         .call(chart);
 
 

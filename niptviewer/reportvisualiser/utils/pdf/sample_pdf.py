@@ -23,10 +23,10 @@ class SampleReportPDF(PDFTemplateView):
         flowcell = Flowcell.get_flowcell(flowcell_barcode=context['barcode'])
         sample_flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=context['sample'])
         flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(sample_id=context['sample'])
-        samples_info = extract_data('other', SamplesRunData.get_samples_not_included(flowcell=flowcell,sample=context['sample']), samples_info, only_prefix=True)
+        samples_info = extract_data(SamplesRunData.get_samples_not_included(flowcell=flowcell,sample=context['sample']), samples_info, label=lambda x: 'other')
 
-        samples_info = extract_data(context['barcode'], flowcell_run_data, samples_info, only_prefix=True, shape='diamond',size=5)
-        samples_info = extract_data(context['sample'], sample_flowcell_run_data, samples_info, only_prefix=True, shape='cross',size=10)
+        samples_info = extract_data(flowcell_run_data, samples_info, label=lambda x: context['barcode'], shape='diamond',size=5)
+        samples_info = extract_data(sample_flowcell_run_data, samples_info, label=lambda x: context['sample'], shape='cross',size=10)
         context.update({
                  'today': datetime.date.today().strftime("%Y-%m-%d"),
                  'sample': sample_flowcell_run_data,

@@ -26,9 +26,9 @@
 <body class="cyan lighten-5 " >
   <nav class="cyan darken-4 nav-extended" role="navigation">
     <div class="nav-wrapper container">
-      <a id="logo-container" href="#" class="brand-logo">CGU</a>
+      <a id="logo-container" href="{% url 'index' %}" class="brand-logo">CGU</a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="{% url "index" %}"><i class="material-icons">home</i></a></li>
+        <li><a href="{% url "viewer:index" %}"><i class="material-icons">assessments</i></a></li>
         <li><a href="{% url "viewer:upload" %}"><i class="material-icons">library_add</i></a></li>
       </ul>
 
