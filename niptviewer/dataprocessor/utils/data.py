@@ -52,7 +52,7 @@ def parse_niptool_csv(file=None, sep=","):
         if "#" in sample and "version" in sample:
             version = re.search('Software[ ]version:[ ]([0-9.]+);', sample)[1]
     data = data[[not "#" in sample for sample in data['SampleID']]]
-    data['FF_Formatted']=data['FF_Formatted'].apply(lambda x: int(x.replace('%',''))/100 if isinstance(x, str) else x)
+    data['FF_Formatted']=data['FF_Formatted'].apply(lambda x: int(x.replace('%','').replace('<',''))/100 if isinstance(x, str) else x)
     columns_to_process = nnc_per_samplesheet + nnc_per_sample + nnc_per_sample_qc +nnc_per_sample_scoring_metrics + nnc_per_batch_scoring_metrics
     data[columns_to_process]=data[columns_to_process].apply(to_numeric)
     return version, run_date, data

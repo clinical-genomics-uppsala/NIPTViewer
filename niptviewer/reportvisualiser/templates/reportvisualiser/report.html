@@ -2,12 +2,17 @@
 {% load tz %}
 {% load percentformat %}
 {% load static %}
-
+{% load lookup %}
+{% load hex_to_rgb %}
 {% block head_js %}
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
   <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
+  <script src="{% static "run_visualiser/js/chromosome_line_chart.js" %}"></script>
 
 {% endblock %}
 
@@ -32,64 +37,75 @@
 <!--<div class="container">-->
   <div class="section">
     <div class="row white">
+        <div id="coverage_chart" style="width:100%;height:400px;">
+        <svg style="width:100%;height:400px;"></svg>
+      </div>
+    <script>
+      chromosomeLineChart({{ data_coverage|safe }},'#coverage_chart svg', 'chromosome', 'Coverage');
+    </script>
+    </div>
+    <div class="row white">
         <div id="scatter_chart_ff" style="width:100%;height:400px;">
         <svg style="width:100%;height:400px;"></svg>
       </div>
     <script>
-      scatterChartTime({{ data_ff_time|safe }},'#scatter_chart_ff svg', 'Date', 'Fetal fraction', '0.02f', '0.02%');
+      scatterChartTime({{ data_ff_time|safe }},'#scatter_chart_ff svg', 'Date', 'Fetal fraction', '0.02f', '0.02%',x_min=null, x_max=null, y_min=0, y_max=0.2);
     </script>
     </div>
     <div class="row white">
       <ul class="collapsible z-depth-0" style="border:0px">
         <li>
-          <div class="collapsible-header"><i class="material-icons">folder</i>Run data</div>
-        <div class="collapsible-body white"><span>
-        <table class="striped highlight responsive-table" id="run_data">
-          <thead>
-            <tr>
-                <th>Sample ID</th>
-                <th>NCV 13</th>
-                <th>NCV 18</th>
-                <th>NCV 21</th>
-                <th>NCV X</th>
-                <th>NCV Y</th>
-                <th>FF</th>
-                <th class="right-align"><button class="btn-floating btn-small" id="copy-hidden-table-button" data-clipboard-target="#hidden_run_data" onclick="copy_table()" ><i class="material-icons">content_copy</i></button></th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for row in flowcell_data %}
-            <tr>
-              <td>{{ row.sample_id }}</td>
-              <td>{{ row.ncv_13|floatformat:3 }}</td>
-              <td>{{ row.ncv_18|floatformat:3 }}</td>
-              <td>{{ row.ncv_21|floatformat:3 }}</td>
-              <td>{{ row.ncv_X|floatformat:3 }}</td>
-              <td>{{ row.ncv_Y|floatformat:3 }}</td>
-              <td colspan="2">{{ row.ff_formatted|percentformat:1 }}</td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table></span></div>
-        <table id="hidden_run_data" class="offscreen">
-          <thead>
-            <tr>
-                <th>Sample ID</th>
-                <th>NCV 13</th>
-                <th>NCV 18</th>
-                <th>NCV 21</th>
-                <th>NCV X</th>
-                <th>NCV Y</th>
-                <th>FF</th>
-                <th class="right-align"> </th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for row in flowcell_data %}
-            <tr><td>{{ row.sample_id }}</td><td>{{ row.ncv_13 }}</td><td>{{ row.ncv_18 }}</td><td>{{ row.ncv_21 }}</td><td>{{ row.ncv_X }}</td><td>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
-          {% endfor %}
-          </tbody>
-        </table>
+            <div class="collapsible-header"><i class="material-icons">folder</i>Run data</div>
+            <div class="collapsible-body white"><span>
+            <table class="striped highlight responsive-table" id="run_data">
+              <thead>
+                <tr>
+                    <th>Sample ID</th>
+                    <th>NCV 13</th>
+                    <th>NCV 18</th>
+                    <th>NCV 21</th>
+                    <th>NCV X</th>
+                    <th>NCV Y</th>
+                    <th>FF</th>
+                    <th class="right-align"><button class="btn-floating btn-small" id="copy-hidden-table-button" data-clipboard-target="#hidden_run_data" onclick="copy_table()" ><i class="material-icons">content_copy</i></button></th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for row in flowcell_run_data %}
+                <tr>
+                  <td>{{ row.sample_id }}</td>
+                  <td>{{ row.ncv_13|floatformat:3 }}</td>
+                  <td>{{ row.ncv_18|floatformat:3 }}</td>
+                  <td>{{ row.ncv_21|floatformat:3 }}</td>
+                  <td>{{ row.ncv_X|floatformat:3 }}</td>
+                  <td>{{ row.ncv_Y|floatformat:3 }}</td>
+                  <td colspan="2">{{ row.ff_formatted|percentformat:1 }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table></span>
+          </div>
+          </li>
+          </ul>
+            <table id="hidden_run_data" class="offscreen">
+              <thead>
+                <tr>
+                    <th>Sample ID</th>
+                    <th>NCV 13</th>
+                    <th>NCV 18</th>
+                    <th>NCV 21</th>
+                    <th>NCV X</th>
+                    <th>NCV Y</th>
+                    <th>FF</th>
+                    <th class="right-align"> </th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for row in flowcell_data %}
+                <tr><td>{{ row.sample_id }}</td><td>{{ row.ncv_13 }}</td><td>{{ row.ncv_18 }}</td><td>{{ row.ncv_21 }}</td><td>{{ row.ncv_X }}</td><td>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
       </div>
   </div>
 <!--</div>
@@ -102,7 +118,52 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'NVC ChrY', 'ChrX', '0.02f', '0.02f');</script>
+      <script>scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'NCV ChrX', 'NCV ChrY', '0.02f', '0.02f',limits=[[[-4,-4],[-200,800]], [[4,4],[-200,800]], [[-40,10],[0,0]]], null, x_min=null, x_max=5, y_min=-20, y_max=null);</script>
+      <ul class="collapsible z-depth-0" style="border:0px">
+        <li>
+            <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+            <div class="collapsible-body white"><span>
+              <table class="striped highlight responsive-table" id="run_data">
+                <thead>
+                  <tr>
+                    <th>
+                        Sample
+                    </th>
+                    <th>
+                        NCV X
+                    </th>
+                    <th>
+                        NCV Y
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for f in flowcell_run_data %}
+                    {% lookup color_dict f.sample_id as hex_color %}
+                    {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+                    {% hex_to_rgb hex_color 0.5 as rgba_color%}
+                    <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                      <b>{{ f.sample_id }}</b>
+                    </td>
+                    <td>
+                      {{ f.ncv_X|stringformat:".2f"  }}
+                    </td>
+                    <td>
+                      {{ f.ncv_Y|stringformat:".2f"  }}
+                    </td>
+                    <td style="position:relative">
+                      <i class="material-icons-outlined" style="position:absolute;left:50%;top:50%;color:{{ hex_color }};">brightness_1</i>
+                      <i class="material-icons" style="position:absolute;top:50%;left:50%;z-index:2;color:{{ hex_color }};opacity:0.5">brightness_1</i>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
     </div>
   </div>
   <!--</div>
@@ -115,7 +176,47 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'NVC ChrX', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'NCV ChrX', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], null, null, x_max=5, y_min=0, y_max=0.2);</script>
+      <ul class="collapsible z-depth-0" style="border:0px">
+        <li>
+            <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+            <div class="collapsible-body white"><span>
+              <table class="striped highlight responsive-table" id="run_data">
+                <thead>
+                  <tr>
+                    <th>
+                        Sample
+                    </th>
+                    <th>
+                        NCV X
+                    </th>
+                    <th>
+                        NCV Y
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for f in flowcell_run_data %}
+                    {% lookup color_dict f.sample_id as hex_color %}
+                    {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+                    {% hex_to_rgb hex_color 0.5 as rgba_color%}
+                    <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                      <b>{{ f.sample_id }}</b>
+                    </td>
+                    <td>
+                      {{ f.ncv_X|stringformat:".2f" }}
+                    </td>
+                    <td>
+                      {{ f.ff_formatted|percentformat:1 }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
     </div>
   </div>
   <!--</div>
@@ -128,20 +229,101 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'NVC ChrY', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'NCV ChrY', 'FF', '0.02f', '%',limits=[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]], null, null, null, y_min=0, y_max=0.2);</script>
+      <ul class="collapsible z-depth-0" style="border:0px">
+        <li>
+            <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+            <div class="collapsible-body white"><span>
+              <table class="striped highlight responsive-table" id="run_data">
+                <thead>
+                  <tr>
+                    <th>
+                        Sample
+                    </th>
+                    <th>
+                        NCV Y
+                    </th>
+                    <th>
+                       Fetal Fraction
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for f in flowcell_run_data %}
+                    {% lookup color_dict f.sample_id as hex_color %}
+                    {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+                    {% hex_to_rgb hex_color 0.5 as rgba_color%}
+                    <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                      <b>{{ f.sample_id }}</b>
+                    </td>
+                    <td>
+                      {{ f.ncv_Y|stringformat:".2f" }}
+                    </td>
+
+                    <td>
+                      {{ f.ff_formatted|percentformat:1 }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
     </div>
   </div>
   <!--</div>
   <div class="container">-->
   <div class="section">
     <div class="row white">
-      <div id="scatter_chart_chr13_vs_ff">
+      <div id="scatter_chart_chr13_vs_ff" style="width:100%;height:400px;">
         <div class=center-align>
           <h4> chr13 vs ff</h4>
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'NVC Chr13', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'NCV Chr13', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area=[[[3,4],[0.2,0.02]],], x_min=-5, x_max=5, y_min=0, y_max=0.2);</script>
+      <ul class="collapsible z-depth-0" style="border:0px">
+        <li>
+            <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+            <div class="collapsible-body white"><span>
+              <table class="striped highlight responsive-table" id="run_data">
+                <thead>
+                  <tr>
+                    <th>
+                        Sample
+                    </th>
+                    <th>
+                        NCV 13
+                    </th>
+                    <th>
+                        Fetal fraction
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for f in flowcell_run_data %}
+                    {% lookup color_dict f.sample_id as hex_color %}
+                    {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+                    {% hex_to_rgb hex_color 0.5 as rgba_color%}
+                    <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                      <b>{{ f.sample_id }}</b>
+                    </td>
+                    <td>
+                      {{ f.ncv_13|stringformat:".2f" }}
+                    </td>
+                    <td>
+                      {{ f.ff_formatted|percentformat:1 }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
     </div>
   </div>
 </div>
@@ -155,7 +337,47 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'NVC Chr18', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'NCV Chr18', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area=[[[3,4],[0.2,0.02]],], x_min=-5, x_max=5, y_min=0, y_max=0.2);</script>
+      <ul class="collapsible z-depth-0" style="border:0px">
+        <li>
+            <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+            <div class="collapsible-body white"><span>
+              <table class="striped highlight responsive-table" id="run_data">
+                <thead>
+                  <tr>
+                    <th>
+                        Sample
+                    </th>
+                    <th>
+                        NCV 18
+                    </th>
+                    <th>
+                      Fetal fraction
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for f in flowcell_run_data %}
+                    {% lookup color_dict f.sample_id as hex_color %}
+                    {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+                    {% hex_to_rgb hex_color 0.5 as rgba_color%}
+                    <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                      <b>{{ f.sample_id }}</b>
+                    </td>
+                    <td>
+                      {{ f.ncv_18|stringformat:".2f" }}
+                    </td>
+                    <td>
+                      {{ f.ff_formatted|percentformat:1 }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
     </div>
   </div>
   <!--</div>
@@ -168,7 +390,47 @@
         </div>
         <svg style="width:100%;height:400px"></svg>
       </div>
-      <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'NVC Chr21', 'FF', '0.02f', '%');</script>
+      <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'NCV Chr21', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area=[[[3,4],[0.2,0.02]],], x_min=-5, x_max=5, y_min=0, y_max=0.2);</script>
+      <ul class="collapsible z-depth-0" style="border:0px">
+        <li>
+            <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+            <div class="collapsible-body white"><span>
+              <table class="striped highlight responsive-table" id="run_data">
+                <thead>
+                  <tr>
+                    <th>
+                        Sample
+                    </th>
+                    <th>
+                        NCV 21
+                    </th>
+                    <th>
+                        Fetal fraction
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for f in flowcell_run_data %}
+                    {% lookup color_dict f.sample_id as hex_color %}
+                    {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+                    {% hex_to_rgb hex_color 0.5 as rgba_color%}
+                    <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                      <b>{{ f.sample_id }}</b>
+                    </td>
+                    <td>
+                      {{ f.ncv_21|stringformat:".2f" }}
+                    </td>
+                    <td>
+                      {{ f.ff_formatted|percentformat:1 }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
     </div>
   </div>
 <!--</div>-->
