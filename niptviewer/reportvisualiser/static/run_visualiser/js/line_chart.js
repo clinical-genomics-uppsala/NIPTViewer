@@ -27,7 +27,7 @@ function lineChart(data,id, x_label, y_label) {
             .datum(data)
             .call(chart);
 
-        nv.utils.windowResize(chart.update());
+        nv.utils.windowResize(function() {chart.update();})
         return chart;
     })
 };

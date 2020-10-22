@@ -1,13 +1,16 @@
 {% load static %}
 {% load percentformat %}
-
+{% load lookup %}
+{% load hex_to_rgb %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
         <title>NIPT Sample Report</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link href="http://127.0.0.1:8001{% static "css/materialize.min.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone" rel="stylesheet">
+        <!--<link href="http://127.0.0.1:8001{% static "css/materialize.min.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
         <script src="http://127.0.0.1:8001{% static "run_visualiser/js/scatter_chart.js" %}"></script>
@@ -52,7 +55,7 @@
     <body>
     {% if page_type != 'pdf' %}
       <div class="fixed-action-btn">
-        <a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode sample=sample.0.sample_id %}" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">file_download</i></a>
+        <a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode %}" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">file_download</i></a>
       </div>
 
 
@@ -67,10 +70,72 @@
 
         <div class='details'>
             Flowcell: {{ flowcell_barcode }}<br/>
-            Sample: {{ flowcell_barcode }}<br/>
             Run Data: {{ run_date }}
             <hr class='hrItem' />
         </div>
+        <div class="row">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th>
+                    Sample
+                </th>
+                <th>
+                    NCV 13
+                </th>
+                <th>
+                    NCV 18
+                </th>
+                <th>
+                    NCV 21
+                </th>
+                <th>
+                    NCV X
+                </th>
+                <th>
+                    NCV Y
+                </th>
+                <th>
+                    Fetal fraction
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {% for f in flowcell_run_data %}
+                <td>
+                  {{ f.sample_id }}
+                </td>
+                <td>
+                  {{ f.ncv_13|floatformat:3 }}
+                </td>
+                <td>
+                  {{ f.ncv_18|floatformat:3 }}
+                </td>
+                <td>
+                  {{ f.ncv_21|floatformat:3 }}
+                </td>
+                <td>
+                  {{ f.ncv_X|floatformat:3 }}
+                </td>
+                <td>
+                  {{ f.ncv_Y|floatformat:3 }}
+                </td>
+                <td>
+                  {{ f.ff_formatted|percentformat:1 }}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if page_type == 'pdf' %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NCV ChrX vs ChrY <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        {% endif %}
         <div class="row">
         <p>
           <div id="scatter_chart_x_vs_y" style="width:100%;height:400px;">
@@ -78,254 +143,292 @@
           </div>
         </div>
         <script>
-          scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'NVC ChrY', 'NVC ChrX', '0.02f', '0.02f');</script>
+          scatterChart({{ data_x_vs_y|safe }},'#scatter_chart_x_vs_y svg', 'NCV ChrX', 'NCV ChrY', '0.02f', '0.02f',limits=[[[-4,-4],[-200,800]], [[4,4],[-200,800]], [[-40,10],[0,0]]], null, x_min=null, x_max=5, y_min=-20, y_max=null);</script>
+</p>
+          <br />
+          <p>
         <table>
           <thead>
             <tr>
               <th>
-                  Variable
+                  Sample
               </th>
               <th>
-                  Value
+                  NCV X
               </th>
+              <th>
+                  NCV Y
+              </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              {% for s in sample %}
-              <td>
-                Normalized Chromosome Value Chromosome X
+
+              {% for f in flowcell_run_data %}
+              {% lookup color_dict f.sample_id as hex_color %}
+              {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+              {% hex_to_rgb hex_color 0.5 as rgba_color%}
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                <b>{{ f.sample_id }}</b>
               </td>
               <td>
-                {{ s.ncv_X}}
+                {{ f.ncv_X|floatformat:3 }}
               </td>
-            </tr>
-            <td>
-              Normalized Chromosome Value Chromosome Y
-            </td>
-            <td>
-              {{ s.ncv_Y }}
-            </td>
+              <td>
+                {{ f.ncv_Y|floatformat:3 }}
+              </td>
+              <td style="position:relative">
+                <i class="material-icons-outlined" style="position:absolute;left:50%;top:50%;color:{{ hex_color }};">brightness_1</i>
+                <i class="material-icons" style="position:absolute;top:50%;left:50%;z-index:2;color:{{ hex_color }};opacity:0.5">brightness_1</i>
+              </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
-        <br /><hr style="border: 1px solid #5698c2" /><br />
         </p>
         <p>
+          {% if page_type == 'pdf' %}
+          <div class='wrapper' style="page-break-before: always;">
+              <div class='header'>
+                  <p class='title'>NCV ChrX vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+              </div>
+          <div>
+          {% endif %}
         <div id="scatter_chart_x_vs_ff" style="width:100%;height:400px;">
           <svg style="width:100%;height:400px;"></svg>
         </div>
 
 
-        <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'NVC ChrX', 'FF', '0.02f', '%');</script>
-
-
-        <table>
-          <thead>
-            <tr>
-              <th>
-                  Variable
-              </th>
-              <th>
-                  Value
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              {% for s in sample %}
-              <td>
-                Normalized Chromosome Value Chromosome X
-              </td>
-              <td>
-                {{ s.ncv_X}}
-              </td>
-            </tr>
-            <td>
-              Fetal fraction
-            </td>
-            <td>
-              {{ s.ff_formatted|percentformat:1 }}
-            </td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        <br /><hr style="border: 1px solid #5698c2" /><br />
-        {% if page_type == 'html' %}
-        <div id="scatter_chart_y_vs_ff" style="width:100%;height:400px;">
-          <svg style="width:100%;height:400px;"></svg>
-        </div>
-        {% else %}
-        <div class='wrapper' style="page-break-before: always;">
-            <div class='header'>
-                <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
-            </div>
-        <div>
-        <div id="scatter_chart_y_vs_ff" style="width:100%;height:400px;">
-          <svg style="width:100%;height:400px;"></svg>
-        </div>
-        {% endif %}
-
-        <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'NVC ChrY', 'FF', '0.02f', '%');</script>
-        </p>
+        <script>scatterChart({{ data_x_vs_ff|safe }},'#scatter_chart_x_vs_ff svg', 'NCV ChrX', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], null, null, x_max=5, y_min=0, y_max=0.2);</script>
+      </p>
+        <br />
         <p>
         <table>
           <thead>
             <tr>
               <th>
-                  Variable
+                  Sample
               </th>
               <th>
-                  Value
+                  NCV X
+              </th>
+              <th>
+                  Fetal fraction
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              {% for s in sample %}
-              <td>
-                Normalized Chromosome Value Chromosome Y
+              {% for f in flowcell_run_data %}
+              {% lookup color_dict f.sample_id as hex_color %}
+              {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+              {% hex_to_rgb hex_color 0.5 as rgba_color%}
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                <b>{{ f.sample_id }}</b>
               </td>
               <td>
-                {{ s.ncv_Y}}
+                {{ f.ncv_X|floatformat:3 }}
               </td>
-            </tr>
-            <td>
-              Fetal fraction
-            </td>
-            <td>
-              {{ s.ff_formatted|percentformat:1 }}
-            </td>
+              <td>
+                {{ f.ff_formatted|percentformat:1 }}
+              </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
-        <br /><hr style="border: 1px solid #5698c2" /><br />
+        {% if page_type == 'pdf' %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NCV ChrY vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        {% endif %}
+        <div id="scatter_chart_y_vs_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+
+        <script>scatterChart({{ data_y_vs_ff|safe }},'#scatter_chart_y_vs_ff svg', 'NCV ChrY', 'FF', '0.02f', '%',limits=[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]], null, null, null, y_min=0, y_max=0.2);</script>
+        </p>
+        <br />
+        <p>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                  Sample
+              </th>
+              <th>
+                  NCV Y
+              </th>
+              <th>
+                 Fetal Fraction
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {% for f in flowcell_run_data %}
+              {% lookup color_dict f.sample_id as hex_color %}
+              {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+              {% hex_to_rgb hex_color 0.5 as rgba_color%}
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                <b>{{ f.sample_id }}</b>
+              </td>
+              <td>
+                {{ f.ncv_Y|floatformat:3 }}
+              </td>
+
+              <td>
+                {{ f.ff_formatted|percentformat:1 }}
+              </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% if page_type == 'pdf' %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NCV Chr13 vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        {% endif %}
+        <p>
         <div id="scatter_chart_chr13_vs_ff" style="width:100%;height:400px;">
           <svg style="width:100%;height:400px;"></svg>
         </div>
 
-        <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'NVC Chr13', 'FF', '0.02f', '%');</script>
+        <script>scatterChart({{ data_chr13_vs_ff|safe }},'#scatter_chart_chr13_vs_ff svg', 'NCV Chr13', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area=[[[3,4],[0.2,0.02]],], x_min=-5, x_max=5, y_min=0, y_max=0.2);</script>
         </p>
+        <br />
         <p>
         <table>
           <thead>
             <tr>
               <th>
-                  Variable
+                  Sample
               </th>
               <th>
-                  Value
+                  NCV 13
+              </th>
+              <th>
+                  Fetal fraction
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              {% for s in sample %}
-              <td>
-                Normalized Chromosome Value Chromosome 13
+              {% for f in flowcell_run_data %}
+              {% lookup color_dict f.sample_id as hex_color %}
+              {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+              {% hex_to_rgb hex_color 0.5 as rgba_color%}
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                <b>{{ f.sample_id }}</b>
               </td>
               <td>
-                {{ s.ncv_13}}
+                {{ f.ncv_13|floatformat:3 }}
               </td>
-            </tr>
-            <td>
-              Fetal fraction
-            </td>
-            <td>
-              {{ s.ff_formatted|percentformat:1 }}
-            </td>
+              <td>
+                {{ f.ff_formatted|percentformat:1 }}
+              </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
-        <br /><hr style="border: 1px solid #5698c2" /><br />
-        {% if page_type == 'html' %}
-        <div id="scatter_chart_chr18_vs_ff" style="width:100%;height:400px;">
-          <svg style="width:100%;height:400px;"></svg>
-        </div>
-        {% else %}
+        {% if page_type == 'pdf' %}
         <div class='wrapper' style="page-break-before: always;">
             <div class='header'>
-                <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NCV Chr18 vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
             </div>
         <div>
+        {% endif %}
+        <p>
         <div id="scatter_chart_chr18_vs_ff" style="width:100%;height:400px;">
           <svg style="width:100%;height:400px;"></svg>
         </div>
-        {% endif %}
 
-        <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'NVC NVC Chr18', 'FF', '0.02f', '%');</script>
+        <script>scatterChart({{ data_chr18_vs_ff|safe }},'#scatter_chart_chr18_vs_ff svg', 'NCV NCV Chr18', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area=[[[3,4],[0.2,0.02]]], x_min-5, x_max=5, y_min=0, y_max=0.2);</script>
         </p>
+        <br />
         <p>
         <table>
           <thead>
             <tr>
               <th>
-                  Variable
+                  Sample
               </th>
               <th>
-                  Value
+                  NCV 18
+              </th>
+              <th>
+                Fetal fraction
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              {% for s in sample %}
-              <td>
-                Normalized Chromosome Value Chromosome 18
+              {% for f in flowcell_run_data %}
+              {% lookup color_dict f.sample_id as hex_color %}
+              {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+              {% hex_to_rgb hex_color 0.5 as rgba_color%}
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                <b>{{ f.sample_id }}</b>
               </td>
               <td>
-                {{ s.ncv_18}}
+                {{ f.ncv_18|floatformat:3 }}
               </td>
-            </tr>
-            <td>
-              Fetal fraction
-            </td>
-            <td>
-              {{ s.ff_formatted|percentformat:1 }}
-            </td>
+              <td>
+                {{ f.ff_formatted|percentformat:1 }}
+              </td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
-        <br /><hr style="border: 1px solid #5698c2" /><br />
+        {% if page_type == 'pdf' %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NCV Chr21 vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        {% endif %}
+        <p>
         <div id="scatter_chart_chr21_vs_ff" style="width:100%;height:400px;">
           <svg style="width:100%;height:400px;"></svg>
         </div>
 
-        <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'NVC Chr21', 'FF', '0.02f', '%');</script>
+        <script>scatterChart({{ data_chr21_vs_ff|safe }},'#scatter_chart_chr21_vs_ff svg', 'NCV Chr21', 'FF', '0.02f', '%',limits=[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area=[[[3,4],[0.2,0.02]]], x_min=-5, x_max=5, y_min=0, y_max=0.2);</script>
         </p>
+        <br />
         <p>
         <table>
           <thead>
             <tr>
               <th>
-                  Variable
+                  Sample
               </th>
               <th>
-                  Value
+                  NCV 21
+              </th>
+              <th>
+                  Fetal fraction
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              {% for s in sample %}
-              <td>
-                Normalized Chromosome Value Chromosome 21
+              {% for f in flowcell_run_data %}
+              {% lookup color_dict f.sample_id as hex_color %}
+              {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+              {% hex_to_rgb hex_color 0.5 as rgba_color%}
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+                <b>{{ f.sample_id }}</b>
               </td>
               <td>
-                {{ s.ncv_21}}
+                {{ f.ncv_21|floatformat:3 }}
               </td>
-            </tr>
-            <td>
-              Fetal fraction
-            </td>
-            <td>
-              {{ s.ff_formatted|percentformat:1 }}
-            </td>
+              <td>
+                {{ f.ff_formatted|percentformat:1 }}
+              </td>
           </tr>
           {% endfor %}
           </tbody>
