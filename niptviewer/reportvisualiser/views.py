@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.template import loader
 import random
 
-from dataprocessor.models import Flowcell, SamplesRunData, BatchRun
+from dataprocessor.models import Flowcell, SamplesRunData, BatchRun, SampleType
 from dataprocessor.utils.data import import_data_into_database
 # Create your views here.
 
@@ -14,8 +14,9 @@ from reportvisualiser.utils.plots import extract_data, data_structur_generator, 
 
 
 def index(request):
-    flowcell_data = BatchRun.objects.select_related().all().order_by('-flowcell_id__run_date')
-    context = {'flowcell_data': flowcell_data}
+    sample_run_data = SamplesRunData.objects.select_related().all().order_by('-flowcell_id__run_date')
+    flowcell_run_data = BatchRun.objects.select_related().all().order_by('-flowcell_id__run_date')
+    context = {'flowcell_data': flowcell_run_data}
     coverage_data =[{
             'key': sample.sample_id, 'data': [
             {'x': 0, 'y': decimal_default(sample.chr1_coverage)},
@@ -40,26 +41,32 @@ def index(request):
             {'x': 19, 'y': decimal_default(sample.chr20_coverage)},
             {'x': 20, 'y': decimal_default(sample.chr21_coverage)},
             {'x': 21, 'y': decimal_default(sample.chr22_coverage)},
-            {'x': 22, 'y': decimal_default(sample.chrx_coverage)}]} for sample in flowcell_run_data]#{'x': 23, 'y': decimal_default(sample.chry_coverage)}]} for sample in flowcell_run_data]
+            {'x': 22, 'y': decimal_default(sample.chrx_coverage)}]} for sample in sample_run_data]#{'x': 23, 'y': decimal_default(sample.chry_coverage)}]} for sample in flowcell_run_data]
 
     context['data_coverate'] = coverage_data
-    batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'median_13')},
-                  '18': {'data': {}, 'fields': ('flowcell_id', 'median_18')},
-                  '21': {'data': {}, 'fields': ('flowcell_id', 'median_21')},
-                  'x': {'data': {}, 'fields': ('flowcell_id', 'median_x')},
-                  'y': {'data': {}, 'fields': ('flowcell_id', 'median_y')}}
-    batch_data = extract_data(data=flowcell_data, info=batch_data, label=lambda x: "median", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
-    context['median_coverage'] = [{"key": k, 'values': d['data']['median']} for k,d in batch_data.items()]
 
-    ncd_batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'ncd_13')},
-                  '18': {'data': {}, 'fields': ('flowcell_id', 'ncd_18')},
-                  '21': {'data': {}, 'fields': ('flowcell_id', 'ncd_21')},
-                  'x': {'data': {}, 'fields': ('flowcell_id', 'ncd_x')},
-                  'y': {'data': {}, 'fields': ('flowcell_id', 'ncd_y')}}
+    if flowcell_run_data.exists():
+        batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'median_13')},
+                      '18': {'data': {}, 'fields': ('flowcell_id', 'median_18')},
+                      '21': {'data': {}, 'fields': ('flowcell_id', 'median_21')},
+                      'x': {'data': {}, 'fields': ('flowcell_id', 'median_x')},
+                      'y': {'data': {}, 'fields': ('flowcell_id', 'median_y')}}
+        batch_data = extract_data(data=flowcell_run_data, info=batch_data, label=lambda x: "median", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
+        context['median_coverage'] = [{"key": k, 'values': d['data']['median']} for k,d in batch_data.items()]
+
+
     control_type = SampleType.objects.get(name="Control")
-    control_flowcell_data = BatchRun.objects.select_related().filter(sample_type=control_type).order_by('-flowcell_id__run_date')
-    ncd_batch_data = extract_data(data=control_flowcell_data, info=ncd_batch_data, label=lambda x: "ncd", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
-    context['ncd'] = [{"key": k, 'values': d['data']['ncd']} for k,d in batch_data.items()]
+    control_flowcell_data = SamplesRunData.objects.select_related().filter(sample_type=control_type).order_by('-flowcell_id__run_date')
+    if control_flowcell_data.exists():
+        ncd_batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'ncd_13')},
+                      '18': {'data': {}, 'fields': ('flowcell_id', 'ncd_18')},
+                      '21': {'data': {}, 'fields': ('flowcell_id', 'ncd_21')},
+                      'x': {'data': {}, 'fields': ('flowcell_id', 'ncd_x')},
+                      'y': {'data': {}, 'fields': ('flowcell_id', 'ncd_y')}}
+        ncd_batch_data = extract_data(data=control_flowcell_data, info=ncd_batch_data, label=lambda x: "ncd", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
+        context['ncd'] = [{"key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
+
+
     samples_info_ff_formated = {'ff_time': {'data': {}, 'fields': ('flowcell_id', 'ff_formatted')}}
     samples_info_ff_formated = extract_data(data=SamplesRunData.objects.all(), info=samples_info_ff_formated, label=lambda x: 'hist',x_format= lambda x: getattr(x, 'run_date').timestamp()*1000)
     context = data_structur_generator(samples_info_ff_formated, context)
