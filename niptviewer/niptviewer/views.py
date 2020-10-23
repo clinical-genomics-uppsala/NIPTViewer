@@ -18,18 +18,23 @@ def index(request):
                   '21': {'data': {}, 'fields': ('flowcell_id', 'median_21')},
                   'x': {'data': {}, 'fields': ('flowcell_id', 'median_x')},
                   'y': {'data': {}, 'fields': ('flowcell_id', 'median_y')}}
-    batch_data = extract_data(data=batch_data, info=batch_info, label=lambda x: "median", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
-    context['median_coverage'] = [{"key": k, 'values': d['data']['median']} for k,d in batch_data.items()]
 
-    ncd_batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'ncd_13')},
+    if batch_data.exists():
+        batch_data = extract_data(data=batch_data, info=batch_info, label=lambda x: "median", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
+        context['median_coverage'] = [{"key": k, 'values': d['data']['median']} for k,d in batch_data.items()]
+
+        ncd_batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'ncd_13')},
                   '18': {'data': {}, 'fields': ('flowcell_id', 'ncd_18')},
                   '21': {'data': {}, 'fields': ('flowcell_id', 'ncd_21')},
                   'x': {'data': {}, 'fields': ('flowcell_id', 'ncd_x')},
                   'y': {'data': {}, 'fields': ('flowcell_id', 'ncd_y')}}
+
+
     control_type = SampleType.objects.get(name="Control")
     control_flowcell_data = SamplesRunData.objects.select_related().filter(sample_type=control_type).order_by('-flowcell_id__run_date')
-    ncd_batch_data = extract_data(data=control_flowcell_data, info=ncd_batch_data, label=lambda x: "ncd", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
-    context['ncd'] = [{"key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
+    if control_flowcell_data.exists():
+        ncd_batch_data = extract_data(data=control_flowcell_data, info=ncd_batch_data, label=lambda x: "ncd", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
+        context['ncd'] = [{"key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
 
     context = data_structur_generator(samples_info, context)
     template = loader.get_template("base.html")

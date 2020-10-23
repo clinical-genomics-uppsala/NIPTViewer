@@ -25,7 +25,7 @@ NIPTViewer: Flowcells run
         <svg style="width:100%;height:400px;"></svg>
     </div>
     <script>
-      scatterChartTime({{ data_ff_time|safe }},'#scatter_chart_ff svg', 'Date', 'Fetal fraction', '0.02f', '0.02%',null,null,0,0.2);
+      scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%',y_min: 0, y_max: 0.2{{ '}' }});
     </script>
     <br /><br />
     <div id="median_coverage">
@@ -34,7 +34,7 @@ NIPTViewer: Flowcells run
       </div>
       <svg style="width:100%;height:400px"></svg>
     </div>
-    <script>lineChart({{ median_coverage|safe }},'#median_coverage svg', 'Date', 'Coverage');</script>
+    <script>lineChart({{ '{' }}data: {{ median_coverage|safe }}, id: '#median_coverage svg', x_label: 'Date', y_label: 'Coverage'{{ '}' }});</script>
   </div>
 </div>
 <div class="section">
