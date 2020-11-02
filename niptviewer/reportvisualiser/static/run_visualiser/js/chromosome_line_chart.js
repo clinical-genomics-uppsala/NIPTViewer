@@ -8,7 +8,6 @@ function chromosomeLineChart({data,id, x_label, y_label}) {
         ;
         //Configure how the tooltip looks.
         chart.tooltip.contentGenerator(function(key) {
-          console.log(key);
             return "#";//"<table><tr><td>Flowcell:</td><td><b>" + key.point.flowcell + "</td></tr><tr><td>Type:</td><td><b>" + key.point.type + "</td></tr><tr><td>Sample:</td><td><b>" + key.point.sample + "</td></tr><tr><td>y:</td><td><b>" + key.point.y.toFixed(2) + "</b></td></tr><tr><td>x:</td><td><b>" + key.point.x.toFixed(2) + "</b></td></tr></table>";
         });
 
