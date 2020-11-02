@@ -166,10 +166,10 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
           .enter()
             .append('line')
               .attr({
-                       x1: function(d){ return chart.xAxis.scale()(d[0][0]) },
-                       y1: function(d){ return chart.yAxis.scale()(d[1][0]) },
-                       x2: function(d){ return chart.xAxis.scale()(d[0][1])},
-                       y2: function(d){ return chart.yAxis.scale()(d[1][1]) }
+                       x1: function(d){ return chart.xAxis.scale()(x_min) },
+                       y1: function(d){ return chart.yAxis.scale()(d[0]) },
+                       x2: function(d){ return chart.xAxis.scale()(x_max)},
+                       y2: function(d){ return chart.yAxis.scale()(d[1]) }
                    })
                    .style("stroke", "#C70039");
     }
