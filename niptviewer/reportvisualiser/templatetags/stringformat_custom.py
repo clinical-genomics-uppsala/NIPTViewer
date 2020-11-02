@@ -3,8 +3,8 @@ from django import template
 register = template.Library()
 
 @register.filter
-def percentformat(value, decimals=0):
+def stringformat_custom(value, format):
     if value is None:
         return "NA"
     else:
-        return ("{:." + str(decimals) + "%}").format(value)
+        return ("{:" + format + "}").format(value)

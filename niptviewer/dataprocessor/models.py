@@ -1,5 +1,7 @@
 from django.db import models
 
+import pandas
+
 # Create your models here.
 
 class Flowcell(models.Model):
@@ -58,6 +60,9 @@ class BatchRun(models.Model):
     stdev_Y = models.FloatField(blank=False, help_text=__help_text_stdev)
     software_version = models.CharField(help_text="Illumina analysis software version", max_length=10, blank=False)
 
+    def __str__(self):
+        return self.software_version
+
     def create_batch_run(flowcell_entry, median_13, median_18, median_21,
                             median_x, median_y, stdev_13, stdev_18, stdev_21,
                             stdev_X, stdev_Y, software_version):
@@ -88,16 +93,16 @@ class SamplesRunData(models.Model):
     qc_flag = models.IntegerField(choices=((0, 'Pass'), (1, 'Warning'), (2, 'Failure')), blank=False, unique=False)
     qc_failure = models.TextField(help_text="Description.", blank=False, unique=False)
     qc_warning = models.TextField(help_text="Description.", blank=False, unique=False)
-    ncv_13 = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) 13", max_digits=15, decimal_places=10)
-    ncv_18 = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) 18", max_digits=15, decimal_places=10)
-    ncv_21 = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) 21", max_digits=15, decimal_places=10)
-    ncv_X = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) X", max_digits=15, decimal_places=10)
-    ncv_Y = models.DecimalField(blank=False, help_text="Normalized Chromosomal Value (z-score) Y", max_digits=15, decimal_places=10)
-    ratio_13 = models.DecimalField(blank=False, help_text="Chromosomal Ratio 13", max_digits=15, decimal_places=10)
-    ratio_18 = models.DecimalField(blank=False, help_text="Chromosomal Ratio 18", max_digits=15, decimal_places=10)
-    ratio_21 = models.DecimalField(blank=False, help_text="Chromosomal Ratio 21", max_digits=15, decimal_places=10)
-    ratio_X = models.DecimalField(blank=False, help_text="Chromosomal Ratio X", max_digits=15, decimal_places=10)
-    ratio_y = models.DecimalField(blank=False, help_text="Chromosomal Ratio Y", max_digits=15, decimal_places=10)
+    ncv_13 = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) 13", max_digits=15, decimal_places=10)
+    ncv_18 = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) 18", max_digits=15, decimal_places=10)
+    ncv_21 = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) 21", max_digits=15, decimal_places=10)
+    ncv_X = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) X", max_digits=15, decimal_places=10)
+    ncv_Y = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) Y", max_digits=15, decimal_places=10)
+    ratio_13 = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio 13", max_digits=15, decimal_places=10)
+    ratio_18 = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio 18", max_digits=15, decimal_places=10)
+    ratio_21 = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio 21", max_digits=15, decimal_places=10)
+    ratio_X = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio X", max_digits=15, decimal_places=10)
+    ratio_y = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio Y", max_digits=15, decimal_places=10)
     clusters = models.IntegerField(blank=False, help_text="Total number of clusters across lanes (Reported per flow cell)")
     total_reads_2_clusters = models.IntegerField(blank=False, help_text="Ratio of recovered reads to number of clusters across lanes (Reported per flow cell)")
     max_misindexed_reads_2_clusters = models.FloatField(blank=False, help_text="Ratio of misindexed reads across lanes to clusters in a virtual lane (Reported per flow cell)")
@@ -163,7 +168,7 @@ class SamplesRunData(models.Model):
     chr22 = models.IntegerField(blank=False, help_text=__help_text_chr)
     Chrx = models.IntegerField(blank=False, help_text=__help_text_chr)
     chry = models.IntegerField(blank=False, help_text=__help_text_chr)
-    ff_formatted = models.DecimalField(blank=False, max_digits=15, decimal_places=10, help_text="Estimated fetal component of cfDNA recovered by the assay. Reported as a discreet, rounded percentage that provides additional information for each sample.")
+    ff_formatted = models.DecimalField(blank=True, null=True, max_digits=15, decimal_places=10, help_text="Estimated fetal component of cfDNA recovered by the assay. Reported as a discreet, rounded percentage that provides additional information for each sample.")
 
     def __str__(self):
         return str(self.index)
@@ -191,16 +196,16 @@ class SamplesRunData(models.Model):
                 qc_flag=qc_flag,
                 qc_failure=qc_failure,
                 qc_warning=qc_warning,
-                ncv_13=ncv_13,
-                ncv_18=ncv_18,
-                ncv_21=ncv_21,
-                ncv_X=ncv_x,
-                ncv_Y=ncv_y,
-                ratio_13=ratio_13,
-                ratio_18=ratio_18,
-                ratio_21=ratio_21,
-                ratio_X=ratio_X,
-                ratio_y=ratio_y,
+                ncv_13=ncv_13 if not pandas.isna(ncv_13) else None,
+                ncv_18=ncv_18 if not pandas.isna(ncv_18) else None,
+                ncv_21=ncv_21 if not pandas.isna(ncv_21) else None,
+                ncv_X=ncv_x if not pandas.isna(ncv_x) else None,
+                ncv_Y=ncv_y if not pandas.isna(ncv_y) else None,
+                ratio_13=ratio_13 if not pandas.isna(ratio_13) else None,
+                ratio_18=ratio_18 if not pandas.isna(ratio_18) else None,
+                ratio_21=ratio_21 if not pandas.isna(ratio_21) else None,
+                ratio_X=ratio_X if not pandas.isna(ratio_X) else None,
+                ratio_y=ratio_y if not pandas.isna(ratio_y) else None,
                 clusters=clusters,
                 total_reads_2_clusters=total_reads_2_clusters,
                 max_misindexed_reads_2_clusters=max_misindexed_reads_2_clusters,
@@ -213,11 +218,11 @@ class SamplesRunData(models.Model):
                 perfect_match_tags_2_tags=perfect_match_tags_2_tags,
                 gc_bias=gc_bias,
                 gcr2=gcr2,
-                ncd_13=ncd_13,
-                ncd_18=ncd_18,
-                ncd_21=ncd_21,
-                ncd_x=ncd_x,
-                ncd_y=ncd_y,
+                ncd_13=ncd_13 if not ncd_13 == "NA" else None,
+                ncd_18=ncd_18 if not ncd_18 == "NA" else None,
+                ncd_21=ncd_21 if not ncd_21 == "NA" else None,
+                ncd_x=ncd_x if not ncd_x == "NA" else None,
+                ncd_y=ncd_y if not ncd_y == "NA" else None,
                 chr1_coverage=chr1_coverage,
                 chr2_coverage=chr2_coverage,
                 chr3_coverage=chr3_coverage,
@@ -266,7 +271,7 @@ class SamplesRunData(models.Model):
                 chr22=chr22,
                 Chrx=chrx,
                 chry=chry,
-                ff_formatted=ff_formatted)
+                ff_formatted=ff_formatted if not pandas.isna(ff_formatted) else None)
 
     def get_samples(flowcell,sample=None):
         if sample is None:
