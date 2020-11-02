@@ -142,8 +142,7 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
                   .useVoronoi(true)
                   .color(d3.scale.category10().range())
                   .duration(300);
-  console.log(y_min)
-  console.log(y_max)
+
   if(x_min !== null && x_max !== null){chart.xDomain([x_min,x_max])}
   if(y_min !== null && y_max !== null ){chart.yDomain([y_min,y_max])}
 
@@ -161,7 +160,6 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
     .datum(data)
         .call(chart);
     if (limits !== null) {
-      console.log(limits)
       var custLine = d3.select(id).select('.nv-scatterWrap').datum(data).append('g');
       custLine.selectAll('line')
         .data(limits)
