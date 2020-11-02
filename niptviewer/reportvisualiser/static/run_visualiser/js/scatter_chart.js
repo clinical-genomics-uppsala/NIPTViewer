@@ -142,7 +142,8 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
                   .useVoronoi(true)
                   .color(d3.scale.category10().range())
                   .duration(300);
-
+  console.log(y_min)
+  console.log(y_max)
   if(x_min !== null && x_max !== null){chart.xDomain([x_min,x_max])}
   if(y_min !== null && y_max !== null ){chart.yDomain([y_min,y_max])}
 
@@ -160,16 +161,17 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
     .datum(data)
         .call(chart);
     if (limits !== null) {
+      console.log(limits)
       var custLine = d3.select(id).select('.nv-scatterWrap').datum(data).append('g');
       custLine.selectAll('line')
         .data(limits)
           .enter()
             .append('line')
               .attr({
-                       x1: function(d){ return chart.xAxis.scale()(d[0][0]) },
-                       y1: function(d){ return chart.yAxis.scale()(d[1][0]) },
-                       x2: function(d){ return chart.xAxis.scale()(d[0][1])},
-                       y2: function(d){ return chart.yAxis.scale()(d[1][1]) }
+                       x1: function(d){ return chart.xAxis.scale()(x_min) },
+                       y1: function(d){ return chart.yAxis.scale()(d[0]) },
+                       x2: function(d){ return chart.xAxis.scale()(x_max)},
+                       y2: function(d){ return chart.yAxis.scale()(d[1]) }
                    })
                    .style("stroke", "#C70039");
     }

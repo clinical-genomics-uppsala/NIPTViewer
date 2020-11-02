@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load tz %}
 {% load percentformat %}
+{% load stringformat_custom %}
+{% load flag_sample %}
 {% load static %}
 {% load lookup %}
 {% load hex_to_rgb %}
@@ -25,9 +27,9 @@
 {% block navbar %}
 <div class="nav-content">
       <ul class="tabs tabs-transparent">
-  <li class="tab"><a href="{% url "viewer:report" barcode=flowcell %}" class="active">{{ flowcell }}</a></li>
+  <li class="tab"><a href="{% url "viewer:report" barcode=flowcell_barcode %}" class="active">{{ flowcell_barcode }}</a></li>
   {% for sample in samples %}
-  <li class="tab"><a href="{% url "viewer:sample_report" barcode=flowcell sample=sample %}">{{ sample }}</a></li>
+  <li class="tab"><a href="{% url "viewer:sample_report" barcode=flowcell_barcode sample=sample %}">{{ sample }}</a></li>
   {% endfor%}
   </ul>
 </div>
@@ -35,7 +37,13 @@
 {% endblock %}
 {% block content %}
 <div class="fixed-action-btn">
-  <a  href="{% url "viewer:upload" %}" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">file_upload</i></a>
+  <a class="btn-floating btn-large red">
+    <i class="large material-icons">menu</i>
+  </a>
+  <ul>
+    <li><a  href="{% url "viewer:upload" %}" class="btn-floating btn- waves-effect waves-light green right"><i class="material-icons">file_upload</i></a></li>
+    <li><a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode %}" class="btn-floating btn- waves-effect waves-light blue right"><i class="material-icons">picture_as_pdf</i></a></li>
+  </ul>
 </div>
 
 <!--<div class="container">-->
@@ -53,7 +61,7 @@
         <svg style="width:100%;height:400px;"></svg>
       </div>
     <script>
-      scatterChartTime({{ '{' }}data:{{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min: 0, y_max:0.2{{ '}' }});
+      scatterChartTime({{ '{' }}data:{{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min: 0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
     </script>
     </div>
     <div class="row white">
@@ -61,7 +69,7 @@
         <li>
             <div class="collapsible-header"><i class="material-icons">folder</i>Run data</div>
             <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table" id="run_data">
+            <table class="striped highlight responsive-table centered" id="run_data">
               <thead>
                 <tr>
                     <th>Sample ID</th>
@@ -78,12 +86,12 @@
               {% for row in flowcell_run_data %}
                 <tr>
                   <td>{{ row.sample_id }}</td>
-                  <td>{{ row.ncv_13|floatformat:3 }}</td>
-                  <td>{{ row.ncv_18|floatformat:3 }}</td>
-                  <td>{{ row.ncv_21|floatformat:3 }}</td>
-                  <td>{{ row.ncv_X|floatformat:3 }}</td>
-                  <td>{{ row.ncv_Y|floatformat:3 }}</td>
-                  <td colspan="2">{{ row.ff_formatted|percentformat:1 }}</td>
+                  <td {{ row.ncv_13|flag_sample }}>{{ row.ncv_13|stringformat_custom:".3f" }}</td>
+                  <td {{ row.ncv_18|flag_sample }}>{{ row.ncv_18|stringformat_custom:".3f" }}</td>
+                  <td {{ row.ncv_21|flag_sample }}>{{ row.ncv_21|stringformat_custom:".3f" }}</td>
+                  <td {{ row.ncv_X|flag_sample }}>{{ row.ncv_X|stringformat_custom:".3f" }}</td>
+                  <td {{ row.ncv_Y|flag_sample }}>{{ row.ncv_Y|stringformat_custom:".3f" }}</td>
+                  <td {{ row.ff_formatted|flag_sample }} colspan="2">{{ row.ff_formatted|percentformat:1 }}</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -106,7 +114,7 @@
               </thead>
               <tbody>
               {% for row in flowcell_data %}
-                <tr><td>{{ row.sample_id }}</td><td>{{ row.ncv_13 }}</td><td>{{ row.ncv_18 }}</td><td>{{ row.ncv_21 }}</td><td>{{ row.ncv_X }}</td><td>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
+                <tr><td>{{ row.sample_id }}</td><td {{ row.ncv_13|flag_sample }}>{{ row.ncv_13 }}</td><td {{ row.ncv_18|flag_sample }}>{{ row.ncv_18 }}</td><td {{ row.ncv_21|flag_sample }}>{{ row.ncv_21 }}</td><td {{ row.ncv_X|flag_sample }}>{{ row.ncv_X }}</td><td {{ row.ncv_Y|flag_sample }}>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
               {% endfor %}
               </tbody>
             </table>
@@ -127,7 +135,7 @@
         <li>
             <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
             <div class="collapsible-body white"><span>
-              <table class="striped highlight responsive-table" id="run_data">
+              <table class="striped highlight responsive-table centered" id="run_data">
                 <thead>
                   <tr>
                     <th>
@@ -139,7 +147,6 @@
                     <th>
                         NCV Y
                     </th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -151,15 +158,11 @@
                     <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
                       <b>{{ f.sample_id }}</b>
                     </td>
-                    <td>
-                      {{ f.ncv_X|stringformat:".2f"  }}
+                    <td {{ f.ncv_X|flag_sample }}>
+                      {{ f.ncv_X|stringformat_custom:".2f"  }}
                     </td>
-                    <td>
-                      {{ f.ncv_Y|stringformat:".2f"  }}
-                    </td>
-                    <td style="position:relative">
-                      <i class="material-icons-outlined" style="position:absolute;left:50%;top:50%;color:{{ hex_color }};">brightness_1</i>
-                      <i class="material-icons" style="position:absolute;top:50%;left:50%;z-index:2;color:{{ hex_color }};opacity:0.5">brightness_1</i>
+                    <td {{ f.ncv_Y|flag_sample }}>
+                      {{ f.ncv_Y|stringformat_custom:".2f"  }}
                     </td>
                 </tr>
                 {% endfor %}
@@ -185,7 +188,7 @@
         <li>
             <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
             <div class="collapsible-body white"><span>
-              <table class="striped highlight responsive-table" id="run_data">
+              <table class="striped highlight responsive-table centered" id="run_data">
                 <thead>
                   <tr>
                     <th>
@@ -208,10 +211,10 @@
                     <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
                       <b>{{ f.sample_id }}</b>
                     </td>
-                    <td>
-                      {{ f.ncv_X|stringformat:".2f" }}
+                    <td {{ f.ncv_X|flag_sample }}>
+                      {{ f.ncv_X|stringformat_custom:".2f" }}
                     </td>
-                    <td>
+                    <td {{ f.ff_formatted|flag_sample }}>
                       {{ f.ff_formatted|percentformat:1 }}
                     </td>
                 </tr>
@@ -238,7 +241,7 @@
         <li>
             <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
             <div class="collapsible-body white"><span>
-              <table class="striped highlight responsive-table" id="run_data">
+              <table class="striped highlight responsive-table centered" id="run_data">
                 <thead>
                   <tr>
                     <th>
@@ -261,11 +264,11 @@
                     <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
                       <b>{{ f.sample_id }}</b>
                     </td>
-                    <td>
-                      {{ f.ncv_Y|stringformat:".2f" }}
+                    <td {{ f.ncv_Y|flag_sample }}>
+                      {{ f.ncv_Y|stringformat_custom:".2f" }}
                     </td>
 
-                    <td>
+                    <td {{ f.ff_formatted|flag_sample }}>
                       {{ f.ff_formatted|percentformat:1 }}
                     </td>
                 </tr>
@@ -292,7 +295,7 @@
         <li>
             <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
             <div class="collapsible-body white"><span>
-              <table class="striped highlight responsive-table" id="run_data">
+              <table class="striped highlight responsive-table centered" id="run_data">
                 <thead>
                   <tr>
                     <th>
@@ -315,10 +318,10 @@
                     <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
                       <b>{{ f.sample_id }}</b>
                     </td>
-                    <td>
-                      {{ f.ncv_13|stringformat:".2f" }}
+                    <td {{ f.ncv_13|flag_sample }}>
+                      {{ f.ncv_13|stringformat_custom:".2f" }}
                     </td>
-                    <td>
+                    <td {{ f.ff_formatted|flag_sample }}>
                       {{ f.ff_formatted|percentformat:1 }}
                     </td>
                 </tr>
@@ -346,7 +349,7 @@
         <li>
             <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
             <div class="collapsible-body white"><span>
-              <table class="striped highlight responsive-table" id="run_data">
+              <table class="striped highlight responsive-table centered" id="run_data">
                 <thead>
                   <tr>
                     <th>
@@ -355,7 +358,7 @@
                     <th>
                         NCV 18
                     </th>
-                    <th>
+                    <th {{ f.ff_formatted|flag_sample }}>
                       Fetal fraction
                     </th>
                   </tr>
@@ -369,10 +372,10 @@
                     <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
                       <b>{{ f.sample_id }}</b>
                     </td>
-                    <td>
-                      {{ f.ncv_18|stringformat:".2f" }}
+                    <td {{ f.ncv_18|flag_sample }}>
+                      {{ f.ncv_18|stringformat_custom:".2f" }}
                     </td>
-                    <td>
+                    <td {{ f.ff_formatted|flag_sample }}>
                       {{ f.ff_formatted|percentformat:1 }}
                     </td>
                 </tr>
@@ -399,7 +402,7 @@
         <li>
             <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
             <div class="collapsible-body white"><span>
-              <table class="striped highlight responsive-table" id="run_data">
+              <table class="striped highlight responsive-table centered" id="run_data">
                 <thead>
                   <tr>
                     <th>
@@ -422,10 +425,10 @@
                     <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
                       <b>{{ f.sample_id }}</b>
                     </td>
-                    <td>
-                      {{ f.ncv_21|stringformat:".2f" }}
+                    <td {{ f.ncv_21|flag_sample }}>
+                      {{ f.ncv_21|stringformat_custom:".2f" }}
                     </td>
-                    <td>
+                    <td {{ f.ff_formatted|flag_sample }}>
                       {{ f.ff_formatted|percentformat:1 }}
                     </td>
                 </tr>
@@ -453,6 +456,14 @@
   $(document).ready(function(){
     $('.materialboxed').materialbox();
   });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.fixed-action-btn');
+      var instances = M.FloatingActionButton.init(elems, {'direction':'left'});
+    });
+
   </script>
 
 {% endblock %}

@@ -1,5 +1,7 @@
 {% load static %}
 {% load percentformat %}
+{% load stringformat_custom %}
+{% load flag_sample %}
 {% load lookup %}
 {% load hex_to_rgb %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -74,7 +76,7 @@
             <hr class='hrItem' />
         </div>
         <div class="row">
-          <table class="striped">
+          <table class="striped centered">
             <thead>
               <tr>
                 <th>
@@ -106,22 +108,22 @@
                 <td>
                   {{ f.sample_id }}
                 </td>
-                <td>
-                  {{ f.ncv_13|floatformat:3 }}
+                <td {{ f.ncv_13|flag_sample }}>
+                  {{ f.ncv_13|stringformat_custom:".3f" }}
                 </td>
-                <td>
-                  {{ f.ncv_18|floatformat:3 }}
+                <td {{ f.ncv_13|flag_sample }}>
+                  {{ f.ncv_18|stringformat_custom:".3f" }}
                 </td>
-                <td>
-                  {{ f.ncv_21|floatformat:3 }}
+                <td {{ f.ncv_13|flag_sample }}>
+                  {{ f.ncv_21|stringformat_custom:".3f" }}
                 </td>
-                <td>
-                  {{ f.ncv_X|floatformat:3 }}
+                <td {{ f.ncv_13|flag_sample }}>
+                  {{ f.ncv_X|stringformat_custom:".3f" }}
                 </td>
-                <td>
-                  {{ f.ncv_Y|floatformat:3 }}
+                <td {{ f.ncv_13|flag_sample }}>
+                  {{ f.ncv_Y|stringformat_custom:".3f" }}
                 </td>
-                <td>
+                <td {{ f.ncv_13|flag_sample }}>
                   {{ f.ff_formatted|percentformat:1 }}
                 </td>
             </tr>
@@ -147,7 +149,7 @@
 </p>
           <br />
           <p>
-        <table>
+        <table class="centered">
           <thead>
             <tr>
               <th>
@@ -159,7 +161,6 @@
               <th>
                   NCV Y
               </th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -169,18 +170,14 @@
               {% lookup color_dict f.sample_id as hex_color %}
               {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
               {% hex_to_rgb hex_color 0.5 as rgba_color%}
-              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};padding: 0px 0px 0px 0px;">
                 <b>{{ f.sample_id }}</b>
               </td>
-              <td>
-                {{ f.ncv_X|floatformat:3 }}
+              <td {{ f.ncv_X|flag_sample }} style="padding: 0px 0px 0px 0px;">
+                {{ f.ncv_X|stringformat_custom:".3f" }}
               </td>
-              <td>
-                {{ f.ncv_Y|floatformat:3 }}
-              </td>
-              <td style="position:relative">
-                <i class="material-icons-outlined" style="position:absolute;left:50%;top:50%;color:{{ hex_color }};">brightness_1</i>
-                <i class="material-icons" style="position:absolute;top:50%;left:50%;z-index:2;color:{{ hex_color }};opacity:0.5">brightness_1</i>
+              <td {{ f.ncv_Y|flag_sample }} style="padding: 0px 0px 0px 0px;">
+                {{ f.ncv_Y|stringformat_custom:".3f" }}
               </td>
           </tr>
           {% endfor %}
@@ -204,7 +201,7 @@
       </p>
         <br />
         <p>
-        <table>
+        <table class="centered">
           <thead>
             <tr>
               <th>
@@ -224,13 +221,13 @@
               {% lookup color_dict f.sample_id as hex_color %}
               {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
               {% hex_to_rgb hex_color 0.5 as rgba_color%}
-              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};padding: 0px 0px 0px 0px;">
                 <b>{{ f.sample_id }}</b>
               </td>
-              <td>
-                {{ f.ncv_X|floatformat:3 }}
+              <td {{ f.ncv_X|flag_sample }} style="padding: 0px 0px 0px 0px;">
+                {{ f.ncv_X|stringformat_custom:".3f" }}
               </td>
-              <td>
+              <td {{ f.ff_formatted|flag_sample }} style="padding: 0px 0px 0px 0px;">
                 {{ f.ff_formatted|percentformat:1 }}
               </td>
           </tr>
@@ -252,7 +249,7 @@
         </p>
         <br />
         <p>
-        <table>
+        <table class="centered">
           <thead>
             <tr>
               <th>
@@ -272,14 +269,14 @@
               {% lookup color_dict f.sample_id as hex_color %}
               {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
               {% hex_to_rgb hex_color 0.5 as rgba_color%}
-              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};padding: 0px 0px 0px 0px;">
                 <b>{{ f.sample_id }}</b>
               </td>
-              <td>
-                {{ f.ncv_Y|floatformat:3 }}
+              <td {{ f.ncv_Y|flag_sample }} style="padding: 0px 0px 0px 0px;">
+                {{ f.ncv_Y|stringformat_custom:".3f" }}
               </td>
 
-              <td>
+              <td {{ f.ff_formatted|flag_sample }}  style="padding: 0px 0px 0px 0px;">
                 {{ f.ff_formatted|percentformat:1 }}
               </td>
           </tr>
@@ -302,7 +299,7 @@
         </p>
         <br />
         <p>
-        <table>
+        <table class="centered">
           <thead>
             <tr>
               <th>
@@ -322,13 +319,13 @@
               {% lookup color_dict f.sample_id as hex_color %}
               {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
               {% hex_to_rgb hex_color 0.5 as rgba_color%}
-              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};padding: 0px 0px 0px 0px;">
                 <b>{{ f.sample_id }}</b>
               </td>
-              <td>
-                {{ f.ncv_13|floatformat:3 }}
+              <td {{ f.ncv_13|flag_sample }} style="padding: 0px 0px 0px 0px;">
+                {{ f.ncv_13|stringformat_custom:".3f" }}
               </td>
-              <td>
+              <td  {{ f.ff_formatted|flag_sample }} style="padding: 0px 0px 0px 0px;">
                 {{ f.ff_formatted|percentformat:1 }}
               </td>
           </tr>
@@ -351,7 +348,7 @@
         </p>
         <br />
         <p>
-        <table>
+        <table class="centered">
           <thead>
             <tr>
               <th>
@@ -371,13 +368,13 @@
               {% lookup color_dict f.sample_id as hex_color %}
               {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
               {% hex_to_rgb hex_color 0.5 as rgba_color%}
-              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};padding: 0px 0px 0px 0px;">
                 <b>{{ f.sample_id }}</b>
               </td>
-              <td>
-                {{ f.ncv_18|floatformat:3 }}
+              <td {{ f.ncv_18|flag_sample }} style="padding: 0px 0px 0px 0px;">
+                {{ f.ncv_18|stringformat_custom:".3f" }}
               </td>
-              <td>
+              <td {{ f.ff_formatted|flag_sample }} style="padding: 0px 0px 0px 0px;">
                 {{ f.ff_formatted|percentformat:1 }}
               </td>
           </tr>
@@ -400,7 +397,7 @@
         </p>
         <br />
         <p>
-        <table>
+        <table class="centered">
           <thead>
             <tr>
               <th>
@@ -420,13 +417,13 @@
               {% lookup color_dict f.sample_id as hex_color %}
               {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
               {% hex_to_rgb hex_color 0.5 as rgba_color%}
-              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+              <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};padding: 0px 0px 0px 0px;">
                 <b>{{ f.sample_id }}</b>
               </td>
-              <td>
-                {{ f.ncv_21|floatformat:3 }}
+              <td {{ f.ncv_21|flag_sample }} style="padding: 0px 0px 0px 0px;" >
+                {{ f.ncv_21|stringformat_custom:".3f" }}
               </td>
-              <td>
+              <td {{ f.ff_formatted|flag_sample }} style="padding: 0px 0px 0px 0px;">
                 {{ f.ff_formatted|percentformat:1 }}
               </td>
           </tr>
