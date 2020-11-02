@@ -18,23 +18,46 @@ NIPTViewer: Flowcells run
 {% block content %}
 <div class="section">
   <div class="row white">
-    <div id="scatter_chart_ff" style="width:100%;height:400px;">
+    <div class="col s12 m12 white">
       <div class=center-align>
         <h4> Fetal fraction</h4>
       </div>
-        <svg style="width:100%;height:400px;"></svg>
-    </div>
-    <script>
-      scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%',y_min: 0, y_max: 0.2{{ '}' }});
-    </script>
-    <br /><br />
-    <div id="median_coverage">
+      {% if data_ff_time %}
+        <div id="scatter_chart_ff" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+      <script>
+        scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min:0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
+      </script>
+      {% else %}
       <div class=center-align>
-        <h4> Median Coverage</h4>
+        <p>
+        <h2 class="center-align">NO DATA</h2>
+        </p>
       </div>
-      <svg style="width:100%;height:400px"></svg>
+      {% endif %}
     </div>
-    <script>lineChart({{ '{' }}data: {{ median_coverage|safe }}, id: '#median_coverage svg', x_label: 'Date', y_label: 'Coverage'{{ '}' }});</script>
+  </div>
+  <div class="row white">
+    <div class="col s12 m12 white">
+      <div class=center-align>
+        <h4> Normalized Chromosome Denominator</h4>
+      </div>
+      {% if ncd %}
+        <div id="scatter_chart_ncd" style="width:100%;height:400px;">
+          <svg style="width:100%;height:400px;"></svg>
+        </div>
+      <script>
+        scatterChartTime({{ '{' }}data: {{ ncd|safe }}, id: '#scatter_chart_ncd svg', x_label: 'Date', y_label: 'NCD', x_format: '0.02f', y_format: '0.02f'{{ '}' }});
+      </script>
+      {% else %}
+      <div class=center-align>
+        <p>
+        <h2 class="center-align">NO DATA</h2>
+        </p>
+      </div>
+      {% endif %}
+    </div>
   </div>
 </div>
 <div class="section">
@@ -42,7 +65,7 @@ NIPTViewer: Flowcells run
     <div class=center-align>
       <h4> Runs</h4>
     </div>
-    <table>
+    <table class="centered">
       <thead>
       <tr>
         <th>Barcode</th>

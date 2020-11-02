@@ -44,5 +44,5 @@ class SampleReportPDF(PDFTemplateView):
                  'flowcell_barcode': context['barcode'],
                  'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
                  'page_type': "pdf"})
-        context = data_structur_generator(samples_info, context)
+        context.update(data_structur_generator(samples_info))
         return context

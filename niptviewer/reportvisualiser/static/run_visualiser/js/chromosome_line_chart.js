@@ -13,7 +13,7 @@ function chromosomeLineChart({data,id, x_label, y_label}) {
         });
 
 
-        var chromosome = ['', 'Chr1', 'Chr2', 'Chr3', 'Chr4', 'Chr5', 'Chr6', 'Chr7', 'Chr8', 'Chr9', 'Chr10',
+        var chromosome = ['Chr1', 'Chr2', 'Chr3', 'Chr4', 'Chr5', 'Chr6', 'Chr7', 'Chr8', 'Chr9', 'Chr10',
                           'Chr11', 'Chr12', 'Chr13', 'Chr14', 'Chr15', 'Chr16', 'Chr17', 'Chr18', 'Chr19', 'Chr20',
                           'Chr21', 'Chr22', 'ChrX']
         chart.forceX([0,23])
@@ -25,7 +25,7 @@ function chromosomeLineChart({data,id, x_label, y_label}) {
         chart.yAxis.axisLabel(y_label);
 
         d3.select(id)
-            .datum(data)
+          .datum(data)
             .call(chart);
 
         nv.utils.windowResize(function() {chart.update();})
