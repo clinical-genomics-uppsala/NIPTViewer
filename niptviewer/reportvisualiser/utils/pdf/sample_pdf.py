@@ -38,6 +38,7 @@ class SampleReportPDF(PDFTemplateView):
                  'today': datetime.date.today().strftime("%Y-%m-%d"),
                  'samples': [d.sample_id for d in samples_run_data],
                  'flowcell_run_data': flowcell_run_data,
+                 'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
                  'color_dict': color_dict,
                  'flowcell_barcode': context['barcode'],
                  'run_date': flowcell.run_date.strftime("%Y-%m-%d"),

@@ -10,6 +10,7 @@ class CustomUserAdmin(UserAdmin):
         form = super().get_form(request, obj, **kwargs)
         is_superuser = request.user.is_superuser
         disabled_fields = set()  # type: Set[str]
+
         if not is_superuser:
             disabled_fields |= {
                 'username',

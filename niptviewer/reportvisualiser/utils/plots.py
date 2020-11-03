@@ -90,7 +90,6 @@ def ncd_data(data):
 def fetal_fraction(data, label=lambda x: 'hist'):
     samples_info_ff_formated = {'ff_time': {'data': {}, 'fields': ('flowcell_id', 'ff_formatted')}}
     samples_info_ff_formated = extract_data(data=data, info=samples_info_ff_formated, label=label,x_format= lambda x: getattr(x, 'run_date').timestamp()*1000,replace_NA_with=-0.01)
-    print(str(samples_info_ff_formated))
     return  data_structur_generator(samples_info_ff_formated)['data_ff_time']
 
 def sample_data(data, colors="#bdbdbd", circle_size=1.0, label=lambda x: 'other'):

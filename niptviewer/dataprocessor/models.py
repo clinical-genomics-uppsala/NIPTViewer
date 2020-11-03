@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 import pandas
 
@@ -6,14 +7,15 @@ import pandas
 
 class Flowcell(models.Model):
     flowcell_barcode = models.CharField(max_length=9, help_text="Flowcell identification.", blank=False, unique=True)
+    uploading_user = models.ForeignKey(User,on_delete=models.RESTRICT,null=False,blank=False, default=1, help_text="User that uploaded the flowcell identification.",)
     created = models.DateTimeField(auto_now_add=True)
     run_date = models.DateTimeField(blank=False)
 
     def __str__(self):
         return "{} {}".format(self.flowcell_barcode, self.created.strftime("%Y-%m-%d %H:%M") )
 
-    def create_flowcell(flowcell_barcode, run_date=None):
-        return Flowcell.objects.create(flowcell_barcode=flowcell_barcode, run_date=run_date)
+    def create_flowcell(user, flowcell_barcode, run_date=None):
+        return Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
 
     def get_flowcell(flowcell_barcode):
         return Flowcell.objects.get(flowcell_barcode=flowcell_barcode)
