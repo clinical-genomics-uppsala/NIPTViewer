@@ -14,7 +14,9 @@ from .forms import UploadFileForm
 from reportvisualiser.utils.plots import data_structur_generator
 from reportvisualiser.utils.data import extract_data, decimal_default
 from .utils import plots, colors, data
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def index(request):
     """
             Information page showing flowcells that have been run and plot
@@ -37,6 +39,8 @@ def index(request):
     template = loader.get_template("reportvisualiser/index.html")
     return HttpResponse(template.render(context, request))
 
+
+@login_required
 def sample_report(request, barcode, sample):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell)
@@ -54,6 +58,7 @@ def sample_report(request, barcode, sample):
     return HttpResponse(template.render(data, request))
 
 
+@login_required
 def report(request, barcode):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
@@ -72,6 +77,7 @@ def report(request, barcode):
     return HttpResponse(template.render(context, request))
 
 
+@login_required
 def upload(request):
     import io
     context = {}
