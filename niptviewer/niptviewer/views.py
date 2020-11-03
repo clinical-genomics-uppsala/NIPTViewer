@@ -1,11 +1,38 @@
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template import loader
+from django.urls import reverse
 from dataprocessor.models import BatchRun, Flowcell, SamplesRunData, SampleType
 from reportvisualiser.utils.plots import extract_data, data_structur_generator
+from django.contrib import auth
 
 from reportvisualiser.utils import plots
 
+@login_required
+def logout(request):
+    auth.logout(request)
+    return redirect("login")
+
+
+def login(request):
+    context = {}
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth.login(request,user)
+            return redirect(reverse("index"))
+        else:
+            context['login_error'] = "Invalid username or password"
+            if request.POST['username']:
+                context['username'] = request.POST['username']
+    template = loader.get_template("base.html")
+    return HttpResponse(template.render(context, request))
+
+@login_required
 def index(request):
     num_flowcells = Flowcell.objects.count()
     num_samples = SamplesRunData.objects.count()
