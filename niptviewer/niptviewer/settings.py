@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'reportvisualiser',
     'dataprocessor',
+    'users',
     'wkhtmltopdf'
 ]
 
@@ -135,3 +136,8 @@ STATICFILES_FINDERS = (
 WKHTMLTOPDF_CMD_OPTIONS = {
     'quiet': True,
 }
+
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = '/login'
+LOGOUT_URL = '/logout'
+LOGOUT_REDIRECT_URL = '/login'
