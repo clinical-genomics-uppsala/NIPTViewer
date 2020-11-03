@@ -57,7 +57,7 @@ def parse_niptool_csv(file=None, sep=","):
     data[columns_to_process]=data[columns_to_process].apply(to_numeric)
     return version, run_date, data
 
-def import_data_into_database(file):
+def import_data_into_database(user, file):
     version, run_date, data = parse_niptool_csv(file)
     try:
         with transaction.atomic():
@@ -79,7 +79,7 @@ def import_data_into_database(file):
 
             first_row = rundata.head(1)
 
-            flowcell = Flowcell.create_flowcell(flowcell_barcode=flowcell_barcode, run_date=run_date)
+            flowcell = Flowcell.create_flowcell(user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
 
             BatchRun.create_batch_run(flowcell_entry=flowcell,
                                         median_13=first_row['Median_13'].item(),

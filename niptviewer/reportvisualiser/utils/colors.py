@@ -1,4 +1,4 @@
-hist = "#bbdefb"
+hist = "#bdbdbd"
 
 samples = ["#140c1c",
            "#442434",
@@ -16,5 +16,9 @@ samples = ["#140c1c",
            "#6dc2ca",
            "#dad45e",
            "#deeed6"]
+
+other_samples = "#039be5"
+
+sample = "#4caf50"
 
 na_color = "#f44336"

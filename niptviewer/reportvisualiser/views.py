@@ -43,19 +43,28 @@ def index(request):
 @login_required
 def sample_report(request, barcode, sample):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
-    flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell)
+    flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(sample_id=sample)
+    sample_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
     previous_samples = SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
 
-    data = {
+    samples_info = data.extract_info_samples(previous_samples, data.sample_info.copy() , size=0.5, label=lambda x: 'other', color=colors.hist)
+    samples_info = data.extract_info_samples(flowcell_run_data, samples_info , size=0.5, label=lambda x: 'same flowcell', color=colors.other_samples)
+    color_dict, samples_info = data.extra_info_per_sample(sample_run_data, samples_info, label=lambda x: x.sample_id, size=1.0, shape="circle",colors=[colors.sample])
+
+    context = {
              'today': datetime.date.today().strftime("%Y-%m-%d"),
              'sample': flowcell_run_data,
              'flowcell_barcode': barcode,
+             'flowcell_run_data': sample_run_data,
+             'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
              'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
-             'page_type': "html"}
+             'upload_date': flowcell.created.strftime("%Y-%m-%d"),
+             'page_type': "html",
+             'color_dict': color_dict}
 
-    data.update(data_structur_generator(samples_info))
+    context.update(data_structur_generator(samples_info))
     template = loader.get_template("reportvisualiser/sample_report.html")
-    return HttpResponse(template.render(data, request))
+    return HttpResponse(template.render(context, request))
 
 
 @login_required
@@ -66,7 +75,14 @@ def report(request, barcode):
 
     sample_info = data.extract_info_samples(flowcell_other, data.sample_info.copy() , size=0.5, label=lambda x: 'other', color=colors.hist)
     color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id, size=1.0, shape="circle",colors=colors.samples)
-    context = {'samples': [d.sample_id for d in samples_run_data], 'flowcell_barcode': barcode, 'flowcell_run_data': samples_run_data, 'color_dict': color_dict}
+    context = {
+        'samples': [d.sample_id for d in samples_run_data],
+        'flowcell_barcode': barcode,
+        'flowcell_run_data': samples_run_data,
+        'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
+        'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
+        'upload_date': flowcell.created.strftime("%Y-%m-%d"),
+        'color_dict': color_dict}
     context.update(data_structur_generator(sample_info))
 
     if samples_run_data.exists():
@@ -85,7 +101,7 @@ def upload(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            flowcell = import_data_into_database(request.FILES['file'])
+            flowcell = import_data_into_database(request.user, request.FILES['file'])
             if isinstance(flowcell, Flowcell):
                 context['form_data'] = form
                 context['file_validation'] = (flowcell.flowcell_barcode,flowcell.created)
