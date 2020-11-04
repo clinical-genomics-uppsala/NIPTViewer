@@ -76,6 +76,7 @@ def report(request, barcode):
     sample_info = data.extract_info_samples(flowcell_other, data.sample_info.copy() , size=0.5, label=lambda x: 'other', color=colors.hist)
     color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id, size=1.0, shape="circle",colors=colors.samples)
     context = {
+        'flowcell': flowcell,
         'samples': [d.sample_id for d in samples_run_data],
         'flowcell_barcode': barcode,
         'flowcell_run_data': samples_run_data,
@@ -88,6 +89,10 @@ def report(request, barcode):
     if samples_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
         context['data_ff_time'] = plots.fetal_fraction(data=flowcell_other) + plots.fetal_fraction(data=samples_run_data, label=lambda x: barcode)
+
+    qc_failure, qc_warning = data.extract_qc_status(samples_run_data)
+    context['qc_warning'] = qc_warning
+    context['qc_failure'] = qc_failure
 
     template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))

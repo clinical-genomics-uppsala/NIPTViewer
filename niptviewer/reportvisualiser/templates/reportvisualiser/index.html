@@ -70,7 +70,9 @@ NIPTViewer: Flowcells run
       <tr>
         <th>Barcode</th>
         <th>Run date</th>
-        <th>Uploaded</th>
+        <th>Uploaded by</th>
+        <th>Upload Date</th>
+        <th>QC Status</th>
         <th>Illumina Software version</th>
       </tr>
       </thead>
@@ -79,7 +81,9 @@ NIPTViewer: Flowcells run
     <tr>
     <td><a  class="cyan-text text-darken-4"href="{% url 'viewer:report' barcode=flowcell.flowcell_id.flowcell_barcode %}">{{ flowcell.flowcell_id.flowcell_barcode}}</a></td>
     <td>{% timezone "Europe/Paris" %}{{ flowcell.flowcell_id.run_date|date:"Y-m-d"}}{% endtimezone %}</td>
+    <td>{{ flowcell.flowcell_id.uploading_user.first_name }} {{ flowcell.flowcell_id.uploading_user.last_name }}</td>
     <td>{% timezone "Europe/Paris" %}{{ flowcell.flowcell_id.created|date:"Y-m-d"}}{% endtimezone %}</td>
+    <td>{{ flowcell.flowcell_id.qc_status }}</td>
     <td>{{ flowcell.software_version }}</td>
     </tr>
     {% endfor %}

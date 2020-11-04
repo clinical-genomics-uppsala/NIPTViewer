@@ -8,6 +8,7 @@ import pandas
 class Flowcell(models.Model):
     flowcell_barcode = models.CharField(max_length=9, help_text="Flowcell identification.", blank=False, unique=True)
     uploading_user = models.ForeignKey(User,on_delete=models.RESTRICT,null=False,blank=False, default=1, help_text="User that uploaded the flowcell identification.",)
+    qc_status = models.CharField(help_text="QC summary for samples", max_length=20, blank=False, default="PASS")
     created = models.DateTimeField(auto_now_add=True)
     run_date = models.DateTimeField(blank=False)
 

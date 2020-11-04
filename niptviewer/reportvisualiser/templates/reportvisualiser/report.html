@@ -51,6 +51,23 @@
     <div class="row white">
         <b>Uploaded by: </b>{{ flowcell_user }} ({{ upload_date}})<br />
         <b>Run date: </b> {{ run_date }}<br>
+        <b>Status: </b> {{ flowcell.qc_status }} <br />
+        {% if qc_failure %}
+        <b> Failures:</b><br />
+          <ul style="padding-left:25px;">
+            {% for failure in qc_failure %}
+              <li  style="list-style-type: initial;">{{ failure.0 }}: {{ failure.1 }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if qc_warning %}
+        <b> Warnings:<b><br />
+          <ul>
+            {% for warning in qc_warning %}
+              <li style="list-style-type: initial;"><b>{{ warning.0 }}:</b>{{ warning.1 }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
     </div>
   </div>
   <div class="section">

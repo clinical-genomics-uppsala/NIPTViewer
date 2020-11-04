@@ -93,12 +93,13 @@ def import_data_into_database(user, file):
                                         stdev_X=first_row['Stdev_X'].item(),
                                         stdev_Y=first_row['Stdev_Y'].item(),
                                         software_version=version)
-
+            fail = []
+            warn = []
             for sample, row in data.loc[:, nnc_per_sample_scoring_metrics + nnc_per_sample_qc + nnc_per_sample + c_sample_data + nnc_per_samplesheet].iterrows():
                 sample_type = SampleType.get_sample_type(name=row['SampleType'])
                 index = Index.get_index(row['IndexID'],row['Index'])
 
-                SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type, sample_id=row['SampleID'], index=index,
+                entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type, sample_id=row['SampleID'], index=index,
                     well=row['Well'], description=row['Description'], library_nm=row['Library_nM'], qc_flag=row['QCFlag'],
                     qc_failure=row['QCFailure'], qc_warning=row['QCWarning'],
                     ncv_13=row['NCV_13'], ncv_18=row['NCV_18'], ncv_21=row['NCV_21'], ncv_x=row['NCV_X'], ncv_y=row['NCV_Y'],
@@ -123,6 +124,19 @@ def import_data_into_database(user, file):
                     chr15=row['Chr15'], chr16=row['Chr16'], chr17=row['Chr17'], chr18=row['Chr18'], chr19=row['Chr19'],
                     chr20=row['Chr20'], chr21=row['Chr21'], chr22=row['Chr22'], chrx=row['ChrX'], chry=row['ChrY'],
                     ff_formatted=row['FF_Formatted'])
+                if not entry.qc_flag == 0:
+                    if not entry.qc_failure == 'nan':
+                        fail.append(entry.qc_failure)
+                    if not sample.qc_warning == 'nan':
+                        warn.append(entry.qc_warning)
+            if len(fail) or len(warn):
+                qc_status = []
+                if len(fail):
+                    qc_status.append("Failures (" + str(len(fail)) + ")")
+                if len(warn):
+                    qc_status.append("Warnings (" + str(len(warn)) + ")")
+                flowcell.qc_status = ", ".join(qc_status)
+                flowcell.save()
     except IntegrityError:
         return Flowcell.get_flowcell(flowcell_barcode)
     return flowcell.flowcell_barcode
