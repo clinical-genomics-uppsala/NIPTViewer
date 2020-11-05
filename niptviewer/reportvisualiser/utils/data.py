@@ -16,6 +16,7 @@ def decimal_default(obj):
         print(type(obj))
         raise TypeError
 
+
 def extract_qc_status(data):
     qc_failure = []
     qc_warning = []
@@ -26,7 +27,8 @@ def extract_qc_status(data):
             if not sample.qc_warning == "nan":
                 qc_warning.append((sample.sample_id, sample.qc_warning))
     return qc_failure, qc_warning
-        
+
+
 def extract_data(data, info, label=lambda x: x.sample_type.name,  shape='circle',color="#c62828", size=1, x_format=decimal_default, y_format=decimal_default, extra_info=lambda x: {"type": x.sample_type.name, "flowcell": x.flowcell_id.flowcell_barcode, "sample": x.sample_id}, replace_NA_with=None, na_color="#f44336"):
     for item in data:
         for key in info:

@@ -14,6 +14,48 @@ def data_structur_generator(samples_info):
         information['data_' + comparison] = data
     return information
 
+def chromosome_num_reads(data):
+    chr_data = {"Chr1": [], "Chr2": [], "Chr3": [], "Chr4": [], "Chr5": [], "Chr6": [], "Chr7": [], "Chr8": [], "Chr9": [], "Chr10": [],
+                "Chr11": [], "Chr12": [], "Chr13": [], "Chr14": [], "Chr15": [], "Chr16": [], "Chr17": [], "Chr18": [], "Chr19": [], "Chr20": [],
+                "Chr21": [], "Chr21": [], "Chr22": [], "ChrX": [], "ChrY": []}
+    reads = 0
+    for sample in data:
+        reads =  decimal_default(sample.chr1) + decimal_default(sample.chr2) + decimal_default(sample.chr3) + decimal_default(sample.chr4) + decimal_default(sample.chr5) + \
+                 decimal_default(sample.chr6) + decimal_default(sample.chr7) + decimal_default(sample.chr8) + decimal_default(sample.chr9) + decimal_default(sample.chr10) +  \
+                 decimal_default(sample.chr11) + decimal_default(sample.chr12) + decimal_default(sample.chr13) + decimal_default(sample.chr14) + decimal_default(sample.chr15) +  \
+                 decimal_default(sample.chr16) + decimal_default(sample.chr17) + decimal_default(sample.chr18) + decimal_default(sample.chr19) + decimal_default(sample.chr20) +  \
+                 decimal_default(sample.chr21) + decimal_default(sample.chr22) + decimal_default(sample.Chrx) + decimal_default(sample.chry) + reads
+        chr_data["Chr1"].append({'x': 0, 'y': decimal_default(sample.chr1), 'label': sample.sample_id})
+        chr_data["Chr2"].append({'x': 1, 'y': decimal_default(sample.chr2), 'label': sample.sample_id})
+        chr_data["Chr3"].append({'x': 2, 'y': decimal_default(sample.chr3), 'label': sample.sample_id})
+        chr_data["Chr4"].append({'x': 3, 'y': decimal_default(sample.chr4), 'label': sample.sample_id})
+        chr_data["Chr5"].append({'x': 4, 'y': decimal_default(sample.chr5), 'label': sample.sample_id})
+        chr_data["Chr6"].append({'x': 5, 'y': decimal_default(sample.chr6), 'label': sample.sample_id})
+        chr_data["Chr7"].append({'x': 6, 'y': decimal_default(sample.chr7), 'label': sample.sample_id})
+        chr_data["Chr8"].append({'x': 7, 'y': decimal_default(sample.chr8), 'label': sample.sample_id})
+        chr_data["Chr9"].append({'x': 8, 'y': decimal_default(sample.chr9), 'label': sample.sample_id})
+        chr_data["Chr10"].append({'x': 9, 'y': decimal_default(sample.chr10), 'label': sample.sample_id})
+        chr_data["Chr11"].append({'x': 10, 'y': decimal_default(sample.chr11), 'label': sample.sample_id})
+        chr_data["Chr12"].append({'x': 11, 'y': decimal_default(sample.chr12), 'label': sample.sample_id})
+        chr_data["Chr13"].append({'x': 12, 'y': decimal_default(sample.chr13), 'label': sample.sample_id})
+        chr_data["Chr14"].append({'x': 13, 'y': decimal_default(sample.chr14), 'label': sample.sample_id})
+        chr_data["Chr15"].append({'x': 14, 'y': decimal_default(sample.chr15), 'label': sample.sample_id})
+        chr_data["Chr16"].append({'x': 15, 'y': decimal_default(sample.chr16), 'label': sample.sample_id})
+        chr_data["Chr17"].append({'x': 16, 'y': decimal_default(sample.chr17), 'label': sample.sample_id})
+        chr_data["Chr18"].append({'x': 17, 'y': decimal_default(sample.chr18), 'label': sample.sample_id})
+        chr_data["Chr19"].append({'x': 18, 'y': decimal_default(sample.chr19), 'label': sample.sample_id})
+        chr_data["Chr20"].append({'x': 19, 'y': decimal_default(sample.chr20), 'label': sample.sample_id})
+        chr_data["Chr21"].append({'x': 20, 'y': decimal_default(sample.chr21), 'label': sample.sample_id})
+        chr_data["Chr22"].append({'x': 21, 'y': decimal_default(sample.chr22), 'label': sample.sample_id})
+        chr_data["ChrX"].append({'x': 22, 'y': decimal_default(sample.Chrx), 'label': sample.sample_id})
+        chr_data["ChrY"].append({'x': 23, 'y': decimal_default(sample.chry), 'label': sample.sample_id})
+    for chr in chr_data:
+        for i in range(len(chr_data[chr])):
+            chr_data[chr][i]['y']  /= reads
+    return [{"key": key, "values": values} for key, values in chr_data.items()]
+
+
+
 def chromosome_coverage(data, exclude_chry=True):
     if exclude_chry:
         return [{
