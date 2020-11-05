@@ -22,7 +22,7 @@
 }
 
 .containerbg {
-   background:url("/static/img/CGU.png") no-repeat 0% 0%;
+   background:url("/staticfiles/img/CGU.png") no-repeat 0% 0%;
    background-size:cover;
    height: 450px;
 }

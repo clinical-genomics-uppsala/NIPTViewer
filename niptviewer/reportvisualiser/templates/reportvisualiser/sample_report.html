@@ -1,4 +1,3 @@
-{% load static %}
 {% load percentformat %}
 {% load stringformat_custom %}
 {% load flag_sample %}
@@ -8,14 +7,16 @@
 <html>
     <head>
         <title>NIPT Sample Report</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
+        <link rel="stylesheet" href="/home/app/web/staticfiles/css/nv.d3.css">
+        {% if page_type != 'pdf' %}
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone" rel="stylesheet">
-        <!--<link href="http://127.0.0.1:8001{% static "css/materialize.min.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>-->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        {% endif %}
+        <!--<link href="http://127.0.0.1:8001/home/app/web/staticfiles/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>-->
+        <link rel="stylesheet" href="/home/app/web/staticfiles/css/materialize.min.css">
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
-        <script src="http://127.0.0.1:8001{% static "run_visualiser/js/scatter_chart.js" %}"></script>
+        <script src="/home/app/web/staticfiles/js/d3.min.js" charset="utf-8"></script>
+        <script src="/home/app/web/staticfiles/js/nv.d3.min.js"></script>
+        <script src="/home/app/web/staticfiles/run_visualiser/js/scatter_chart.js"></script>
         <style type="text/css">
             body {
                 font-weight: 200;
@@ -65,7 +66,7 @@
         <div class="container">
         <div class='wrapper'>
             <div class='header'>
-                <p class='title'>NIPT report <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NIPT report <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
             </div>
 
         <div>
@@ -135,7 +136,7 @@
         {% if page_type == 'pdf' %}
         <div class='wrapper' style="page-break-before: always;">
             <div class='header'>
-                <p class='title'>NCV ChrX vs ChrY <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NCV ChrX vs ChrY <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
             </div>
         <div>
         {% endif %}
@@ -189,7 +190,7 @@
           {% if page_type == 'pdf' %}
           <div class='wrapper' style="page-break-before: always;">
               <div class='header'>
-                  <p class='title'>NCV ChrX vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                  <p class='title'>NCV ChrX vs Fetal fraction <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
               </div>
           <div>
           {% endif %}
@@ -238,7 +239,7 @@
         {% if page_type == 'pdf' %}
         <div class='wrapper' style="page-break-before: always;">
             <div class='header'>
-                <p class='title'>NCV ChrY vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NCV ChrY vs Fetal fraction <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
             </div>
         <div>
         {% endif %}
@@ -287,7 +288,7 @@
         {% if page_type == 'pdf' %}
         <div class='wrapper' style="page-break-before: always;">
             <div class='header'>
-                <p class='title'>NCV Chr13 vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NCV Chr13 vs Fetal fraction <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
             </div>
         <div>
         {% endif %}
@@ -336,7 +337,7 @@
         {% if page_type == 'pdf' %}
         <div class='wrapper' style="page-break-before: always;">
             <div class='header'>
-                <p class='title'>NCV Chr18 vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NCV Chr18 vs Fetal fraction <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
             </div>
         <div>
         {% endif %}
@@ -385,7 +386,7 @@
         {% if page_type == 'pdf' %}
         <div class='wrapper' style="page-break-before: always;">
             <div class='header'>
-                <p class='title'>NCV Chr21 vs Fetal fraction <img src='http://127.0.0.1:8001{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
+                <p class='title'>NCV Chr21 vs Fetal fraction <img src='/home/app/web/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
             </div>
         <div>
         {% endif %}
@@ -435,9 +436,9 @@
     </div>
   {% if page_type != 'pdf' %}</div>
   {% endif %}
-  <script src="http://127.0.0.1:8001{% static "js/jquery-2.1.1.min.js" %}"></script>
-  <script src="http://127.0.0.1:8001{% static "js/materialize.min.js" %}"></script>
-  <script src="http://127.0.0.1:8001{% static "js/init.js" %}"></script>
+  <script src="/home/app/web/staticfiles/js/jquery-2.1.1.min.js"></script>
+  <script src="/home/app/web/staticfiles/js/materialize.min.js"></script>
+  <script src="/home/app/web/staticfiles/js/init.js"></script>
   <script>
     $(document).ready(function(){
       $('.fixed-action-btn').floatingActionButton();
