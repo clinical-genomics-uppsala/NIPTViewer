@@ -127,7 +127,7 @@ def import_data_into_database(user, file):
                 if not entry.qc_flag == 0:
                     if not entry.qc_failure == 'nan':
                         fail.append(entry.qc_failure)
-                    if not sample.qc_warning == 'nan':
+                    if not entry.qc_warning == 'nan':
                         warn.append(entry.qc_warning)
             if len(fail) or len(warn):
                 qc_status = []
