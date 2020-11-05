@@ -94,6 +94,8 @@ def report(request, barcode):
     context['qc_warning'] = qc_warning
     context['qc_failure'] = qc_failure
 
+    context['data_coverage_reads'] = plots.chromosome_num_reads(samples_run_data)
+
     template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))
 
