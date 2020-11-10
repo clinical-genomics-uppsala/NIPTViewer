@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'niptviewer.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if os.environ.get('DATABASE', "sqlite3") == "postgres":
+if os.environ.get('DATABASE', "sqlite3") == "sqlite3":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
