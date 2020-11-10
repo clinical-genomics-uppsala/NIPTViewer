@@ -27,7 +27,8 @@ def index(request):
 
     control_type = SampleType.objects.get(name="Control")
     control_flowcell_data = SamplesRunData.objects.select_related().filter(sample_type=control_type).order_by('-flowcell_id__run_date')
-    context = {'flowcell_data': flowcell_run_data}
+    num_flowcells = Flowcell.objects.count()
+    context = {'flowcell_data': flowcell_run_data, "num_flowcells": num_flowcells}
 
     if sample_run_data.exists():
         context['data_coverage'] = [plots.chromosome_coverage(data=sample_run_data)]
