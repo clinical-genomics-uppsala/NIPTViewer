@@ -42,8 +42,9 @@
     <i class="large material-icons">menu</i>
   </a>
   <ul>
-    <li><a  href="{% url "viewer:upload" %}" class="btn-floating btn- waves-effect waves-light green right"><i class="material-icons">file_upload</i></a></li>
-    <li><a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode %}" class="btn-floating btn- waves-effect waves-light blue right"><i class="material-icons">picture_as_pdf</i></a></li>
+    <li><a  href="{% url "viewer:upload" %}" data-tooltip="Upload new NIPT data" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light green right"><i class="material-icons">file_upload</i></a></li>
+    <li><a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode %}" data-tooltip="Download run report" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light yellow right"><i class="material-icons">insert_chart</i></a></li>
+    <li><a  href="{% url "viewer:qc_report_pdf" barcode=flowcell_barcode %}" data-tooltip="Download QC report" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light blue right"><i class="material-icons">info</i></a></li>
   </ul>
 </div>
 
@@ -488,6 +489,12 @@
     new Clipboard('#copy-hidden-table-button');
     }
 
+  </script>
+
+  <script>
+    $(document).ready(function(){
+    $('.tooltipped').tooltip();
+  });
   </script>
 
   <script>

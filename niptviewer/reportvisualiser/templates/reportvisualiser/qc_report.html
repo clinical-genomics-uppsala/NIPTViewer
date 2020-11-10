@@ -1,0 +1,125 @@
+{% load percentformat %}
+{% load stringformat_custom %}
+{% load flag_sample %}
+{% load lookup %}
+{% load hex_to_rgb %}
+{% if page_type != 'pdf' %}
+{% load static %}
+{% endif %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>NIPT Sample Report</title>
+
+        {% if page_type != 'pdf' %}
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone" rel="stylesheet">
+        <link rel="stylesheet" href="{% static "css/nv.d3.css" %}">
+        <link rel="stylesheet" href=""{% static "css/materialize.min.css" %}">
+
+        <script src="{% static "js/d3.min.js" %}" charset="utf-8"></script>
+        <script src="{% static "js/nv.d3.min.js" %}"></script>
+        <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
+        <script src="{% static "run_visualiser/js/chromosome_line_chart.js" %}"></script>
+        <script src="{% static "run_visualiser/js/grouped_barchart.js" %}" charset="utf-8"></script>
+        {% else %}
+        <link rel="stylesheet" href="http://nginx/staticfiles/css/materialize.min.css">
+        <link rel="stylesheet" href="http://nginx/staticfiles/css/nv.d3.css">
+        <script src="http://nginx/staticfiles/js/d3.min.js" charset="utf-8"></script>
+        <script src="http://nginx/staticfiles/js/nv.d3.min.js"></script>
+        <script src="http://nginx/staticfiles/run_visualiser/js/scatter_chart.js"></script>
+        <script src="http://nginx/staticfiles/run_visualiser/js/chromosome_line_chart.js"  charset="utf-8"></script>
+        <script src="http://nginx/staticfiles/run_visualiser/js/grouped_barchart.js" charset="utf-8"></script>
+        {% endif %}
+
+
+
+        <style type="text/css">
+            body {
+                font-weight: 200;
+                font-size: 14px;
+            }
+
+            .header {
+                font-size: 20px;
+                font-weight: 100;
+                text-align: center;
+                color: #007cae;
+            }
+            .title {
+                font-size: 22px;
+                font-weight: 100;
+               /* text-align: right;*/
+               padding: 10px 20px 0px 20px;
+            }
+            .title span {
+                color: #007cae;
+            }
+            .details {
+                padding: 10px 20px 0px 20px;
+                text-align: left !important;
+                /*margin-left: 40%;*/
+            }
+            .hrItem {
+                border: none;
+                height: 1px;
+                /* Set the hr color */
+                color: #333; /* old IE */
+                background-color: #fff; /* Modern Browsers */
+            }
+            .footer {
+              float: right
+            }
+        </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class='wrapper'>
+            <div class='header'>
+                <p class='title'>NIPT QC report <img src='http://nginx/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
+            </div>
+          </div>
+
+        {% include "reportvisualiser/plots/qc_stat_list.html" %}
+        <p>
+          {% include "reportvisualiser/plots/chromosome_coverage_reads.html" with data=data_coverage plot_id="coverage_chart" only %}
+        </p>
+        <br />
+        <p>
+          {% include "reportvisualiser/plots/chromosome_coverage_normalized.html" with data=data_coverage_reads plot_id="read_coverage_chart" only %}
+        </p>
+
+        {% if page_type == 'pdf' %}
+        <div class='wrapper' style="page-break-before: always;">
+            <div class='header'>
+                <p class='title'>NIPT QC <img src='http://nginx/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
+            </div>
+        <div>
+        <br /><br />
+        {% endif %}
+
+        <p>
+        {% include "reportvisualiser/plots/fetal_fraction_time.html" %}
+        </p>
+        <br />
+        <p>
+        {% include "reportvisualiser/plots/ncd.html" with data=ncd plot_id="scatter_chart_ncd" title="NCD" x_label="Date" y_label="NCD"  only %}
+        </p>
+    </div>
+
+  {% if page_type != 'pdf' %}
+    <script src="{% static "js/jquery-2.1.1.min.js" %}"></script>
+    <script src="{% static "js/materialize.min.js" %}"></script>
+    <script src="{% static "js/init.js" %}"></script>
+  {% else %}
+    <script src="http://nginx/staticfiles/js/jquery-2.1.1.min.js"></script>
+    <script src="http://nginx/staticfiles/js/materialize.min.js"></script>
+    <script src="http://nginx/staticfiles/js/init.js"></script>
+  {% endif %}
+  <script>
+    $(document).ready(function(){
+      $('.fixed-action-btn').floatingActionButton();
+    });
+  </script>
+  </body>
+
+</html>

@@ -1,0 +1,9 @@
+<div class="row">
+  <h5 class="center-align">Normalized coverage</h5>
+  <div id="{{ plot_id }}" style="width:900px;height:450px;">
+    <svg style="width:900px;height:450px;"></svg>
+  </div>
+  <script>
+    chromosomeLineChart({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_label: 'chromosome', y_label: 'Coverage'{{ '}' }});
+  </script>
+</div>

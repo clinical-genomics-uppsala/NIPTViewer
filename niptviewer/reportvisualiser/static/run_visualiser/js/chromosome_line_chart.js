@@ -19,6 +19,7 @@ function chromosomeLineChart({data,id, x_label, y_label}) {
         chart.forceY([0.9,1.1])
         chart.xAxis.tickValues([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,23])
         chart.xAxis.tickFormat(function(d) { return chromosome[d]});
+        chart.xAxis.rotateLabels(-90);
         chart.xAxis.axisLabel(x_label);
         chart.yAxis.tickFormat(d3.format('.03f'));;
         chart.yAxis.axisLabel(y_label);
