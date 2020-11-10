@@ -18,10 +18,10 @@ services:
   web:
     build:
       context: .
-      dockerfile: ./dockerfiles/production.dockerfile
+      dockerfile: ./dockerfiles/development.dockerfile
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./niptviewer/:/usr/src/app/
+      - ./niptviewer/:/home/app/web:Z
       - ./dockerfiles/entrypoint-dev.sh:/home/app/web/entrypoint.sh
       - static_volume:/home/app/web/staticfiles
     expose:
