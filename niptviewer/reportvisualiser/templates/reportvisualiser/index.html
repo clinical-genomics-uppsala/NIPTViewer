@@ -17,7 +17,7 @@ NIPTViewer: Flowcells run
 
 {% block content %}
 <div class="fixed-action-btn">
-  <a  href="{% url "viewer:upload" %}" class="btn-floating btn-large waves-effect waves-light red right {% if not num_flowcells %} pulse {% endif %}"><i class="material-icons">file_upload</i></a>
+  <a  href="{% url "viewer:upload" %}" data-tooltip="Upload new NIPT data" data-position="top" class="btn-floating tooltipped btn-large waves-effect waves-light red right {% if not num_flowcells %} pulse {% endif %}"><i class="material-icons">file_upload</i></a>
 </div>
 
 <div class="section">
