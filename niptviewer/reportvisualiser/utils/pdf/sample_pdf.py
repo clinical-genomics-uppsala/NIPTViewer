@@ -14,6 +14,8 @@ class SampleReportPDF(PDFTemplateView):
     filename = 'my_pdf.pdf'
     template_name = 'my_template.html'
     cmd_options = {
+        'quiet': None,
+        'enable-local-file-access': True,
         'margin-top': 3,
         #'javascript-delay': 2000,
         "no-stop-slow-scripts": True,
@@ -42,6 +44,7 @@ class SampleReportPDF(PDFTemplateView):
                  'color_dict': color_dict,
                  'flowcell_barcode': context['barcode'],
                  'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
+                 'upload_date': flowcell.created.strftime("%Y-%m-%d"),
                  'page_type': "pdf"})
 
         return context

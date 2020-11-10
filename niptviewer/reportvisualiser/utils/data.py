@@ -13,7 +13,6 @@ def decimal_default(obj):
     elif isinstance(obj,float):
         return obj
     else:
-        print(type(obj))
         raise TypeError
 
 
