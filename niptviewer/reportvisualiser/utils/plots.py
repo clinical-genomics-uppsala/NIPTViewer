@@ -120,14 +120,23 @@ def median_coverage(data):
     batch_data = extract_data(data=data, info=batch_data, label=lambda x: "median", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
     return [{"key": k, 'values': d['data']['median']} for k,d in batch_data.items()]
 
-def ncd_data(data):
+def ncd_data(data, pre_legend=None, chr=None, size=1):
     info_to_extract = {'13': {'data': {}, 'fields': ('flowcell_id', 'ncd_13')},
                   '18': {'data': {}, 'fields': ('flowcell_id', 'ncd_18')},
                   '21': {'data': {}, 'fields': ('flowcell_id', 'ncd_21')},
                   'x': {'data': {}, 'fields': ('flowcell_id', 'ncd_x')},
                   'y': {'data': {}, 'fields': ('flowcell_id', 'ncd_y')}}
-    ncd_batch_data = extract_data(data=data, info=info_to_extract, label=lambda x: "ncd", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
-    return  [{"key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
+    ncd_batch_data = extract_data(data=data, size=size, info=info_to_extract, label=lambda x: "ncd", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'flowcell': x.flowcell_id.flowcell_barcode ,'type': x.sample_type.name, 'sample': x.sample_id})
+
+    if not pre_legend is None:
+        return [{"max_y": max(d['data']['ncd'], key=lambda v: v['y'])['y'],
+                 "min_y": min(d['data']['ncd'], key=lambda v: v['y'])['y'],
+                 "key": pre_legend + " " + k,
+                 'values': d['data']['ncd']} for k,d in ncd_batch_data.items() if chr is None or chr == k]
+    else:
+        return [{"max_y": max(d['data']['ncd'], key=lambda v: v['y'])['y'],
+                 "min_y": min(d['data']['ncd'], key=lambda v: v['y'])['y'],
+                 "key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
 
 def fetal_fraction(data, label=lambda x: 'hist'):
     samples_info_ff_formated = {'ff_time': {'data': {}, 'fields': ('flowcell_id', 'ff_formatted')}}
