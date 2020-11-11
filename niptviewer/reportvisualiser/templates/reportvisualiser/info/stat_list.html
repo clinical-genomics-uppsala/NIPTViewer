@@ -1,5 +1,8 @@
 <div class='details'>
     <b>Flowcell:</b> {{ flowcell_barcode }}<br/>
+    {% if active_sample %}
+    <b>Sample:</b> {{ active_sample }}<br/>
+    {% endif %}
     <b>Run Data:</b> {{ run_date }} <br />
     <b>Uploaded by:</b> {{ flowcell_user }} ({{ upload_date}}) <br />
     <b>Status: </b> {{ flowcell.qc_status }} <br />

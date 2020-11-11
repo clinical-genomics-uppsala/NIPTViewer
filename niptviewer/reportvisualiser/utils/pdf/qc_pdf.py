@@ -43,10 +43,6 @@ class QCReportPDF(PDFTemplateView):
             context['ncd'] = plots.ncd_data(control_flowcell_data, context['barcode'], size=1.0)
             if control_other_flowcell_data.exists():
                 context['ncd'] = plots.ncd_data(control_other_flowcell_data, "other", size=0.5) + context['ncd']
-            #for chr in ['13', '18', '21', 'x', 'y']:
-            #    context['ncd_'+ chr] = plots.ncd_data(control_flowcell_data, context['barcode'], size=1.0,chr=chr)
-            #    if control_other_flowcell_data.exists():
-            #        context['ncd_'+ chr] = plots.ncd_data(control_other_flowcell_data, "other", size=0.5, chr=chr) + context['ncd_'+ chr]
 
         if samples_run_data.exists():
             context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
@@ -57,11 +53,8 @@ class QCReportPDF(PDFTemplateView):
 
         context.update({
                  'today': datetime.date.today().strftime("%Y-%m-%d"),
-                 #'samples': [d.sample_id for d in samples_run_data],
                  'flowcell':  flowcell,
-                 #'flowcell_run_data': flowcell_run_data,
                  'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
-                 #'color_dict': color_dict,
                  'flowcell_barcode': context['barcode'],
                  'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
                  'upload_date': flowcell.created.strftime("%Y-%m-%d"),
