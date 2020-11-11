@@ -27,7 +27,7 @@
       <ul class="tabs tabs-transparent">
   <li class="tab"><a href="{% url "viewer:report" barcode=flowcell_barcode %}" class="active">{{ flowcell_barcode }}</a></li>
   {% for sample in samples %}
-  <li class="tab"><a href="{% url "viewer:sample_report" barcode=flowcell_barcode sample=sample %}">{{ sample }}</a></li>
+  <li class="tab"><a href="{% url "viewer:sample_report" barcode=flowcell_barcode sample=sample %}" {% if sample == active_sample  %} class="active" {% endif %} >{{ sample }}</a></li>
   {% endfor%}
   </ul>
 </div>
