@@ -11,16 +11,16 @@
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="{% static "css/materialize.min.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="{% static "css/materialize.min.1.0.0.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="{% static "css/style.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
 
   {% block head_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
+    <link rel="stylesheet" href="{% static "css/nv.d3.1.8.6.css" %}">
   {% endblock %}
 
   {% block head_js %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
+    <script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
+    <script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
     <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
     <script src="{% static "run_visualiser/js/line_chart.js" %}"></script>
   {% endblock %}
@@ -203,7 +203,7 @@
 
   <!--  Scripts-->
   <script src="{% static "js/jquery-2.1.1.min.js" %}"></script>
-  <script src="{% static "js/materialize.min.js" %}"></script>
+  <script src="{% static "js/materialize.min.1.0.0.js" %}"></script>
   <script src="{% static "js/init.js" %}"></script>
   {% block footer_js %}
   {% endblock %}
