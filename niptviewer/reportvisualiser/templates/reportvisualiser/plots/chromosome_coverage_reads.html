@@ -1,9 +1,9 @@
 <div class="row">
-  <h5 class="center-align">Normalized coverage</h5>
-  <div id="{{ plot_id }}" style="width:900px;height:450px;">
-    <svg style="width:900px;height:450px;"></svg>
+  <h5 class="center-align">Reads per sample</h5>
+  <div id="{{ plot_id }}" style="width:{{ width }};height:{{ height }};">
+    <svg style="width:{{ width }};height:{{ height }};"></svg>
   </div>
   <script>
-    chromosomeLineChart({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_label: 'chromosome', y_label: 'Coverage'{{ '}' }});
+    horizontalGroupedBarChart({{ '{' }}data: {{ data|safe }}, id: "#{{ plot_id }} svg"{{ '}' }})
   </script>
 </div>

@@ -13,19 +13,19 @@
 
         {% if page_type != 'pdf' %}
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone" rel="stylesheet">
-        <link rel="stylesheet" href="{% static "css/nv.d3.css" %}">
-        <link rel="stylesheet" href=""{% static "css/materialize.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/nv.d3.1.8.6.css" %}">
+        <link rel="stylesheet" href="{% static "css/materialize.min.1.0.0.css" %}">
 
-        <script src="{% static "js/d3.min.js" %}" charset="utf-8"></script>
-        <script src="{% static "js/nv.d3.min.js" %}"></script>
+        <script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
+        <script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
         <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
         <script src="{% static "run_visualiser/js/chromosome_line_chart.js" %}"></script>
         <script src="{% static "run_visualiser/js/grouped_barchart.js" %}" charset="utf-8"></script>
         {% else %}
-        <link rel="stylesheet" href="http://nginx/staticfiles/css/materialize.min.css">
-        <link rel="stylesheet" href="http://nginx/staticfiles/css/nv.d3.css">
-        <script src="http://nginx/staticfiles/js/d3.min.js" charset="utf-8"></script>
-        <script src="http://nginx/staticfiles/js/nv.d3.min.js"></script>
+        <link rel="stylesheet" href="http://nginx/staticfiles/css/materialize.min.1.0.0.css">
+        <link rel="stylesheet" href="http://nginx/staticfiles/css/nv.d3.1.8.6.css">
+        <script src="http://nginx/staticfiles/js/d3.min.3.5.2.js" charset="utf-8"></script>
+        <script src="http://nginx/staticfiles/js/nv/1.8.6/nv.d3.min.js"></script>
         <script src="http://nginx/staticfiles/run_visualiser/js/scatter_chart.js"></script>
         <script src="http://nginx/staticfiles/run_visualiser/js/chromosome_line_chart.js"  charset="utf-8"></script>
         <script src="http://nginx/staticfiles/run_visualiser/js/grouped_barchart.js" charset="utf-8"></script>
@@ -73,32 +73,24 @@
     </head>
     <body>
       <div class="container">
-        <div class='wrapper'>
-            <div class='header'>
-                <p class='title'>NIPT QC report <img src='http://nginx/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
-            </div>
-          </div>
+        <{% include "reportvisualiser/info/first_page_head.html" with title="NIPT QC Report" %}
 
-        {% include "reportvisualiser/plots/qc_stat_list.html" %}
+        {% include "reportvisualiser/info/stat_list.html" %}
         <p>
-          {% include "reportvisualiser/plots/chromosome_coverage_reads.html" with data=data_coverage plot_id="coverage_chart" only %}
+          {% include "reportvisualiser/plots/chromosome_coverage_reads.html" with data=data_coverage_reads plot_id="reads_coverage_chart" width="900px" height="450px" only %}
         </p>
         <br />
         <p>
-          {% include "reportvisualiser/plots/chromosome_coverage_normalized.html" with data=data_coverage_reads plot_id="read_coverage_chart" only %}
+          {% include "reportvisualiser/plots/chromosome_coverage_normalized.html" with data=data_coverage plot_id="coverage_chart" width="900px" height="450px" only %}
         </p>
 
         {% if page_type == 'pdf' %}
-        <div class='wrapper' style="page-break-before: always;">
-            <div class='header'>
-                <p class='title'>NIPT QC <img src='http://nginx/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
-            </div>
-        <div>
+        <{% include "reportvisualiser/info/page_head.html" with title="NIPT QC Report" %}
         <br /><br />
         {% endif %}
 
         <p>
-        {% include "reportvisualiser/plots/fetal_fraction_time.html" %}
+        {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart" width="900px" height="450px" only %}
         </p>
         <br />
         <p>
@@ -108,18 +100,20 @@
 
   {% if page_type != 'pdf' %}
     <script src="{% static "js/jquery-2.1.1.min.js" %}"></script>
-    <script src="{% static "js/materialize.min.js" %}"></script>
+    <script src="{% static "js/materialize.min.1.0.0.js" %}"></script>
     <script src="{% static "js/init.js" %}"></script>
+
+    <script>
+      $(document).ready(function(){
+        $('.fixed-action-btn').floatingActionButton();
+      });
+    </script>
   {% else %}
     <script src="http://nginx/staticfiles/js/jquery-2.1.1.min.js"></script>
-    <script src="http://nginx/staticfiles/js/materialize.min.js"></script>
+    <script src="http://nginx/staticfiles/js/materialize.min.1.0.0.js"></script>
     <script src="http://nginx/staticfiles/js/init.js"></script>
   {% endif %}
-  <script>
-    $(document).ready(function(){
-      $('.fixed-action-btn').floatingActionButton();
-    });
-  </script>
+
   </body>
 
 </html>
