@@ -1,15 +1,14 @@
 function horizontalGroupedBarChart({data,id}) {
     nv.addGraph(function() { 
+      stacked = true;
+      if(data[0]['values'].length == 1){stacked=false;}
       chart = nv.models.multiBarChart()
-            //.barColor(d3.scale.category20().range())
-            //.duration(300)
-            .stacked(true)
+            .stacked(stacked)
             .x(function(d) { return d.label })
             .margin({bottom: 100, left: 70})
             .rotateLabels(45)
             .showControls(false);
-            //.groupSpacing(0.1);
-
+      
         chart.reduceXTicks(false).staggerLabels(true);
 
         chart.xAxis
