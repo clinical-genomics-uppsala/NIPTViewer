@@ -1,0 +1,58 @@
+{% load flag_sample %}
+{% load stringformat_custom %}
+
+
+<table class="striped highlight responsive-table centered" id="run_data">
+  <thead>
+    <tr>
+      <th>
+          Sample
+      </th>
+      <th>
+          NCV 13
+      </th>
+      <th>
+          NCV 18
+      </th>
+      <th>
+          NCV 21
+      </th>
+      <th>
+          NCV X
+      </th>
+      <th>
+          NCV Y
+      </th>
+      <th>
+          Fetal fraction
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      {% for f in data %}
+      <td>
+        {{ f.sample_id }}
+      </td>
+      <td {{ f.ncv_13|flag_sample }}>
+        {{ f.ncv_13|stringformat_custom:".3f" }}
+      </td>
+      <td {{ f.ncv_13|flag_sample }}>
+        {{ f.ncv_18|stringformat_custom:".3f" }}
+      </td>
+      <td {{ f.ncv_13|flag_sample }}>
+        {{ f.ncv_21|stringformat_custom:".3f" }}
+      </td>
+      <td {{ f.ncv_13|flag_sample }}>
+        {{ f.ncv_X|stringformat_custom:".3f" }}
+      </td>
+      <td {{ f.ncv_13|flag_sample }}>
+        {{ f.ncv_Y|stringformat_custom:".3f" }}
+      </td>
+      <td {{ f.ncv_13|flag_sample }}>
+        {{ f.ff_formatted|stringformat_custom:".1%" }}
+      </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

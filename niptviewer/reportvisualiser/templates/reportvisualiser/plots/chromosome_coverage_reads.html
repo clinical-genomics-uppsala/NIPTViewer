@@ -1,0 +1,9 @@
+<div class="row">
+  <h5 class="center-align">Reads per sample</h5>
+  <div id="{{ plot_id }}" style="width:{{ width }};height:{{ height }};">
+    <svg style="width:{{ width }};height:{{ height }};"></svg>
+  </div>
+  <script>
+    horizontalGroupedBarChart({{ '{' }}data: {{ data|safe }}, id: "#{{ plot_id }} svg"{{ '}' }})
+  </script>
+</div>

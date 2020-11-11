@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/nginx.dev.dockerfile
+    image: cgu/nginx_dev:0.5.2
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - ./dockerfiles/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - web
+    networks:
+      - private
+  web:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/development.dockerfile
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./niptviewer/:/home/app/web:Z
+      - ./dockerfiles/entrypoint-dev.sh:/home/app/web/entrypoint.sh
+      - static_volume:/home/app/web/staticfiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+    networks:
+      - private
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.dev.db
+    networks:
+      - private
+
+volumes:
+  postgres_data:
+  static_volume:
+
+networks:
+  private:

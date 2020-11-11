@@ -5,17 +5,18 @@
 NIPTViewer: Flowcells run
 {% endblock %}
 
-{% block head_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.css">
-{% endblock %}
 {% block head_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
+<script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
+<script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
 <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
 <script src="{% static "run_visualiser/js/line_chart.js" %}"></script>
 {% endblock %}
 
 {% block content %}
+<div class="fixed-action-btn">
+  <a  href="{% url "viewer:upload" %}" data-tooltip="Upload new NIPT data" data-position="top" class="btn-floating tooltipped btn-large waves-effect waves-light red right {% if not num_flowcells %} pulse {% endif %}"><i class="material-icons">file_upload</i></a>
+</div>
+
 <div class="section">
   <div class="row white">
     <div class="col s12 m12 white">
