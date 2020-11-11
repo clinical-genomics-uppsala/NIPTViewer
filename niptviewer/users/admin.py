@@ -13,7 +13,6 @@ class CustomUserAdmin(UserAdmin):
 
         if not is_superuser:
             disabled_fields |= {
-                'username',
                 'is_superuser',
                 'user_permissions',
                 'last_login',

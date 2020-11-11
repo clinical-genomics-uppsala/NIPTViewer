@@ -1,0 +1,9 @@
+<div class="row">
+  <h5 class="center-align">Fetal fraction</h5>
+  <div id="{{ plot_id }}" style="width:{{ width }};height:{{ height }};">
+    <svg style="width:{{ width }};height:{{ height }};"></svg>
+  </div>
+  <script>
+    scatterChartTime({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min: 0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
+  </script>
+</div>

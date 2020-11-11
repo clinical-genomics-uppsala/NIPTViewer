@@ -61,8 +61,8 @@ function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=nul
 
   d3.select(id)
     .datum(data)
-      .attr('width', 600)
-      .attr('hieght', 400)
+      //.attr('width', 400)
+      //.attr('hieght', 400)
         .call(chart);
 
   if (limits !== null) {

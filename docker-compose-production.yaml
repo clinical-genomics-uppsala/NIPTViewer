@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/nginx.prod.dockerfile
+    image: cgu/nginx:0.5.2
+    ports:
+      - 443:443
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    depends_on:
+      - web
+    networks:
+      - private
+  web:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/production.dockerfile
+    image: cgu/niptweb:0.5.9
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+    networks:
+      - private
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.dev.db
+    networks:
+      - private
+
+volumes:
+  postgres_data:
+  static_volume:
+
+networks:
+  private:

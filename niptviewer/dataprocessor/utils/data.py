@@ -41,8 +41,6 @@ nnc_per_batch_scoring_metrics = ['Median_13', 'Median_18', 'Median_21',
                                  'Stdev_X', 'Stdev_Y']
 
 def parse_niptool_csv(file=None, sep=","):
-    #ncc: numeric columns
-    print(file.name)
     run_date = re.search('^([0-9]+)_',file.name)
     if run_date:
         run_date = datetime.datetime.strptime(run_date[1],"%y%m%d")
@@ -62,8 +60,6 @@ def import_data_into_database(user, file):
     try:
         with transaction.atomic():
             rundata =  data.loc[:, ['Flowcell'] + nnc_per_batch_scoring_metrics]
-            #for index, row in rundata.iterrows():
-            #    print(row['Flowcell'])
 
             flowcell_barcode = set([row['Flowcell'] for index, row in rundata.iterrows()])
             if len(flowcell_barcode) > 1:
@@ -127,7 +123,7 @@ def import_data_into_database(user, file):
                 if not entry.qc_flag == 0:
                     if not entry.qc_failure == 'nan':
                         fail.append(entry.qc_failure)
-                    if not sample.qc_warning == 'nan':
+                    if not entry.qc_warning == 'nan':
                         warn.append(entry.qc_warning)
             if len(fail) or len(warn):
                 qc_status = []

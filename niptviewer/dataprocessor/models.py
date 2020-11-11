@@ -8,7 +8,7 @@ import pandas
 class Flowcell(models.Model):
     flowcell_barcode = models.CharField(max_length=9, help_text="Flowcell identification.", blank=False, unique=True)
     uploading_user = models.ForeignKey(User,on_delete=models.RESTRICT,null=False,blank=False, default=1, help_text="User that uploaded the flowcell identification.",)
-    qc_status = models.CharField(help_text="QC summary for samples", max_length=20, blank=False, default="PASS")
+    qc_status = models.CharField(help_text="QC summary for samples", max_length=200, blank=False, default="PASS")
     created = models.DateTimeField(auto_now_add=True)
     run_date = models.DateTimeField(blank=False)
 
@@ -88,7 +88,7 @@ class SamplesRunData(models.Model):
     __help_text_chr_coverage="Normalized coverage of each chromosome used in evaluation of chromosomal ratios"
     flowcell_id = models.ForeignKey(Flowcell, on_delete=models.CASCADE, help_text="Flowcell ID")
     sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE, help_text="Flowcell ID")
-    sample_id = models.CharField(help_text="SampleID", max_length=10)
+    sample_id = models.CharField(help_text="SampleID", max_length=20)
     index = models.ForeignKey(Index, on_delete=models.CASCADE, help_text="Index used")
     well = models.CharField(help_text="Well id", max_length=10)
     description = models.TextField(help_text="Description.", blank=False, unique=False)
