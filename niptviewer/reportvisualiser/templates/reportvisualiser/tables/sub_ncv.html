@@ -1,0 +1,41 @@
+{% load flag_sample %}
+{% load stringformat_custom %}
+{% load lookup %}
+{% load model_lookup %}
+
+  <table class="striped highlight responsive-table centered" id="run_data">
+  <thead>
+    <tr>
+      <th>
+          Sample
+      </th>
+      <th>
+          {{ title_1 }}
+      </th>
+      <th>
+          {{ title_2 }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+
+      {% for f in data %}
+      {% lookup color_dict f.sample_id as hex_color %}
+      {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
+      {% hex_to_rgb hex_color 0.5 as rgba_color%}
+      {% model_lookup f field_1 as value_1 %}
+      {% model_lookup f field_2 as value_2 %}
+      <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
+        <b>{{ f.sample_id }}</b>
+      </td>
+      <td {{ value_1|flag_sample }}>
+        {{ value_1|stringformat_custom:format_field_1 }}
+      </td>
+      <td {{ value_2|flag_sample }}>
+        {{ value_2|stringformat_custom:format_field_2 }}
+      </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

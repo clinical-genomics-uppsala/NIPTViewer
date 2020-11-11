@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 {% load tz %}
-{% load percentformat %}
-{% load stringformat_custom %}
 {% load flag_sample %}
 {% load static %}
-{% load lookup %}
-{% load hex_to_rgb %}
 {% block head_js %}
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js"></script>
+  <script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
+  <script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
+
   <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
   <script src="{% static "run_visualiser/js/chromosome_line_chart.js" %}"></script>
   <script src="{% static "run_visualiser/js/grouped_barchart.js" %}"></script>
@@ -43,443 +40,158 @@
   </a>
   <ul>
     <li><a  href="{% url "viewer:upload" %}" data-tooltip="Upload new NIPT data" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light green right"><i class="material-icons">file_upload</i></a></li>
-    <li><a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode %}" data-tooltip="Download run report" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light yellow right"><i class="material-icons">insert_chart</i></a></li>
-    <li><a  href="{% url "viewer:qc_report_pdf" barcode=flowcell_barcode %}" data-tooltip="Download QC report" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light blue right"><i class="material-icons">info</i></a></li>
+    <li><a  href="{% url "viewer:sample_report_pdf" barcode=flowcell_barcode %}" data-tooltip="Download run report" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light blue right"><i class="material-icons">insert_chart</i></a></li>
+    <li><a  href="{% url "viewer:qc_report_pdf" barcode=flowcell_barcode %}" data-tooltip="Download QC report" data-position="top" class="btn-floating tooltipped btn- waves-effect waves-light yellow right"><i class="material-icons">info</i></a></li>
   </ul>
 </div>
 
 <div class="section">
   <div class="row white ">
-      <b>Uploaded by: </b>{{ flowcell_user }} ({{ upload_date}})<br />
-      <b>Run date: </b> {{ run_date }}<br>
-      <b>Status: </b> {{ flowcell.qc_status }} <br />
-      {% if qc_failure %}
-      <b> Failures:</b><br />
-        <ul style="padding-left:25px;">
-          {% for failure in qc_failure %}
-            <li  style="list-style-type: initial;">{{ failure.0 }}: {{ failure.1 }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-      {% if qc_warning %}
-      <b> Warnings:<b><br />
-        <ul>
-          {% for warning in qc_warning %}
-            <li style="list-style-type: initial;"><b>{{ warning.0 }}:</b>{{ warning.1 }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+    {% include "reportvisualiser/info/stat_list.html" %}
   </div>
   <div class="row white">
-    <h5 class="center-align">Reads per sample</h5>
-    <div id="read_coverage_chart" style="width:100%;height:400px;">
-      <svg style="width:100%;height:400px;"></svg>
-    </div>
-    <script>
-      horizontalGroupedBarChart({{ '{' }}data: {{ data_coverage_reads|safe }}, id: "#read_coverage_chart svg"{{ '}' }})
-    </script>
+    {% include "reportvisualiser/plots/chromosome_coverage_reads.html" with data=data_coverage_reads plot_id="read_coverage_chart"  width="100%" height="450px" only %}
+  </div>
+</div>
+<div class="section">
+  <div class="row white">
+      {% include "reportvisualiser/plots/chromosome_coverage_normalized.html" with data=data_coverage plot_id="coverage_chart" width="100%" height="450px" only %}
   </div>
 </div>
 
 <div class="section">
   <div class="row white">
-      <h5 class="center-align">Normalized coverage</h5>
-      <div id="coverage_chart" style="width:100%;height:400px;">
-      <svg style="width:100%;height:400px;"></svg>
-    </div>
-  <script>
-    chromosomeLineChart({{ '{' }}data: {{ data_coverage|safe }}, id: '#coverage_chart svg', x_label: 'chromosome', y_label: 'Coverage'{{ '}' }});
-  </script>
-  </div>
-</div>
-
-<div class="section">
-  <div class="row white">
-      <h5 class="center-align">Fetal fraction</h5>
-    <div id="scatter_chart_ff" style="width:100%;height:400px;">
-      <svg style="width:100%;height:400px;"></svg>
-    </div>
-  <script>
-    scatterChartTime({{ '{' }}data:{{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min: 0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
-  </script>
+      {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart" width="100%" height="450px" only %}
   </div>
   <div class="row white">
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
-          <div class="collapsible-header"><i class="material-icons">folder</i>Run data</div>
-          <div class="collapsible-body white"><span>
-          <table class="striped highlight responsive-table centered" id="run_data">
-            <thead>
-              <tr>
-                  <th>Sample ID</th>
-                  <th>NCV 13</th>
-                  <th>NCV 18</th>
-                  <th>NCV 21</th>
-                  <th>NCV X</th>
-                  <th>NCV Y</th>
-                  <th>FF</th>
-                  <th class="right-align"><button class="btn-floating btn-small" id="copy-hidden-table-button" data-clipboard-target="#hidden_run_data" onclick="copy_table()" ><i class="material-icons">content_copy</i></button></th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for row in flowcell_run_data %}
-              <tr>
-                <td>{{ row.sample_id }}</td>
-                <td {{ row.ncv_13|flag_sample }}>{{ row.ncv_13|stringformat_custom:".3f" }}</td>
-                <td {{ row.ncv_18|flag_sample }}>{{ row.ncv_18|stringformat_custom:".3f" }}</td>
-                <td {{ row.ncv_21|flag_sample }}>{{ row.ncv_21|stringformat_custom:".3f" }}</td>
-                <td {{ row.ncv_X|flag_sample }}>{{ row.ncv_X|stringformat_custom:".3f" }}</td>
-                <td {{ row.ncv_Y|flag_sample }}>{{ row.ncv_Y|stringformat_custom:".3f" }}</td>
-                <td {{ row.ff_formatted|flag_sample }} colspan="2">{{ row.ff_formatted|percentformat:1 }}</td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table></span>
+        <div class="collapsible-header"><i class="material-icons">folder</i>Run data</div>
+        <div class="collapsible-body white">
+          {% include "reportvisualiser/tables/full_ncv.html" with data=flowcell_run_data only %}
         </div>
-        </li>
-        </ul>
-          <table id="hidden_run_data" class="offscreen">
-            <thead>
-              <tr>
-                  <th>Sample ID</th>
-                  <th>NCV 13</th>
-                  <th>NCV 18</th>
-                  <th>NCV 21</th>
-                  <th>NCV X</th>
-                  <th>NCV Y</th>
-                  <th>FF</th>
-                  <th class="right-align"> </th>
-              </tr>
-            </thead>
-            <tbody>
-            {% for row in flowcell_data %}
-              <tr><td>{{ row.sample_id }}</td><td {{ row.ncv_13|flag_sample }}>{{ row.ncv_13 }}</td><td {{ row.ncv_18|flag_sample }}>{{ row.ncv_18 }}</td><td {{ row.ncv_21|flag_sample }}>{{ row.ncv_21 }}</td><td {{ row.ncv_X|flag_sample }}>{{ row.ncv_X }}</td><td {{ row.ncv_Y|flag_sample }}>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
-            {% endfor %}
-            </tbody>
-          </table>
+      </li>
+    </ul>
+    <table id="hidden_run_data" class="offscreen">
+      <thead>
+        <tr>
+          <th>Sample ID</th>
+          <th>NCV 13</th>
+          <th>NCV 18</th>
+          <th>NCV 21</th>
+          <th>NCV X</th>
+          <th>NCV Y</th>
+          <th>FF</th>
+          <th class="right-align"> </th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for row in flowcell_data %}
+        <tr><td>{{ row.sample_id }}</td><td {{ row.ncv_13|flag_sample }}>{{ row.ncv_13 }}</td><td {{ row.ncv_18|flag_sample }}>{{ row.ncv_18 }}</td><td {{ row.ncv_21|flag_sample }}>{{ row.ncv_21 }}</td><td {{ row.ncv_X|flag_sample }}>{{ row.ncv_X }}</td><td {{ row.ncv_Y|flag_sample }}>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
-<!--</div>
-<div class="container">-->
+
 <div class="section">
   <div class="row white ">
-    <div id="scatter_chart_x_vs_y">
-      <div class=center-align>
-        <h4> NCV X vs NCV Y</h4>
-      </div>
-      <svg style="width:100%;height:400px"></svg>
-    </div>
-    <script>scatterChart({{ '{' }}data: {{ data_x_vs_y|safe }}, id: '#scatter_chart_x_vs_y svg', x_label: 'NCV ChrX', y_label:'NCV ChrY', x_format: '0.02f', y_format: '0.02f',limits: [[[-4,-4],[-200,800]], [[4,4],[-200,800]], [[-40,10],[0,0]]], x_max:5, y_min:-20{{ '}' }});</script>
-    <ul class="collapsible z-depth-0" style="border:0px">
-      <li>
-          <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
-          <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table centered" id="run_data">
-              <thead>
-                <tr>
-                  <th>
-                      Sample
-                  </th>
-                  <th>
-                      NCV X
-                  </th>
-                  <th>
-                      NCV Y
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {% for f in flowcell_run_data %}
-                  {% lookup color_dict f.sample_id as hex_color %}
-                  {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
-                  {% hex_to_rgb hex_color 0.5 as rgba_color%}
-                  <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
-                    <b>{{ f.sample_id }}</b>
-                  </td>
-                  <td {{ f.ncv_X|flag_sample }}>
-                    {{ f.ncv_X|stringformat_custom:".2f"  }}
-                  </td>
-                  <td {{ f.ncv_Y|flag_sample }}>
-                    {{ f.ncv_Y|stringformat_custom:".2f"  }}
-                  </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </li>
-      </ul>
-  </div>
-</div>
-<!--</div>
-<div class="container">-->
-<div class="section">
-  <div class="row white">
-    <div id="scatter_chart_x_vs_ff">
-      <div class=center-align>
-        <h4> NCV X vs Fetal fraction</h4>
-      </div>
-      <svg style="width:100%;height:400px"></svg>
-    </div>
-    <script>scatterChart({{ '{' }}data: {{ data_x_vs_ff|safe }}, id: '#scatter_chart_x_vs_ff svg', x_label: 'NCV ChrX', y_label: 'FF', x_format: '0.02f', y_format: '%', limits: [[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], x_max:5, y_min:0, y_max:0.2{{ '}' }});</script>
-    <ul class="collapsible z-depth-0" style="border:0px">
-      <li>
-          <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
-          <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table centered" id="run_data">
-              <thead>
-                <tr>
-                  <th>
-                      Sample
-                  </th>
-                  <th>
-                      NCV X
-                  </th>
-                  <th>
-                      NCV Y
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {% for f in flowcell_run_data %}
-                  {% lookup color_dict f.sample_id as hex_color %}
-                  {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
-                  {% hex_to_rgb hex_color 0.5 as rgba_color%}
-                  <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
-                    <b>{{ f.sample_id }}</b>
-                  </td>
-                  <td {{ f.ncv_X|flag_sample }}>
-                    {{ f.ncv_X|stringformat_custom:".2f" }}
-                  </td>
-                  <td {{ f.ff_formatted|flag_sample }}>
-                    {{ f.ff_formatted|percentformat:1 }}
-                  </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </li>
-      </ul>
-  </div>
-</div>
-<!--</div>
-<div class="container">-->
-<div class="section">
-  <div class="row white">
-    <div id="scatter_chart_y_vs_ff">
-      <div class=center-align>
-        <h4> NCV Y vs Fetal fraction</h4>
-      </div>
-      <svg style="width:100%;height:400px"></svg>
-    </div>
-    <script>scatterChart({{ '{' }}data: {{ data_y_vs_ff|safe }}, id: '#scatter_chart_y_vs_ff svg', x_label: 'NCV ChrY', y_label: 'FF', x_format: '0.02f', y_format: '%', limits: [[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]], y_min:0, y_max:0.2{{ '}' }});</script>
-    <ul class="collapsible z-depth-0" style="border:0px">
-      <li>
-          <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
-          <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table centered" id="run_data">
-              <thead>
-                <tr>
-                  <th>
-                      Sample
-                  </th>
-                  <th>
-                      NCV Y
-                  </th>
-                  <th>
-                     Fetal Fraction
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {% for f in flowcell_run_data %}
-                  {% lookup color_dict f.sample_id as hex_color %}
-                  {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
-                  {% hex_to_rgb hex_color 0.5 as rgba_color%}
-                  <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
-                    <b>{{ f.sample_id }}</b>
-                  </td>
-                  <td {{ f.ncv_Y|flag_sample }}>
-                    {{ f.ncv_Y|stringformat_custom:".2f" }}
-                  </td>
 
-                  <td {{ f.ff_formatted|flag_sample }}>
-                    {{ f.ff_formatted|percentformat:1 }}
-                  </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </li>
-      </ul>
-  </div>
-</div>
-<!--</div>
-<div class="container">-->
-<div class="section">
-  <div class="row white">
-    <div id="scatter_chart_chr13_vs_ff" style="width:100%;height:400px;">
-      <div class=center-align>
-        <h4> NCV chromosome 13 vs Fetal fraction</h4>
-      </div>
-      <svg style="width:100%;height:400px"></svg>
-    </div>
-    <script>scatterChart({{ '{' }}data: {{ data_chr13_vs_ff|safe }},  id: '#scatter_chart_chr13_vs_ff svg', x_labe: 'NCV Chr13', y_label: 'FF', x_format: '0.02f', y_format: '%', limits: [[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area: [[[3,4],[0.2,0.02]],], x_min:-5, x_max:5, y_min:0, y_max:0.2{{ '}' }});</script>
+    {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_y plot_id="scatter_chart_chrx_vs_chry" title="NCV X vs NCV Y" x_label='NCV ChrX' y_label='ChrY' x_format='0.02f' y_format='0.02f' x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[-4,-4],[-200,800]], [[4,4],[-200,800]]]' highlight_area='[]' only %}
+
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
-          <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
-          <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table centered" id="run_data">
-              <thead>
-                <tr>
-                  <th>
-                      Sample
-                  </th>
-                  <th>
-                      NCV 13
-                  </th>
-                  <th>
-                      Fetal fraction
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {% for f in flowcell_run_data %}
-                  {% lookup color_dict f.sample_id as hex_color %}
-                  {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
-                  {% hex_to_rgb hex_color 0.5 as rgba_color%}
-                  <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
-                    <b>{{ f.sample_id }}</b>
-                  </td>
-                  <td {{ f.ncv_13|flag_sample }}>
-                    {{ f.ncv_13|stringformat_custom:".2f" }}
-                  </td>
-                  <td {{ f.ff_formatted|flag_sample }}>
-                    {{ f.ff_formatted|percentformat:1 }}
-                  </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </li>
-      </ul>
-  </div>
-</div>
-<!--</div>
-<div class="container">-->
-<div class="section">
-  <div class="row white">
-    <div id="scatter_chart_chr18_vs_ff">
-      <div class=center-align>
-        <h4> NCV chromosome 18 vs Fetal fraction</h4>
-      </div>
-      <svg style="width:100%;height:400px"></svg>
-    </div>
-    <script>scatterChart({{ '{' }}data: {{ data_chr18_vs_ff|safe }}, id: '#scatter_chart_chr18_vs_ff svg', x_label: 'NCV Chr18', y_label: 'FF', x_format: '0.02f',  y_format: '%', limits: [[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area: [[[3,4],[0.2,0.02]],], x_min:-5, x_max:5, y_min:0, y_max:0.2{{ '}' }});</script>
-    <ul class="collapsible z-depth-0" style="border:0px">
-      <li>
-          <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
-          <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table centered" id="run_data">
-              <thead>
-                <tr>
-                  <th>
-                      Sample
-                  </th>
-                  <th>
-                      NCV 18
-                  </th>
-                  <th {{ f.ff_formatted|flag_sample }}>
-                    Fetal fraction
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {% for f in flowcell_run_data %}
-                  {% lookup color_dict f.sample_id as hex_color %}
-                  {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
-                  {% hex_to_rgb hex_color 0.5 as rgba_color%}
-                  <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
-                    <b>{{ f.sample_id }}</b>
-                  </td>
-                  <td {{ f.ncv_18|flag_sample }}>
-                    {{ f.ncv_18|stringformat_custom:".2f" }}
-                  </td>
-                  <td {{ f.ff_formatted|flag_sample }}>
-                    {{ f.ff_formatted|percentformat:1 }}
-                  </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </li>
-      </ul>
-  </div>
-</div>
-<!--</div>
-<div class="container">-->
-<div class="section">
-  <div class="row white">
-    <div id="scatter_chart_chr21_vs_ff">
-      <div class=center-align>
-        <h4> NCV chromosome 21 vs Fetal fraction</h4>
-      </div>
-      <svg style="width:100%;height:400px"></svg>
-    </div>
-    <script>scatterChart({{ '{' }}data: {{ data_chr21_vs_ff|safe }}, id: '#scatter_chart_chr21_vs_ff svg', x_label: 'NCV Chr21', y_label: 'FF', x_format: '0.02f', y_format: '%', limits:[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]], highlight_area:[[[3,4],[0.2,0.02]],], x_min:-5, x_max:5, y_min:0, y_max:0.2{{ '}' }});</script>
-    <ul class="collapsible z-depth-0" style="border:0px">
-      <li>
-          <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
-          <div class="collapsible-body white"><span>
-            <table class="striped highlight responsive-table centered" id="run_data">
-              <thead>
-                <tr>
-                  <th>
-                      Sample
-                  </th>
-                  <th>
-                      NCV 21
-                  </th>
-                  <th>
-                      Fetal fraction
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {% for f in flowcell_run_data %}
-                  {% lookup color_dict f.sample_id as hex_color %}
-                  {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
-                  {% hex_to_rgb hex_color 0.5 as rgba_color%}
-                  <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
-                    <b>{{ f.sample_id }}</b>
-                  </td>
-                  <td {{ f.ncv_21|flag_sample }}>
-                    {{ f.ncv_21|stringformat_custom:".2f" }}
-                  </td>
-                  <td {{ f.ff_formatted|flag_sample }}>
-                    {{ f.ff_formatted|percentformat:1 }}
-                  </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </li>
-      </ul>
+        <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+        <div class="collapsible-body white">
+            {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV X" title_2="NCV Y" field_1="ncv_X" field_2="ncv_Y" format_field_1=".2f" format_field_2=".2f" color_dict=color_dict only %}
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
 
-<!--</div>-->
+
+<div class="section">
+  <div class="row white">
+    {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff" title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' only  %}
+
+    <ul class="collapsible z-depth-0" style="border:0px">
+      <li>
+        <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+        <div class="collapsible-body white">
+            {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV X" title_2="Fetal fraction" field_1="ncv_X" field_2="ff_formatted" format_field_1=".2f" format_field_2=".1%" color_dict=color_dict only %}
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="section">
+  <div class="row white">
+
+    {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff" title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' only %}
+
+    <ul class="collapsible z-depth-0" style="border:0px">
+      <li>
+        <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+        <div class="collapsible-body white">
+          {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV Y" title_2="Fetal fraction" field_1="ncv_Y" field_2="ff_formatted" format_field_1=".2f" format_field_2=".1%" color_dict=color_dict only %}
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="section">
+  <div class="row white">
+
+    {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff" title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' only %}
+
+    <ul class="collapsible z-depth-0" style="border:0px">
+      <li>
+        <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+        <div class="collapsible-body white"><span>
+          {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 13" title_2="Fetal fraction" field_1="ncv_13" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <div class="row white">
+    {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff" title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' only %}
+
+    <ul class="collapsible z-depth-0" style="border:0px">
+      <li>
+        <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+        <div class="collapsible-body white"><span>
+          {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 18" title_2="Fetal fraction" field_1="ncv_18" field_2="ff_formatted" format_field_1=".2f" format_field_2=".1%" color_dict=color_dict only %}
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="section">
+  <div class="row white">
+
+    {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="sca1tter_chart_chr21_vs_ff" title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' only  %}
+
+    <ul class="collapsible z-depth-0" style="border:0px">
+      <li>
+        <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
+        <div class="collapsible-body white">
+          {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 21" title_2="Fetal fraction" field_1="ncv_21" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict  only %}
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block footer_js %}
@@ -489,12 +201,6 @@
     new Clipboard('#copy-hidden-table-button');
     }
 
-  </script>
-
-  <script>
-    $(document).ready(function(){
-    $('.tooltipped').tooltip();
-  });
   </script>
 
   <script>
