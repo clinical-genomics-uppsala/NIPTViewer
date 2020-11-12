@@ -39,7 +39,7 @@ function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=nul
     }
   })
     var chart = nv.models.scatterChart()
-                  .showLegend(false)
+                  .showLegend(true)
                   .showDistX(true)
                   .showDistY(true)
                   .useVoronoi(true)
