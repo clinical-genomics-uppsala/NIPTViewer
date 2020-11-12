@@ -15,7 +15,7 @@ class SampleReportPDF(PDFTemplateView):
     template_name = 'my_template.html'
     cmd_options = {
         'quiet': None,
-        'enable-local-file-access': False,
+        'enable-local-file-access': True,
         'margin-top': 3,
         #'javascript-delay': 2000,
         "no-stop-slow-scripts": True,
