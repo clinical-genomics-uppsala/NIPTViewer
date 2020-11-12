@@ -15,7 +15,7 @@ class QCReportPDF(PDFTemplateView):
     template_name = 'my_template.html'
     cmd_options = {
         'quiet': None,
-        'enable-local-file-access': False,
+        'enable-local-file-access': True,
         'margin-top': 3,
         'javascript-delay': 2000,
         "no-stop-slow-scripts": True,
@@ -24,7 +24,7 @@ class QCReportPDF(PDFTemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(QCReportPDF, self).get_context_data(**kwargs)
-        self.filename = context['barcode'] + "_" + datetime.date.today().strftime("%Y-%m-%d") +".QC.NIPT..pdf"
+        self.filename = context['barcode'] + "_" + datetime.date.today().strftime("%Y-%m-%d") +".QC.NIPT.pdf"
 
         flowcell = Flowcell.get_flowcell(flowcell_barcode=context['barcode'])
         flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)

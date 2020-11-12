@@ -1,7 +1,7 @@
 <div class="row">
   <h5 class="center-align">{{ title }}</h5>
-  <div id="{{ plot_id }}" style="width:900px;height:450px;">
-    <svg style="width:900px;height:450px;"></svg>
+  <div id="{{ plot_id }}" style="width:{{ width }};height:{{ height }};">
+    <svg style="width:{{ width }};height:{{ height }};"></svg>
   </div>
   <script>
     scatterChartTime({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', y_min: 0, x_label: "{{ x_label }}", y_label: "{{ y_label }}", x_format: '0.02f', y_format: '0.02f'{{ '}' }});
