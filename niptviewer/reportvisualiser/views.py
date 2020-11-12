@@ -45,6 +45,7 @@ def index(request):
 def sample_report(request, barcode, sample):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(sample_id=sample)
+    flowclell_controls = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_type=SampleType.objects.get(name="Control"))
     sample_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
     previous_samples = SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
 
@@ -54,7 +55,8 @@ def sample_report(request, barcode, sample):
 
     context = {
              'today': datetime.date.today().strftime("%Y-%m-%d"),
-             'sample': flowcell_run_data,
+             'active_sample': sample,
+             'samples': [d.sample_id for d in flowcell_run_data] + [sample_run_data[0].sample_id],
              'flowcell_barcode': barcode,
              'flowcell_run_data': sample_run_data,
              'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
@@ -63,8 +65,18 @@ def sample_report(request, barcode, sample):
              'page_type': "html",
              'color_dict': color_dict}
 
+    context['data_coverage_reads'] = plots.chromosome_num_reads(sample_run_data)
+
+    if sample_run_data.exists():
+        context['data_coverage'] = plots.chromosome_coverage(data=sample_run_data) + plots.chromosome_coverage(data=flowclell_controls)
+        context['data_ff_time'] = plots.fetal_fraction(data=previous_samples) + plots.fetal_fraction(data=sample_run_data, label=lambda x: sample) + plots.fetal_fraction(data=flowcell_run_data, label=lambda x: barcode)
+
+    qc_failure, qc_warning = data.extract_qc_status(sample_run_data)
+    context['qc_warning'] = qc_warning
+    context['qc_failure'] = qc_failure
+
     context.update(data_structur_generator(samples_info))
-    template = loader.get_template("reportvisualiser/sample_report.html")
+    template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))
 
 
