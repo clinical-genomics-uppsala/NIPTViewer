@@ -141,7 +141,8 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
                   .showDistY(true)
                   .useVoronoi(true)
                   .color(d3.scale.category10().range())
-                  .duration(300);
+                  .duration(300)
+                  .pointRange([10, 50]);
 
   if(x_min !== null && x_max !== null){chart.xDomain([x_min,x_max])}
   if(y_min !== null && y_max !== null ){chart.yDomain([y_min,y_max])}
