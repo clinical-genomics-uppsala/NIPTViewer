@@ -138,9 +138,9 @@ def ncd_data(data, pre_legend=None, chr=None, size=1):
                  "min_y": min(d['data']['ncd'], key=lambda v: v['y'])['y'],
                  "key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
 
-def fetal_fraction(data, label=lambda x: 'hist'):
+def fetal_fraction(data, label=lambda x: 'hist', size=1):
     samples_info_ff_formated = {'ff_time': {'data': {}, 'fields': ('flowcell_id', 'ff_formatted')}}
-    samples_info_ff_formated = extract_data(data=data, info=samples_info_ff_formated, label=label,x_format= lambda x: getattr(x, 'run_date').timestamp()*1000,replace_NA_with=-0.01)
+    samples_info_ff_formated = extract_data(data=data, info=samples_info_ff_formated, size=size,  label=label,x_format= lambda x: getattr(x, 'run_date').timestamp()*1000,replace_NA_with=-0.01)
     return  data_structur_generator(samples_info_ff_formated)['data_ff_time']
 
 def sample_data(data, colors="#bdbdbd", circle_size=1.0, label=lambda x: 'other'):

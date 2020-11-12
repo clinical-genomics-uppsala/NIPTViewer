@@ -69,7 +69,7 @@ def sample_report(request, barcode, sample):
 
     if sample_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=sample_run_data) + plots.chromosome_coverage(data=flowclell_controls)
-        context['data_ff_time'] = plots.fetal_fraction(data=previous_samples) + plots.fetal_fraction(data=sample_run_data, label=lambda x: sample) + plots.fetal_fraction(data=flowcell_run_data, label=lambda x: barcode)
+        context['data_ff_time'] = plots.fetal_fraction(data=previous_samples) + plots.fetal_fraction(data=flowcell_run_data, label=lambda x: barcode) + plots.fetal_fraction(data=sample_run_data, label=lambda x: sample, size=2.0)
 
     qc_failure, qc_warning = data.extract_qc_status(sample_run_data)
     context['qc_warning'] = qc_warning
