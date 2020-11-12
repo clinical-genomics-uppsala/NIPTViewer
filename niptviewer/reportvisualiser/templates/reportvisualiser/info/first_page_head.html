@@ -1,5 +1,7 @@
+{% load static %}
+
 <div class='wrapper'>
     <div class='header'>
-        <p class='title'>{{ title }}<img src='http://nginx/staticfiles/img/CGU.png' style="width:200px;height:100px;float:right"></p>
+        <p class='title'>{{ title }}<img src='{% static "img/CGU.png" %}' style="width:200px;height:100px;float:right"></p>
     </div>
 <div>
