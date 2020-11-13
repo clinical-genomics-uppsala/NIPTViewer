@@ -1,4 +1,5 @@
-sample_info = {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
+def sample_info():
+    return {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
                 'x_vs_ff': {'data': {}, 'fields': ('ncv_X', 'ff_formatted')},
                 'y_vs_ff': {'data': {}, 'fields': ('ncv_Y', 'ff_formatted')},
                 'chr13_vs_ff': {'data': {}, 'fields': ('ncv_13', 'ff_formatted')},
@@ -57,6 +58,7 @@ def extract_data(data, info, label=lambda x: x.sample_type.name,  shape='circle'
                 info[key]['data'][label(item)].append(entry)
             else:
                 info[key]['data'][label(item)] = [entry]
+                print(key + " " + str(label(item)) + " " + "\n")
     return info
 
 def extract_info_samples(data, info, label=lambda x: x.sample_id, size=1.0, shape="circle", color="#bdbdbd"):

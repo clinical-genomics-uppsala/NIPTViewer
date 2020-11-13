@@ -3,6 +3,7 @@
 {% load flag_sample %}
 {% load lookup %}
 {% load hex_to_rgb %}
+{% load addstr %}
 {% load static %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -62,22 +63,22 @@
 
         {% include "reportvisualiser/info/stat_list.html" %}
         <p>
-          {% include "reportvisualiser/plots/chromosome_coverage_reads.html" with data=data_coverage_reads plot_id="reads_coverage_chart" width="880px" height="450px" only %}
+          {% include "reportvisualiser/plots/chromosome_coverage_reads.html" with data=data_coverage_reads plot_id="reads_coverage_chart"|addstr:flowcell_barcode width="880px" height="450px" only %}
         </p>
         <br />
         <p>
-          {% include "reportvisualiser/plots/chromosome_coverage_normalized.html" with data=data_coverage plot_id="coverage_chart" width="880px" height="450px" only %}
+          {% include "reportvisualiser/plots/chromosome_coverage_normalized.html" with data=data_coverage plot_id="coverage_chart"|addstr:flowcell_barcode width="880px" height="450px" only %}
         </p>
 
         {% include "reportvisualiser/info/page_head.html" with title="NIPT QC Report" %}
         <br /><br />
 
         <p>
-        {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart" width="880px" height="450px" only %}
+        {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart"|addstr:flowcell_barcode width="880px" height="450px" only %}
         </p>
         <br />
         <p>
-        {% include "reportvisualiser/plots/ncd.html" with data=ncd plot_id="scatter_chart_ncd" title="NCD" x_label="Date" y_label="NCD"  width="880px" height="450px" only %}
+        {% include "reportvisualiser/plots/ncd.html" with data=ncd plot_id="scatter_chart_ncd"|addstr:flowcell_barcode title="NCD" x_label="Date" y_label="NCD"  width="880px" height="450px" only %}
         </p>
     </div>
 
