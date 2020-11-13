@@ -1,6 +1,7 @@
 
 {% load hex_to_rgb %}
 {% load static %}
+{% load addstr %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
@@ -77,7 +78,7 @@
         <br /><br />
 
         <p>
-            {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff" title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="880px" height="400px" only  %}
+            {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="880px" height="400px" only  %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV X" title_2="Fetal fraction" field_1="ncv_X" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -87,7 +88,7 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff" title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="880px" height="400px" only %}
+          {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="880px" height="400px" only %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV Y" title_2="Fetal fraction" field_1="ncv_Y" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -97,7 +98,7 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff" title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
+          {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 13" title_2="Fetal fraction" field_1="ncv_13" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -107,7 +108,7 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff" title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
+          {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 18" title_2="Fetal fraction" field_1="ncv_18" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -117,7 +118,7 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="scatter_chart_chr21_vs_ff" title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
+          {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="scatter_chart_chr21_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 21" title_2="Fetal fraction" field_1="ncv_21" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>

@@ -32,7 +32,7 @@ class SampleReportPDF(PDFTemplateView):
         samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
         flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)
 
-        sample_info = data.extract_info_samples(flowcell_other, data.sample_info.copy() , size=0.5, label=lambda x: 'other', color=colors.hist)
+        sample_info = data.extract_info_samples(flowcell_other, data.sample_info() , size=0.5, label=lambda x: 'other', color=colors.hist)
         color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id, size=1.0, shape="circle",colors=colors.samples)
         context.update(data_structur_generator(sample_info))
 
