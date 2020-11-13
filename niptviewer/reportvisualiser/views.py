@@ -49,7 +49,7 @@ def sample_report(request, barcode, sample):
     sample_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
     previous_samples = SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
 
-    samples_info = data.extract_info_samples(previous_samples, data.sample_info.copy() , size=0.5, label=lambda x: 'other', color=colors.hist)
+    samples_info = data.extract_info_samples(previous_samples, data.sample_info() , size=0.5, label=lambda x: 'other', color=colors.hist)
     samples_info = data.extract_info_samples(flowcell_run_data, samples_info , size=0.5, label=lambda x: 'same flowcell', color=colors.other_samples)
     color_dict, samples_info = data.extra_info_per_sample(sample_run_data, samples_info, label=lambda x: x.sample_id, size=1.0, shape="circle",colors=[colors.sample])
 
@@ -86,7 +86,8 @@ def report(request, barcode):
     samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
     flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)
 
-    sample_info = data.extract_info_samples(flowcell_other, data.sample_info.copy() , size=0.5, label=lambda x: 'other', color=colors.hist)
+    sample_info = data.extract_info_samples(flowcell_other, data.sample_info() , size=0.5, label=lambda x: 'other', color=colors.hist)
+
     color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id, size=1.0, shape="circle",colors=colors.samples)
     context = {
         'flowcell': flowcell,

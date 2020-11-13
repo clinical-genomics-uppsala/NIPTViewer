@@ -78,6 +78,7 @@ NIPTViewer: Flowcells run
       </tr>
       </thead>
       <tbody>
+    {% if flowcell_data %}
     {% for flowcell in flowcell_data %}
     <tr>
     <td><a  class="cyan-text text-darken-4"href="{% url 'viewer:report' barcode=flowcell.flowcell_id.flowcell_barcode %}">{{ flowcell.flowcell_id.flowcell_barcode}}</a></td>
@@ -88,6 +89,7 @@ NIPTViewer: Flowcells run
     <td>{{ flowcell.software_version }}</td>
     </tr>
     {% endfor %}
+    {% endif %}
     </tbody>
   </table>
 </div>
