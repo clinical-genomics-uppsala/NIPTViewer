@@ -11,6 +11,7 @@ services:
       - 80:80
     volumes:
       - static_volume:/home/app/web/staticfiles
+      - /etc/letsencrypt/live/cgu.igp.uu.se:/etc/letsencrypt/live/cgu.igp.uu.se
     depends_on:
       - web
     networks:
