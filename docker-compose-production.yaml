@@ -5,9 +5,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/nginx.prod.dockerfile
-    image: cgu/nginx:0.5.3
+    image: cgu/nginx_https:0.5.8
     ports:
       - 443:443
+      - 80:80
     volumes:
       - static_volume:/home/app/web/staticfiles
     depends_on:
@@ -18,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/production.dockerfile
-    image: cgu/niptweb:0.6.13
+    image: cgu/niptweb:1.0.0
     volumes:
       - static_volume:/home/app/web/staticfiles
     expose:
