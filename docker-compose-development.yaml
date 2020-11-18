@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  nginx:
+  nipt-nginx-service:
     build:
       context: .
       dockerfile: ./dockerfiles/nginx.dev.dockerfile
@@ -15,7 +15,7 @@ services:
       - web
     networks:
       - private
-  web:
+  nipt-web-service:
     build:
       context: .
       dockerfile: ./dockerfiles/development.dockerfile
@@ -32,7 +32,7 @@ services:
       - db
     networks:
       - private
-  db:
+  nipt-db-service:
     image: postgres:12.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/

@@ -46,7 +46,6 @@ ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
-RUN ln -s $APP_HOME/staticfiles /staticfiles
 WORKDIR $APP_HOME
 
 # install dependencies
@@ -55,7 +54,7 @@ COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.prod.txt .
 RUN pip install --no-cache /wheels/*
 
-COPY ./dockerfiles/entrypoint.sh .
+COPY ./dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
 
@@ -65,6 +64,6 @@ RUN chown -R app:app $APP_HOME
 # change to the app user
 USER app
 
-ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+ENTRYPOINT ["/home/app/entrypoint.sh"]
 
-CMD ["gunicorn", "niptviewer.wsgi:application", "--bind", "0.0.0.0:8000", "--workers=3"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "niptviewer.wsgi:application"]

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nipt-web-deployment
+  labels:
+    app: nipt-web
+spec:
+  selector:
+    matchLabels:
+      app: nipt-web-container
+      tier: backend
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nipt-web-container
+        tier: backend
+    spec:
+      containers:
+      - name: nipt-web
+        ports:
+          - containerPort: 8000
+        env:
+        - name: DEBUG
+          value: "1"
+        - name: DJANGO_ALLOWED_HOSTS
+          value: 192.168.49.2 127.0.0.1 [::1]
+        - name: SQL_ENGINE
+          value: django.db.backends.postgresql
+        - name: SQL_DATABASE
+          value: niptviewer_prod
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: SQL_USER
+          value: nipt_user
+        - name: SQL_HOST
+          value: nipt-db-service
+        - name: SQL_PORT
+          value: "5432"
+        - name: DATABASE
+          value: postgres
+        - name: FROM_EMAIL
+          value: gollum.cgu.igp.uu.se
+        - name: SERVER_EMAIL
+          value: gollum.cgu.igp.uu.se
+        - name: SECRET_KEY
+          value: f$41-$md^=bp^r4^o9qvto(e)sev_29ej17!@#nqheowq$yoid
+        image: cgu/niptweb:0.6.4
+        imagePullPolicy: Never
+        resources: {}
+        volumeMounts:
+          - name: staticfiles-volume-mount
+            mountPath: /home/app/web/staticfiles
+      volumes:
+        - name: staticfiles-volume-mount
+          persistentVolumeClaim:
+            claimName: staticfiles-data
+      restartPolicy: Always
+status: {}

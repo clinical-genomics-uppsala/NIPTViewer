@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nipt-db-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nipt-db-container
+      tier: backend
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nipt-db-container
+        tier: backend
+    spec:
+      containers:
+        - name: nipt-db
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: nipt_user
+            - name: POSTGRES_DB
+              value: niptviewer_prod
+        #- name: POSTGRES_PASSWORD
+        #  value: niptviewer_prod
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          image: postgres:12.0-alpine
+          volumeMounts:
+            - name: postgres-volume-mount
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-volume-mount
+          persistentVolumeClaim:
+            claimName: postgres-data
+      restartPolicy: Always
+
+status: {}
