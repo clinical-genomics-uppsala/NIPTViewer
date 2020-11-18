@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nipt-nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nipt-nginx-container
+      tier: frontend
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nipt-nginx-container
+        tier: frontend
+    spec:
+      containers:
+      - image: cgu/nginx:0.5.5
+        imagePullPolicy: Never
+        name: nipt-nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+          - name: staticfiles-volume-mount
+            mountPath: /home/app/web/staticfiles
+      volumes:
+        - name: staticfiles-volume-mount
+          persistentVolumeClaim:
+            claimName: staticfiles-data
+      restartPolicy: Always
+status: {}
