@@ -61,12 +61,11 @@ jobs:
           echo 'DEBUG=1' >> $GITHUB_ENV
           echo 'DATABASE=postgres' >> $GITHUB_ENV
           echo 'SQL_ENGINE=django.db.backends.postgresql' >> $GITHUB_ENV
-          echo 'SQL_DATABASE=hello_django_prod' >> $GITHUB_ENV
-          echo 'SQL_USER=hello_django' >> $GITHUB_ENV
-          echo 'SQL_PASSWORD=hello_django' >> $GITHUB_ENV
-          echo 'SQL_HOST=db' >> $GITHUB_ENV
+          echo 'SQL_DATABASE=nipt_test_view' >> $GITHUB_ENV
+          echo 'SQL_USER=nipt_user' >> $GITHUB_ENV
+          echo 'SQL_PASSWORD=nipt_password_postgres' >> $GITHUB_ENV
+          echo 'SQL_HOST=localhost' >> $GITHUB_ENV
           echo 'SQL_PORT=5432' >> $GITHUB_ENV
-          echo 'DATABASE=postgres' >> $GITHUB_ENV
       - name: Run Migrations # run migrations to create table in side car db container
         run: python manage.py migrate
         working-directory: ./niptviewer
