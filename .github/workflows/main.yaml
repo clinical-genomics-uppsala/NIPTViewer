@@ -52,6 +52,8 @@ jobs:
       - name: Check Python version # checking the python version to see if 3.x is installed.
         run: python --version
       - name: Install requirements # install application requirements
+          run: pip install --no-use-pep517 pandas==1.1.2
+      - name: Install requirements # install application requirements
         run: pip install -r requirements.txt
       - name: Check Syntax # check code formatting
         run: pycodestyle --statistics .
