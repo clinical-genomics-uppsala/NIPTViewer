@@ -21,6 +21,9 @@ on:
 jobs:
   health-check-job: # health check job for testing and code formatting check
     runs-on: ubuntu-latest # os for running the job
+    strategy:
+      matrix:
+        python-version: [ 3.8 ]
     services:
       postgres: # we need a postgres docker image to be booted a side car service to run the tests that needs a db
         image: postgres
@@ -42,10 +45,10 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - name: Setup python environment # setting python environment to 3.x
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x' # if you want multiple python version run just use matrix strategy in job config. See the documentation of GitHub Actions
+      - name: Set up Python ${{ matrix.python-version }}
+          uses: actions/setup-python@v2
+          with:
+            python-version: ${{ matrix.python-version }}
       - name: Check Python version # checking the python version to see if 3.x is installed.
         run: python --version
       - name: Install requirements # install application requirements
