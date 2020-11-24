@@ -1,10 +1,11 @@
 from pandas import read_csv, to_numeric
 from django.db import IntegrityError, transaction
-
+from decimal import Decimal
 from ..models import Flowcell, BatchRun, SamplesRunData, Index, Flowcell, SampleType
 import re
 from io import StringIO
 import datetime
+import os
 
 nnc_per_samplesheet = ['Library_nM']
 c_sample_data = ['SampleID', 'Index','IndexID','Well','QCFailure','QCWarning', 'Description', 'SampleProject', 'SampleType']
@@ -39,17 +40,26 @@ nnc_per_batch_scoring_metrics = ['Median_13', 'Median_18', 'Median_21',
                                  'Median_X', 'Median_Y',
                                  'Stdev_13', 'Stdev_18', 'Stdev_21',
                                  'Stdev_X', 'Stdev_Y']
+def decimal_from_value(value):
+    if len(value) == 0:
+        return None
+    else:
+        return Decimal(value)
 
 def parse_niptool_csv(file=None, sep=","):
-    run_date = re.search('^([0-9]+)_',file.name)
+    run_date = re.search('^([0-9]+)_',os.path.basename(file.name))
     if run_date:
         run_date = datetime.datetime.strptime(run_date[1],"%y%m%d")
-    data = read_csv(file,sep=sep, comment='#', decimal=".")
+    data = read_csv(file,sep=sep, comment='#', decimal=".", float_precision='high', converters={'Library_nM': decimal_from_value})
     data.set_index('SampleID', drop=False)
     for sample in data['SampleID']:
         if "#" in sample and "version" in sample:
             version = re.search('Software[ ]version:[ ]([0-9.]+);', sample)[1]
     data = data[[not "#" in sample for sample in data['SampleID']]]
+    data['Description'] = data['Description'].fillna("")
+    data['QCFailure'] = data['QCFailure'].fillna("")
+    data['QCWarning'] = data['QCWarning'].fillna("")
+    data['SampleProject'] = data['SampleProject'].fillna("")
     data['FF_Formatted']=data['FF_Formatted'].apply(lambda x: int(x.replace('%','').replace('<',''))/100 if isinstance(x, str) else x)
     columns_to_process = nnc_per_samplesheet + nnc_per_sample + nnc_per_sample_qc +nnc_per_sample_scoring_metrics + nnc_per_batch_scoring_metrics
     data[columns_to_process]=data[columns_to_process].apply(to_numeric)
@@ -95,7 +105,7 @@ def import_data_into_database(user, file):
                 sample_type = SampleType.get_sample_type(name=row['SampleType'])
                 index = Index.get_index(row['IndexID'],row['Index'])
 
-                entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type, sample_id=row['SampleID'], index=index,
+                entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type, sample_id=row['SampleID'], sample_project=row["SampleProject"], index=index,
                     well=row['Well'], description=row['Description'], library_nm=row['Library_nM'], qc_flag=row['QCFlag'],
                     qc_failure=row['QCFailure'], qc_warning=row['QCWarning'],
                     ncv_13=row['NCV_13'], ncv_18=row['NCV_18'], ncv_21=row['NCV_21'], ncv_x=row['NCV_X'], ncv_y=row['NCV_Y'],
@@ -107,10 +117,10 @@ def import_data_into_database(user, file):
                     tags_2_indexed_reads=row['Tags2IndexedReads'], perfect_match_tags_2_tags=row['PerfectMatchTags2Tags'],
                     gc_bias=row['GCBias'], gcr2=row['GCR2'], ncd_13=row['NCD_13'], ncd_18=row['NCD_18'], ncd_21=row['NCD_21'],
                     ncd_x=row['NCD_X'], ncd_y=row['NCD_Y'], chr1_coverage=row['Chr1_Coverage'], chr2_coverage=row['Chr2_Coverage'],
-                    chr3_coverage=row['Chr3_Coverage'], chr4_coverage=row['Chr4_Coverage'], chr5_coverage=row['Chr4_Coverage'],
+                    chr3_coverage=row['Chr3_Coverage'], chr4_coverage=row['Chr4_Coverage'], chr5_coverage=row['Chr5_Coverage'],
                     chr6_coverage=row['Chr6_Coverage'], chr7_coverage=row['Chr7_Coverage'], chr8_coverage=row['Chr8_Coverage'],
                     chr9_coverage=row['Chr9_Coverage'], chr10_coverage=row['Chr10_Coverage'], chr11_coverage=row['Chr11_Coverage'],
-                    chr12_coverage=row['Chr12_Coverage'], chr13_coverage=row['Chr13_Coverage'], chr14_coverage=row['Chr15_Coverage'],
+                    chr12_coverage=row['Chr12_Coverage'], chr13_coverage=row['Chr13_Coverage'], chr14_coverage=row['Chr14_Coverage'],
                     chr15_coverage=row['Chr15_Coverage'], chr16_coverage=row['Chr16_Coverage'], chr17_coverage=row['Chr17_Coverage'],
                     chr18_coverage=row['Chr18_Coverage'], chr19_coverage=row['Chr19_Coverage'], chr20_coverage=row['Chr20_Coverage'],
                     chr21_coverage=row['Chr21_Coverage'], chr22_coverage=row['Chr22_Coverage'], chrx_coverage=row['ChrX_Coverage'],
@@ -121,9 +131,9 @@ def import_data_into_database(user, file):
                     chr20=row['Chr20'], chr21=row['Chr21'], chr22=row['Chr22'], chrx=row['ChrX'], chry=row['ChrY'],
                     ff_formatted=row['FF_Formatted'])
                 if not entry.qc_flag == 0:
-                    if not entry.qc_failure == 'nan':
+                    if not entry.qc_failure == "":
                         fail.append(entry.qc_failure)
-                    if not entry.qc_warning == 'nan':
+                    if not entry.qc_warning == "":
                         warn.append(entry.qc_warning)
             if len(fail) or len(warn):
                 qc_status = []
