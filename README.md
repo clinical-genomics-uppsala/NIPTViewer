@@ -1,3 +1,5 @@
+![CI](https://github.com/clinical-genomics-uppsala/NIPTViewer/workflows/CI/badge.svg?branch=dev)
+
 docker-compose -f docker-compose-production.yaml exec web python3 manage.py collectstatic --noinput --clear
 docker-compose -f docker-compose-production.yaml exec web python3 manage.py collectstatic --noinput --clear
 
