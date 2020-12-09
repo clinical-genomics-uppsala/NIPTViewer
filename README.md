@@ -1,4 +1,4 @@
-![CI](https://github.com/clinical-genomics-uppsala/NIPTViewer/workflows/CI/badge.svg?branch=dev)
+![CI](https://github.com/clinical-genomics-uppsala/NIPTViewer/workflows/CI/badge.svg?branch=master)
 
 docker-compose -f docker-compose-production.yaml exec web python3 manage.py collectstatic --noinput --clear
 docker-compose -f docker-compose-production.yaml exec web python3 manage.py collectstatic --noinput --clear
