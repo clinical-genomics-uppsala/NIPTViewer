@@ -144,6 +144,6 @@ def import_data_into_database(user, file):
                     qc_status.append("Warnings (" + str(len(warn)) + ")")
                 flowcell.qc_status = ", ".join(qc_status)
                 flowcell.save()
-    except IntegrityError:
-        return Flowcell.get_flowcell(flowcell_barcode)
+    except IntegrityError as e:
+        raise e
     return flowcell.flowcell_barcode
