@@ -1,4 +1,4 @@
-pycodestyle
+pycodestyle==2.6.0
 django==3.1.1
 numpy==1.19.4
 pandas==1.1.2
@@ -7,3 +7,4 @@ pyaml==20.4.0
 psycopg2-binary==2.8.5
 django-wkhtmltopdf==3.3.0
 gunicorn==20.0.4
+coverage==5.3
