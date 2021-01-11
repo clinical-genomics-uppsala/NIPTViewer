@@ -8,3 +8,6 @@ SSL
 staticfiles
 admin
 assets
+.coverage
+coverage_html
+.idea
