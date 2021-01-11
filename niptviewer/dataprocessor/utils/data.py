@@ -73,10 +73,11 @@ def import_data_into_database(user, file):
 
             flowcell_barcode = set([row['Flowcell'] for index, row in rundata.iterrows()])
             if len(flowcell_barcode) > 1:
-                raise Exception("Multiple flowcell barcodes specified in the provided file: " + ", ".join(flowcell_barcode))
+                raise Exception("Multiple flowcell barcodes specified in the provided file: " + ", ".join(sorted(flowcell_barcode)))
             flowcell_barcode = flowcell_barcode.pop()
+
             if len(flowcell_barcode) != 9:
-                raise Exception("Invalid Flowcell bardcode length, should be 9 chars, found: " + str(len(rundata[0]['Flowcell'])))
+                raise Exception("Invalid Flowcell bardcode length, should be 9 chars, found: " + str(len(flowcell_barcode)))
             batch_data_error = []
 
             for column in nnc_per_batch_scoring_metrics:
