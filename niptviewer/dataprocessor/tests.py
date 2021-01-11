@@ -97,7 +97,7 @@ class UtilTestTestsCase(TestCase):
         samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
         iSamples = iter(samples)
         sample = next(iSamples)
-        
+
         self.assertEqual(sample.sample_type,SampleType.objects.get(name="Test"))
         self.assertEqual(sample.sample_id,"120AB-1")
         self.assertEqual(sample.sample_project, "P1")
@@ -541,10 +541,23 @@ class UtilTestTestsCase(TestCase):
         self.assertEqual(sample.chry, 64)
         self.assertTrue(abs(sample.ff_formatted - Decimal("0.01")) < 0.00000001)
 
+    def test_csv_parsing_multiple_barcode(self):
+        csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS_MULTIPLE_BARCODE.csv")
+        from .utils.data import import_data_into_database
+        #Expects an exception
+        try:
+            flowcell_barcode = import_data_into_database(self.user,csv)
+            self.assertTrue(False)
+        except Exception as e:
+            self.assertEqual(str(e),"Multiple flowcell barcodes specified in the provided file: ABCDEFGHI, ABCDEFGHJ")
 
 
-
-
-
-
-
+    def test_csv_parsing_wrong_barcode_length(self):
+        csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS_WRONG_BARCODE_LENGTH.csv")
+        from .utils.data import import_data_into_database
+        #Expects an exception
+        try:
+            flowcell_barcode = import_data_into_database(self.user,csv)
+            self.assertTrue(False)
+        except Exception as e:
+            self.assertEqual(str(e), "Invalid Flowcell bardcode length, should be 9 chars, found: 8")
