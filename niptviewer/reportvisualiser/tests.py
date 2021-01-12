@@ -237,6 +237,7 @@ class UtilPlotsTestTestsCase(TestCase):
         self.assertEqual(data[0]['key'], 'TESTAR 13')
         self.assertEqual(data[0]['values'], [{'x': 1596931200000.0, 'y': 22.8842, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'flowcell': 'ABCDEFGHI', 'type': 'Test', 'sample': '120AB-1'}, {'x': 1596931200000.0, 'y': 23.67755, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'flowcell': 'ABCDEFGHI', 'type': 'Test', 'sample': '130VY-2'}, {'x': 1596931200000.0, 'y': 26.1829, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'flowcell': 'ABCDEFGHI', 'type': 'Control', 'sample': 'XY012345'}, {'x': 1596931200000.0, 'y': 13.15018, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'flowcell': 'ABCDEFGHI', 'type': 'Test', 'sample': 'MN20-1234-BM'}, {'x': 1596931200000.0, 'y': 16.75418, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'flowcell': 'ABCDEFGHI', 'type': 'Test', 'sample': 'LK19-4321-C-BM'}])
 
+
     def test_fetal_fraction(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
@@ -257,3 +258,35 @@ class UtilPlotsTestTestsCase(TestCase):
         self.assertEqual(data[1]['max_y'], -0.01)
         self.assertEqual(data[1]['key'], 'NA')
         self.assertEqual(data[1]['values'], [{'x': 1596931200000.0, 'y': -0.01, 'shape': 'circle', 'size': 1, 'color': '#f44336', 'type': 'Test', 'flowcell': 'ABCDEFGHI', 'sample': 'MN20-1234-BM'}])
+
+
+    def test_template_tags(self):
+        from .templatetags.addstr import addstr
+        self.assertEqual(addstr("TEST1","TEST2"), "TEST1TEST2")
+
+        from .templatetags.flag_sample import flag_sample
+        self.assertEqual(flag_sample(123), '')
+        self.assertEqual(flag_sample(None),'class=red')
+
+        from .templatetags.hex_to_rgb import hex_to_rgb
+        self.assertEqual(hex_to_rgb("#F4B145",1), (244,177,69,1))
+
+        from .templatetags.lookup import lookup
+        self.assertEqual(lookup({"1": 11, "2": 22, "3": 33},"3"), 33)
+
+        class TEST:
+            VALUE1=1
+            VALUE2=2
+            VALUE3=3
+
+        from .templatetags.model_lookup import model_lookup
+        self.assertEqual(model_lookup(TEST(),"VALUE2"), 2)
+        self.assertFalse(model_lookup(TEST(),"VALUE2") == 3)
+
+        from .templatetags.percentformat import percentformat
+        self.assertEqual(percentformat(None), "NA")
+        self.assertEqual(percentformat(0.14), "14%")
+
+        from .templatetags.stringformat_custom import stringformat_custom
+        self.assertEqual(stringformat_custom(None, ".1%"), "NA")
+        self.assertEqual(stringformat_custom(0.14, ".1%"), "14.0%")
