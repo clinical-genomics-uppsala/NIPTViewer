@@ -194,15 +194,20 @@ class UtilPlotsTestTestsCase(TestCase):
 
         data = median_coverage(samples)
         self.assertEqual(data[0]['key'], '13')
-        self.assertEqual(data[0]['values'], [{'x': 1596931200000.0, 'y': 0.200009977208429, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'}])
+        self.assertEqual({k: data[0]['values'][0][k] for k in ['x', 'shape', 'size', 'color', 'label']}, {'x': 1596931200000.0, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'})
+        self.assertTrue(abs(data[0]['values'][0]['y'] - 0.200009977208429) < 0.00000001)
         self.assertEqual(data[1]['key'], '18')
-        self.assertEqual(data[1]['values'], [{'x': 1596931200000.0, 'y': 0.249673836653633, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'}])
+        self.assertEqual({k: data[1]['values'][0][k] for k in ['x', 'shape', 'size', 'color', 'label']}, {'x': 1596931200000.0,  'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'})
+        self.assertTrue(abs(data[1]['values'][0]['y'] - 0.249673836653633) < 0.00000001)
         self.assertEqual(data[2]['key'], '21')
-        self.assertEqual(data[2]['values'], [{'x': 1596931200000.0, 'y': 0.250130152346746, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'}])
+        self.assertEqual({k: data[2]['values'][0][k] for k in ['x', 'shape', 'size', 'color', 'label']}, {'x': 1596931200000.0, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'})
+        self.assertTrue(abs(data[2]['values'][0]['y'] - 0.250130152346746) < 0.00000001)
         self.assertEqual(data[3]['key'], 'x')
-        self.assertEqual(data[3]['values'], [{'x': 1596931200000.0, 'y': 0.331740734144767, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'}])
+        self.assertEqual({k: data[3]['values'][0][k] for k in ['x', 'shape', 'size', 'color', 'label']}, {'x': 1596931200000.0, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'})
+        self.assertTrue(abs(data[3]['values'][0]['y'] - 0.331740734144767) < 0.00000001)
         self.assertEqual(data[4]['key'], 'y')
-        self.assertEqual(data[4]['values'], [{'x': 1596931200000.0, 'y': 7.97904055829e-09, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'}])
+        self.assertEqual({k: data[4]['values'][0][k] for k in ['x', 'shape', 'size', 'color', 'label']}, {'x': 1596931200000.0, 'shape': 'circle', 'size': 1, 'color': '#c62828', 'label': 'ABCDEFGHI'})
+        self.assertTrue(abs(data[4]['values'][0]['y'] - 7.97904055829e-09) < 0.00000001)
 
 
     def test_ncd(self):
