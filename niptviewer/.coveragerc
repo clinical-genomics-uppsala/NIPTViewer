@@ -2,3 +2,8 @@
 omit =
    manage.py
    */__init__.py
+
+[report]
+exclude_lines =
+  __str__
+  self.assertTrue(False)
