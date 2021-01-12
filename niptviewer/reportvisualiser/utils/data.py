@@ -58,7 +58,6 @@ def extract_data(data, info, label=lambda x: x.sample_type.name,  shape='circle'
                 info[key]['data'][label(item)].append(entry)
             else:
                 info[key]['data'][label(item)] = [entry]
-                print(key + " " + str(label(item)) + " " + "\n")
     return info
 
 def extract_info_samples(data, info, label=lambda x: x.sample_id, size=1.0, shape="circle", color="#bdbdbd"):
@@ -70,6 +69,6 @@ def extra_info_per_sample(data, info, label=lambda x: x.sample_id, size=1.0, sha
     color_dict = {}
     for sample in data:
         extract_info_samples([sample], info, label=label, size=size, shape=shape,color=colors[counter%color_length])
-        color_dict[sample.sample_id] = color=colors[counter]
+        color_dict[sample.sample_id] = color=colors[counter%color_length]
         counter = counter + 1
     return (color_dict, info)

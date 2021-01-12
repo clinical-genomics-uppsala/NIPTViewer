@@ -14,7 +14,7 @@ def data_structur_generator(samples_info):
         information['data_' + comparison] = data
     return information
 
-def chromosome_num_reads(data):
+def chromosome_percentage_reads(data):
     chr_data = {"Chr1": [], "Chr2": [], "Chr3": [], "Chr4": [], "Chr5": [], "Chr6": [], "Chr7": [], "Chr8": [], "Chr9": [], "Chr10": [],
                 "Chr11": [], "Chr12": [], "Chr13": [], "Chr14": [], "Chr15": [], "Chr16": [], "Chr17": [], "Chr18": [], "Chr19": [], "Chr20": [],
                 "Chr21": [], "Chr21": [], "Chr22": [], "ChrX": [], "ChrY": []}
@@ -111,6 +111,7 @@ def chromosome_coverage(data, exclude_chry=True):
             {'x': 22, 'y': decimal_default(sample.chrx_coverage), 'label': 'X'},
             {'x': 23, 'y': decimal_default(sample.chry_coverage), 'label': 'Y'}]} for sample in data]
 
+
 def median_coverage(data):
     batch_data = {'13': {'data': {}, 'fields': ('flowcell_id', 'median_13')},
                   '18': {'data': {}, 'fields': ('flowcell_id', 'median_18')},
@@ -119,6 +120,7 @@ def median_coverage(data):
                   'y': {'data': {}, 'fields': ('flowcell_id', 'median_y')}}
     batch_data = extract_data(data=data, info=batch_data, label=lambda x: "median", x_format= lambda x: getattr(x, 'run_date').timestamp()*1000, extra_info=lambda x: {'label': x.flowcell_id.flowcell_barcode})
     return [{"key": k, 'values': d['data']['median']} for k,d in batch_data.items()]
+
 
 def ncd_data(data, pre_legend=None, chr=None, size=1):
     info_to_extract = {'13': {'data': {}, 'fields': ('flowcell_id', 'ncd_13')},
@@ -138,26 +140,8 @@ def ncd_data(data, pre_legend=None, chr=None, size=1):
                  "min_y": min(d['data']['ncd'], key=lambda v: v['y'])['y'],
                  "key": k, 'values': d['data']['ncd']} for k,d in ncd_batch_data.items()]
 
+
 def fetal_fraction(data, label=lambda x: 'hist', size=1):
     samples_info_ff_formated = {'ff_time': {'data': {}, 'fields': ('flowcell_id', 'ff_formatted')}}
     samples_info_ff_formated = extract_data(data=data, info=samples_info_ff_formated, size=size,  label=label,x_format= lambda x: getattr(x, 'run_date').timestamp()*1000,replace_NA_with=-0.01)
     return  data_structur_generator(samples_info_ff_formated)['data_ff_time']
-
-def sample_data(data, colors="#bdbdbd", circle_size=1.0, label=lambda x: 'other'):
-    samples_info = {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
-                    'x_vs_ff': {'data': {}, 'fields': ('ncv_X', 'ff_formatted')},
-                   'y_vs_ff': {'data': {}, 'fields': ('ncv_Y', 'ff_formatted')},
-                   'chr13_vs_ff': {'data': {}, 'fields': ('ncv_13', 'ff_formatted')},
-                   'chr18_vs_ff': {'data': {}, 'fields': ('ncv_18', 'ff_formatted')},
-                   'chr21_vs_ff': {'data': {}, 'fields': ('ncv_21', 'ff_formatted')}}
-    if isinstance(colors, list):
-        colors = ["#140c1c", "#442434", "#30346d", "#ffab40", "#854c30", "#346524", "#d04648", "#757161", "#597dce", "#d27d2c", "#8595a1", "#6daa2c", "#d2aa99", "#6dc2ca", "#dad45e", "#deeed6"]
-        counter = 0
-        shapes = ['diamond', 'square']
-        color_dict = {}
-        for sample in data:
-            samples_info = extract_data([sample], samples_info, label=lambda x: x.sample_id, size=1.0, color=colors[counter])
-            color_dict[sample.sample_id] = color=colors[counter]
-            counter = counter + 1
-    else:
-        samples_info = extract_data(data=samples, info=samples_info, size=circle_size, label=label, color=colors)

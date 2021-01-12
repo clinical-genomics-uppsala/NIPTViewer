@@ -65,7 +65,7 @@ def sample_report(request, barcode, sample):
              'page_type': "html",
              'color_dict': color_dict}
 
-    context['data_coverage_reads'] = plots.chromosome_num_reads(sample_run_data)
+    context['data_coverage_reads'] = plots.chromosome_percentage_reads(sample_run_data)
 
     if sample_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=sample_run_data) + plots.chromosome_coverage(data=flowclell_controls)
@@ -108,7 +108,7 @@ def report(request, barcode):
     context['qc_warning'] = qc_warning
     context['qc_failure'] = qc_failure
 
-    context['data_coverage_reads'] = plots.chromosome_num_reads(samples_run_data)
+    context['data_coverage_reads'] = plots.chromosome_percentage_reads(samples_run_data)
 
     template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))
