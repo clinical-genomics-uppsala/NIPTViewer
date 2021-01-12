@@ -25,6 +25,7 @@ class UtilTestTestsCase(TestCase):
         call_command("loaddata","index", app_label='dataprocessor')
         call_command("loaddata","sample_types", app_label='dataprocessor')
 
+
     def test_csv_parsing(self):
         csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS.csv")
         from .utils.data import parse_niptool_csv
@@ -45,6 +46,7 @@ class UtilTestTestsCase(TestCase):
                 elif isinstance(TEST_DATA[counter][i], str):
                     self.assertEqual(row[1][HEADER[i]], TEST_DATA[counter][i])
                 else:
+                    #Catch unhandled case
                     self.assertTrue(False)
         compare_row(row,0)
         row = next(iterator)
@@ -70,6 +72,7 @@ class UtilTestTestsCase(TestCase):
         self.assertEqual(flowcell.created.strftime("%d/%m/%Y"), datetime.datetime.now().strftime("%d/%m/%Y"))
         self.assertEqual(flowcell.run_date.strftime("%d/%m/%Y"), datetime.datetime.strptime("200809","%y%m%d").strftime("%d/%m/%Y"))
 
+
     def test_batchrun_csv_into_database(self):
         csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS.csv")
         from .utils.data import import_data_into_database
@@ -88,6 +91,7 @@ class UtilTestTestsCase(TestCase):
         self.assertTrue(abs(batch.stdev_X -  0.0006369169138443013) < 0.00000001)
         self.assertTrue(abs(batch.stdev_Y-  1.1323241868674808E-9) < 0.00000001)
         self.assertEqual(batch.software_version,"1.1.1")
+
 
     def test_samplerundata_csv_into_database(self):
         csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS.csv")
@@ -541,7 +545,8 @@ class UtilTestTestsCase(TestCase):
         self.assertEqual(sample.chry, 64)
         self.assertTrue(abs(sample.ff_formatted - Decimal("0.01")) < 0.00000001)
 
-    def test_csv_parsing_multiple_barcode(self):
+
+    def test_data_import_multiple_barcode(self):
         csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS_MULTIPLE_BARCODE.csv")
         from .utils.data import import_data_into_database
         #Expects an exception
@@ -552,7 +557,7 @@ class UtilTestTestsCase(TestCase):
             self.assertEqual(str(e),"Multiple flowcell barcodes specified in the provided file: ABCDEFGHI, ABCDEFGHJ")
 
 
-    def test_csv_parsing_wrong_barcode_length(self):
+    def test_data_import_wrong_barcode_length(self):
         csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS_WRONG_BARCODE_LENGTH.csv")
         from .utils.data import import_data_into_database
         #Expects an exception
@@ -561,3 +566,22 @@ class UtilTestTestsCase(TestCase):
             self.assertTrue(False)
         except Exception as e:
             self.assertEqual(str(e), "Invalid Flowcell bardcode length, should be 9 chars, found: 8")
+
+
+    def test_csv_parsing_modified_header(self):
+        from .utils.data import parse_niptool_csv, import_data_into_database
+        #Expects an exception
+        try:
+            csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS_MOD_HEADER.csv")
+            parse_niptool_csv(csv)
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEqual(str(e), "'SampleProject'")
+
+        #Expects an exception
+        try:
+            csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS_MOD_HEADER.csv")
+            import_data_into_database(self.user,csv)
+            self.assertTrue(False)
+        except KeyError as e:
+            self.assertEqual(str(e), "'SampleProject'")
