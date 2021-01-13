@@ -13,6 +13,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='samplesrundata',
             name='ff_formatted',
-            field=models.DecimalField(decimal_places=10, help_text='Estimated fetal component of cfDNA recovered by the assay. Reported as a discreet, rounded percentage that provides additional information for each sample.', max_digits=15, null=True),
+            field=models.DecimalField(decimal_places=10,
+                                      help_text='Estimated fetal component of cfDNA recovered by the assay. Reported as a' +
+                                                ' discreet, rounded percentage that provides additional information for each' +
+                                                ' sample.',
+                                      max_digits=15,
+                                      null=True),
         ),
     ]

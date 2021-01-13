@@ -16,6 +16,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='flowcell',
             name='uploading_user',
-            field=models.ForeignKey(default=1, help_text='User that uploaded the flowcell identification.', on_delete=django.db.models.deletion.RESTRICT, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(default=1,
+                                    help_text='User that uploaded the flowcell identification.',
+                                    on_delete=django.db.models.deletion.RESTRICT,
+                                    to=settings.AUTH_USER_MODEL),
         ),
     ]
