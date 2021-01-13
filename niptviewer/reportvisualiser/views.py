@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import loader
-from reportvisualiser.utils.plots import data_structur_generator
+from reportvisualiser.utils.plots import data_structure_generator
 import datetime
 
 
@@ -77,7 +77,7 @@ def sample_report(request, barcode, sample):
     context['qc_warning'] = qc_warning
     context['qc_failure'] = qc_failure
 
-    context.update(data_structur_generator(samples_info))
+    context.update(data_structure_generator(samples_info))
     template = loader.get_template("reportvisualiser/report.html")
     return HttpResponse(template.render(context, request))
 
@@ -102,7 +102,7 @@ def report(request, barcode):
         'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
         'upload_date': flowcell.created.strftime("%Y-%m-%d"),
         'color_dict': color_dict}
-    context.update(data_structur_generator(sample_info))
+    context.update(data_structure_generator(sample_info))
 
     if samples_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)

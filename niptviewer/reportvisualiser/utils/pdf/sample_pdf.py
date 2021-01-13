@@ -1,6 +1,6 @@
 from wkhtmltopdf.views import PDFTemplateView
 from dataprocessor.models import Flowcell, SamplesRunData
-from reportvisualiser.utils.plots import extract_data, data_structur_generator
+from reportvisualiser.utils.plots import extract_data, data_structure_generator
 from reportvisualiser.utils import colors, data
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -34,7 +34,7 @@ class SampleReportPDF(PDFTemplateView):
                                                 color=colors.hist)
         color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id,
                                                              size=1.0, shape="circle", colors=colors.samples)
-        context.update(data_structur_generator(sample_info))
+        context.update(data_structure_generator(sample_info))
 
         qc_failure, qc_warning = data.extract_qc_status(samples_run_data)
         context['qc_warning'] = qc_warning
