@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import os, logging
+import os
+import logging.config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +27,6 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 SECRET_KEY = os.environ.get("SECRET_KEY", None if DEBUG == 0 else "DUMMY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
-
-
 
 
 # Application definition
@@ -153,12 +151,9 @@ SESSION_COOKIE_SECURE: True
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(" ")
 
-DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL',"DUMMAY")
+DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL', "DUMMAY")
 
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', "DUMMY")
-
-#ADMINS = [tuple(mail.split(",")) for mail in os.environ['SERVER_EMAIL'].split(";")]
-
 
 if os.environ.get('DATABASE', "sqlite3") == "postgres":
     DATABASES = {
@@ -172,7 +167,6 @@ if os.environ.get('DATABASE', "sqlite3") == "postgres":
         }
     }
 
-import logging.config
 LOGGING_CONFIG = None
 #
 # # Get loglevel from env
@@ -195,7 +189,7 @@ logging.config.dictConfig({
     'loggers': {
         '': {
             'level': LOGLEVEL,
-            'handlers': ['console',],
+            'handlers': ['console', ],
         },
     },
 })

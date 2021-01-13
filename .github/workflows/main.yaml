@@ -53,8 +53,6 @@ jobs:
         run: python --version
       - name: Install requirements # install application requirements
         run: pip install --no-use-pep517 -r requirements.txt
-      #- name: Check Syntax # check code formatting
-      #  run: pycodestyle --statistics .
       - name: Set the value
         id: step_one
         run: |
@@ -72,3 +70,7 @@ jobs:
       - name: Run Test # running tests
         run: python manage.py test
         working-directory: ./niptviewer
+      - name: Check Syntax # check code formatting
+        run: pycodestyle --max-line-length=130 --statistics .
+
+
