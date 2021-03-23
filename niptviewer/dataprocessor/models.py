@@ -29,6 +29,9 @@ class Flowcell(models.Model):
 class SampleType(models.Model):
     name = models.CharField(max_length=9, help_text="Sample type.", blank=False, unique=True)
 
+    def __str__(self):
+        return self.name
+
     def create_sample_type(name=name):
         return SampleType.objects.create(name=name)
 
@@ -39,6 +42,9 @@ class SampleType(models.Model):
 class Index(models.Model):
     index_id = models.CharField(max_length=6, help_text="Index id.", blank=False, unique=True)
     index = models.CharField(max_length=6, help_text="Index sequence.", blank=False, unique=True)
+
+    def __str__(self):
+        return self.index
 
     def create_index(index_id, index):
         return Index.objects.create(index_id=index_id, index=index)
@@ -66,7 +72,7 @@ class BatchRun(models.Model):
     software_version = models.CharField(help_text="Illumina analysis software version", max_length=10, blank=False)
 
     def __str__(self):
-        return self.software_version
+        return self.software_version + ";" + str(self.flowcell_id)
 
     def create_batch_run(flowcell_entry, median_13, median_18, median_21,
                          median_x, median_y, stdev_13, stdev_18, stdev_21,
@@ -202,7 +208,7 @@ class SamplesRunData(models.Model):
                                                  "sample.")
 
     def __str__(self):
-        return str(self.index)
+        return self.sample_id + ";  " + str(self.sample_type) + "; " + str(self.index)
 
     def create_sample_data(flowcell_id_entry, sample_type_entry, sample_id, sample_project, index, well, description, library_nm,
                            qc_flag, qc_failure, qc_warning,
