@@ -8,14 +8,15 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from reportvisualiser.utils.plots import data_structure_generator
 import datetime
-
+import math
 
 @login_required
-def index(request):
+def index(request,active_page=1):
     """
             Information page showing flowcells that have been run and plot
             showing fetal fraction over time and NCV over time for controls
     """
+    num_visible_flowcells = 10
     sample_run_data = SamplesRunData.objects.select_related().all().order_by('-flowcell_id__run_date')
     flowcell_run_data = BatchRun.objects.select_related().all().order_by('-flowcell_id__run_date')
 
@@ -23,7 +24,14 @@ def index(request):
     control_flowcell_data = SamplesRunData.objects.select_related(). \
         filter(sample_type=control_type).order_by('-flowcell_id__run_date')
     num_flowcells = Flowcell.objects.count()
-    context = {'flowcell_data': flowcell_run_data, "num_flowcells": num_flowcells}
+    active_page = int(active_page)
+    context = {
+               'flowcell_data': flowcell_run_data[(active_page-1)*num_visible_flowcells:active_page*num_visible_flowcells],
+               "num_flowcells": num_flowcells,
+               "num_pages": math.ceil(num_flowcells/num_visible_flowcells),
+               "pages": range(1,math.ceil(num_flowcells/num_visible_flowcells)+1),
+               "active_page": active_page
+    }
 
     if sample_run_data.exists():
         context['data_coverage'] = [plots.chromosome_coverage(data=sample_run_data)]
