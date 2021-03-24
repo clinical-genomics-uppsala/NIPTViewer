@@ -12,7 +12,7 @@ class Flowcell(models.Model):
     run_date = models.DateTimeField(blank=False)
 
     def __str__(self):
-        return "{} {}".format(self.flowcell_barcode, self.created.strftime("%Y-%m-%d %H:%M"))
+        return "{} {}".format(self.flowcell_barcode, self.run_date.strftime("%Y-%m-%d %H:%M"))
 
     def create_flowcell(user, flowcell_barcode, run_date=None):
         return Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
@@ -318,8 +318,15 @@ class SamplesRunData(models.Model):
         else:
             return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
 
-    def get_samples_not_included(flowcell, sample=None):
-        if sample is None:
-            return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+    def get_samples_not_included(flowcell, start_time=None, stop_time=None, sample=None):
+        if start_time is not None or stop_time is not None:
+            flowcells = Flowcell.objects.filter(run_date__lte=stop_time, run_date__gte=start_time)
+            if sample is None:
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell)
+            else:
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell, sample_id=sample)
         else:
-            return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample)
+            if sample is None:
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+            else:
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample)
