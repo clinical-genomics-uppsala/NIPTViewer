@@ -10,6 +10,7 @@ from reportvisualiser.utils import plots
 import datetime
 from dateutil.relativedelta import *
 
+
 @login_required
 def logout(request):
     auth.logout(request)
@@ -45,7 +46,8 @@ def index(request, time_selection="12"):
         sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
             '-flowcell_id__run_date')
         control_flowcell_data = SamplesRunData.objects.select_related(). \
-            filter(flowcell_id__in=flowcells, sample_type=SampleType.objects.get(name="Control")).order_by('-flowcell_id__run_date')
+            filter(flowcell_id__in=flowcells, sample_type=SampleType.objects.get(name="Control")). \
+            order_by('-flowcell_id__run_date')
         num_flowcells = len(flowcells)
         num_samples = len(sample_run_data)
         total_num_flowcells = Flowcell.objects.count()
@@ -59,7 +61,6 @@ def index(request, time_selection="12"):
         num_flowcells = total_num_flowcells = len(flowcells)
         num_samples = total_num_samples = len(sample_run_data)
 
-
     context = {
         'total_num_flowcells': total_num_flowcells,
         'total_num_samples': total_num_samples,
@@ -72,8 +73,6 @@ def index(request, time_selection="12"):
     if num_flowcells > 0:
         context['latest_flowcells'] = flowcells[:5]
         context['latest_samples'] = sample_run_data[:5]
-
-        #sample_run_data = SamplesRunData.objects.all()
 
         if sample_run_data.exists():
             context['data_ff_time'] = plots.fetal_fraction(data=sample_run_data)

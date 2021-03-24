@@ -12,6 +12,7 @@ from dateutil.relativedelta import *
 import math
 
 
+
 @login_required
 def index(request, active_page=1, time_selection="12"):
     """
@@ -31,7 +32,8 @@ def index(request, active_page=1, time_selection="12"):
     else:
         previous_time = now + relativedelta(months=-time_selection)
         flowcells = Flowcell.objects.filter(run_date__lte=now, run_date__gte=previous_time)
-        sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date')
+        sample_run_data = SamplesRunData.objects.select_related(). \
+            filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date')
         flowcell_run_data = BatchRun.objects.select_related().filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date')
 
     control_type = SampleType.objects.get(name="Control")
