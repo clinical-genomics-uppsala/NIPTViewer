@@ -7,6 +7,9 @@ from django.template import loader
 from django.urls import reverse
 from reportvisualiser.utils import plots
 
+import datetime
+from dateutil.relativedelta import *
+
 
 @login_required
 def logout(request):
@@ -33,16 +36,43 @@ def login(request):
 
 
 @login_required
-def index(request):
-    num_flowcells = Flowcell.objects.count()
-    num_samples = SamplesRunData.objects.count()
-    context = {'num_flowcells': num_flowcells, 'num_samples': num_samples, 'latest_flowcells': [], 'latest_samples': []}
-    if num_flowcells > 0:
-        context['latest_flowcells'] = Flowcell.objects.all().order_by('-run_date')[:5]
-        context['latest_samples'] = SamplesRunData.objects.all().order_by('-flowcell_id__run_date')[:5]
-        control_flowcell_data = SamplesRunData.objects.select_related().\
+def index(request, time_selection="12"):
+    now = datetime.datetime.now()
+    time_selection = int(time_selection)
+    previous_time = now + relativedelta(months=-time_selection)
+
+    if time_selection < 9999:
+        flowcells = Flowcell.objects.filter(run_date__lte=now, run_date__gte=previous_time).order_by('-run_date')
+        sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
+            '-flowcell_id__run_date')
+        control_flowcell_data = SamplesRunData.objects.select_related(). \
+            filter(flowcell_id__in=flowcells, sample_type=SampleType.objects.get(name="Control")). \
+            order_by('-flowcell_id__run_date')
+        num_flowcells = len(flowcells)
+        num_samples = len(sample_run_data)
+        total_num_flowcells = Flowcell.objects.count()
+        total_num_samples = SamplesRunData.objects.count()
+    else:
+        flowcells = Flowcell.objects.all().order_by('-run_date')
+        sample_run_data = SamplesRunData.objects.all().order_by(
+            '-flowcell_id__run_date')
+        control_flowcell_data = SamplesRunData.objects.select_related(). \
             filter(sample_type=SampleType.objects.get(name="Control")).order_by('-flowcell_id__run_date')
-        sample_run_data = SamplesRunData.objects.all()
+        num_flowcells = total_num_flowcells = len(flowcells)
+        num_samples = total_num_samples = len(sample_run_data)
+
+    context = {
+        'total_num_flowcells': total_num_flowcells,
+        'total_num_samples': total_num_samples,
+        'num_flowcells': num_flowcells,
+        'num_samples': num_samples,
+        'latest_flowcells': [],
+        'latest_samples': [],
+        'time_selection': time_selection
+    }
+    if num_flowcells > 0:
+        context['latest_flowcells'] = flowcells[:5]
+        context['latest_samples'] = sample_run_data[:5]
 
         if sample_run_data.exists():
             context['data_ff_time'] = plots.fetal_fraction(data=sample_run_data)
