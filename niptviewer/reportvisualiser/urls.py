@@ -6,6 +6,7 @@ app_name = "viewer"
 
 urlpatterns = [
     re_path(r'^$', views.index, name='index'),
+    re_path(r'^(?P<active_page>[0-9]+)$', views.index, name='index'),
     re_path(r'^(?P<barcode>[A-Z0-9]{9})$', views.report, name='report'),
     re_path(r'^(?P<barcode>[A-Z0-9]{9})/(?P<sample>[A-Za-z0-9-]+)$', views.sample_report, name='sample_report'),
     re_path(r'^pdf/(?P<barcode>[A-Z0-9]{9})$',

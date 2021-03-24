@@ -92,6 +92,16 @@ NIPTViewer: Flowcells run
     {% endif %}
     </tbody>
   </table>
+  {% if num_pages >= 2 %}
+  <ul class="pagination center-align">
+
+      <li {% if 1 == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %}><a href="{% url 'viewer:index' active_page=active_page|add:-1 %}"><i class="material-icons">chevron_left</i></a></li>
+    {% for page in pages %}
+        <li {% if page == active_page %} class="active" {% endif %}><a href="{% url 'viewer:index' active_page=page %}">{{ page }}</a></li>
+    {% endfor %}
+    <li {% if num_pages == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %} ><a href="{% url 'viewer:index' active_page=active_page|add:1 %}"><i class="material-icons">chevron_right</i></a></li>
+  </ul>
+ {% endif %}
 </div>
 </div>
 {% endblock %}
