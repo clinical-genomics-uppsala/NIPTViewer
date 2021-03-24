@@ -12,7 +12,6 @@ from dateutil.relativedelta import *
 import math
 
 
-
 @login_required
 def index(request, active_page=1, time_selection="12"):
     """
@@ -46,7 +45,7 @@ def index(request, active_page=1, time_selection="12"):
                'flowcell_data': flowcell_run_data[(active_page-1)*num_visible_flowcells:active_page*num_visible_flowcells],
                "num_flowcells": num_flowcells,
                "num_pages": math.ceil(num_flowcells/num_visible_flowcells),
-               "pages": range(1,math.ceil(num_flowcells/num_visible_flowcells)+1),
+               "pages": range(1, math.ceil(num_flowcells/num_visible_flowcells)+1),
                "time_selection": time_selection,
                "active_page": active_page
     }
