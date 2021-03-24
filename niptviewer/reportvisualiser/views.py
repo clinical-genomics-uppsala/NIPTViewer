@@ -40,7 +40,7 @@ def index(request, active_page=1, time_selection="12"):
     control_flowcell_data = SamplesRunData.objects.filter(flowcell_id__in=flowcells).select_related(). \
         filter(sample_type=control_type).order_by('-flowcell_id__run_date')
 
-    num_flowcells = Flowcell.objects.count()
+    num_flowcells = len(flowcells)
     active_page = int(active_page)
     context = {
                'flowcell_data': flowcell_run_data[(active_page-1)*num_visible_flowcells:active_page*num_visible_flowcells],

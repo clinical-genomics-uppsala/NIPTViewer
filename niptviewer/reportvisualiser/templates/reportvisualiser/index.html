@@ -20,13 +20,13 @@ NIPTViewer: Flowcells run
 <div class="section">
   <div class="row white">
       <div class="col s12 m12 white center">
-        <a class="waves-effect {% if time_selection == 1 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=1 %}">1 month</>
-        <a class="waves-effect {% if time_selection == 3 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=2 %}">3 month</>
-        <a class="waves-effect {% if time_selection == 6 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=6 %}">6 month</>
-        <a class="waves-effect {% if time_selection == 12 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=12 %}">1 year</>
-        <a class="waves-effect {% if time_selection == 24 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=24 %}">2 year</>
-        <a class="waves-effect {% if time_selection == 70 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=60 %}">5 year</>
-        <a class="waves-effect {% if time_selection == 9999 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' time_selection=9999 %}">All</a>
+        <a class="waves-effect {% if time_selection == 1 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=1 %}">1 month</a>
+        <a class="waves-effect {% if time_selection == 3 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=2 %}">3 month</a>
+        <a class="waves-effect {% if time_selection == 6 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=6 %}">6 month</a>
+        <a class="waves-effect {% if time_selection == 12 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=12 %}">1 year</a>
+        <a class="waves-effect {% if time_selection == 24 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=24 %}">2 year</a>
+        <a class="waves-effect {% if time_selection == 70 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=60 %}">5 year</a>
+        <a class="waves-effect {% if time_selection == 9999 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=9999 %}">All</a>
       </div>
     <div class="col s12 m12 white">
       <div class=center-align>
@@ -104,11 +104,11 @@ NIPTViewer: Flowcells run
   {% if num_pages >= 2 %}
   <ul class="pagination center-align">
 
-      <li {% if 1 == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %}><a href="{% url 'viewer:index' active_page=active_page|add:-1 %}"><i class="material-icons">chevron_left</i></a></li>
+      <li {% if 1 == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %}><a href="{% url 'viewer:index' active_page=active_page|add:-1 time_selection=time_selection %}"><i class="material-icons">chevron_left</i></a></li>
     {% for page in pages %}
-        <li {% if page == active_page %} class="active" {% endif %}><a href="{% url 'viewer:index' active_page=page %}">{{ page }}</a></li>
+        <li {% if page == active_page %} class="active" {% endif %}><a href="{% url 'viewer:index' active_page=page time_selection=time_selection %}">{{ page }}</a></li>
     {% endfor %}
-    <li {% if num_pages == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %} ><a href="{% url 'viewer:index' active_page=active_page|add:1 %}"><i class="material-icons">chevron_right</i></a></li>
+    <li {% if num_pages == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %} ><a href="{% url 'viewer:index' active_page=active_page|add:1 time_selection=time_selection %}"><i class="material-icons">chevron_right</i></a></li>
   </ul>
  {% endif %}
 </div>
