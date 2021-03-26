@@ -13,7 +13,7 @@ class Flowcell(models.Model):
     run_date = models.DateTimeField(blank=False)
 
     def __str__(self):
-        return "{} {}".format(self.flowcell_barcode, self.run_date)#.strftime("%Y-%m-%d %H:%M"))
+        return "{} {}".format(self.flowcell_barcode, self.run_date).strftime("%Y-%m-%d %H:%M")
 
     def create_flowcell(user, flowcell_barcode, run_date=None, upload_date=None):
         if upload_date is None:
@@ -22,8 +22,6 @@ class Flowcell(models.Model):
             flowcell = Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
             flowcell.created = datetime.datetime.strptime(upload_date, '%Y-%m-%d %H:%M:%S.%f+00:00')
             return flowcell
-
-
 
     def get_flowcell(flowcell_barcode):
         return Flowcell.objects.get(flowcell_barcode=flowcell_barcode)

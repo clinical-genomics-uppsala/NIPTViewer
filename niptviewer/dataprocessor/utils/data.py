@@ -42,9 +42,10 @@ nnc_per_batch_scoring_metrics = ['Median_13', 'Median_18', 'Median_21',
                                  'Stdev_X', 'Stdev_Y']
 
 
-csv_header_flowcell=[
+csv_header_flowcell = [
     "UserID", "UserName", "SoftwareVersion",
-    "SampleID", "SampleType", "Flowcell", "Created", "RunDate", "Description", "SampleProject", "IndexID", "Index", "Well",
+    "SampleID", "SampleType", "Flowcell", "Created", "RunDate", "Description",
+    "SampleProject", "IndexID", "Index", "Well",
     "Library_nM", "QCFlag", "QCFailure", "QCWarning",
     "NCV_13", "NCV_18", "NCV_21", "NCV_X", "NCV_Y",
     "Ratio_13", "Ratio_18", "Ratio_21", "Ratio_X", "Ratio_Y",
@@ -63,7 +64,6 @@ csv_header_flowcell=[
     "Median_13", "Median_18", "Median_21", "Median_X", "Median_Y",
     "Stdev_13", "Stdev_18", "Stdev_21", "Stdev_X", "Stdev_Y", "FF_Formatted"
 ]
-
 
 
 def decimal_from_value(value):
@@ -345,6 +345,7 @@ def export_flowcell_data():
                 str(sample.ff_formatted)
             ]))
 
+
 def import_flowcell_export(file_handle):
     def compare_flowcell(flowcell, columns, header_map, user_information):
         if flowcell.uploading_user.username == user_information[columns[header_map["UserName"]]].username and \
@@ -356,10 +357,13 @@ def import_flowcell_export(file_handle):
             raise Exception("flowcell information inconsistent for flowcell: " + columns[header_map['Flowcell']] +
                             "\n" +
                             str([(flowcell.uploading_user.username, user_information[columns[header_map["UserName"]]]),
-                                 (flowcell.flowcell_barcode, columns[header_map["Flowcell"]]),
-                                 (flowcell.run_date, columns[header_map["RunDate"]]),
-                                 (flowcell.created, datetime.datetime.strptime(columns[header_map["Created"]], '%Y-%m-%d %H:%M:%S.%f+00:00'))]
-                            ))
+                                (flowcell.flowcell_barcode, columns[header_map["Flowcell"]]),
+                                (flowcell.run_date, columns[header_map["RunDate"]]),
+                                (flowcell.created, datetime.datetime.strptime(columns[header_map["Created"]],
+                                                                              '%Y-%m-%d %H:%M:%S.%f+00:00'))
+                                 ]
+                                )
+                            )
 
     def compare_batch(batch, columns, header_map):
         if batch.median_13 == columns[header_map["Median_13"]] and \
@@ -389,6 +393,7 @@ def import_flowcell_export(file_handle):
                                  (batch.stdev_Y, columns[header_map["Stdev_Y"]]),
                                  (batch.software_version, columns[header_map["SoftwareVersion"]])])
                             )
+
     def create_sample(columns):
         type = SampleType.get_sample_type(columns[header_map["SampleType"]])
         index = Index.get_index(columns[header_map["IndexID"]], columns[header_map["Index"]])
@@ -491,22 +496,22 @@ def import_flowcell_export(file_handle):
         if line.startswith("#id"):
             continue
         if line.startswith("##Flowcell data export"):
-            break;
+            break
         columns = line.rstrip().split(",")
         user = User.objects.filter(id=int(columns[0]))
         if len(user) > 0:
             user = user[0]
             if user.username != columns[1]:
                 raise Exception("Inconsistent user information:, found user " +
-                            user.username + " with id " + columns[0] +
-                            ", trying to import user with username " + columns[1] + " with id " + columns[0])
+                                user.username + " with id " + columns[0] +
+                                ", trying to import user with username " + columns[1] + " with id " + columns[0])
         else:
             user = User.objects.create(id=int(columns[0]), username=columns[1], first_name=columns[2], last_name=columns[3])
         user_information[user.username] = user
 
     flowcell = None
 
-    header_map = {key: value for key, value in zip(csv_header_flowcell, range(0,len(csv_header_flowcell)))}
+    header_map = {key: value for key, value in zip(csv_header_flowcell, range(0, len(csv_header_flowcell)))}
 
     for line in file_handle:
         line = line.rstrip("\n")
@@ -542,8 +547,3 @@ def import_flowcell_export(file_handle):
             compare_flowcell(flowcell, columns, header_map, user_information)
             compare_batch(batch, columns, header_map)
             create_sample(columns)
-
-
-
-
-

@@ -34,7 +34,8 @@ class FlowcellAdmin(admin.ModelAdmin):
         from .utils.data import export_flowcell_data
         response = HttpResponse(content_type='text/csv')
         from datetime import datetime
-        response['Content-Disposition'] = 'attachment; filename="niptviewer_export.' + datetime.today().strftime('%Y-%m-%d') + '.csv"'
+        response['Content-Disposition'] = 'attachment; filename="niptviewer_export.' + \
+                                          datetime.today().strftime('%Y-%m-%d') + '.csv"'
         writer = csv.writer(response)
         for data in export_flowcell_data():
             writer.writerow([data])
@@ -42,10 +43,11 @@ class FlowcellAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = super().get_urls()
-        my_urls = [path("importdata/", self.import_flowcell_data), path("exportdata/", self.export_flowcell_data)]
+        my_urls = [
+            path("importdata/", self.import_flowcell_data),
+            path("exportdata/", self.export_flowcell_data)
+        ]
         return my_urls + urls
 
+
 admin.site.register(SamplesRunData)
-
-
-

@@ -2461,5 +2461,3 @@ class UtilTestTestsCase(TestCase):
         self.assertEqual(sample.Chrx, 860100)
         self.assertEqual(sample.chry, 64)
         self.assertTrue(abs(sample.ff_formatted - Decimal("0.01")) < 0.00000001)
-
-
