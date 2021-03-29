@@ -175,10 +175,10 @@ def upload(request):
     return HttpResponse(template.render(context, request))
 
 
-
+@login_required
 def search_data(request):
     if request.is_ajax():
-        term = request.GET.get("term",None)
+        term = request.GET.get("term", None)
         if term is not None:
             import json
             data = {}
@@ -197,7 +197,8 @@ def search_data(request):
                 samples = SamplesRunData.objects.filter(flowcell_id=flowcell_data, sample_id=sample)
                 if len(samples) > 0:
                     return redirect('viewer:sample_report', barcode=flowcell_data.flowcell_barcode, sample=samples[0].sample_id)
-                samples = SamplesRunData.objects.filter(flowcell_id=flowcell_data.flowcell_barcode, sample_id__contains=sample[0].sample_id)
+                samples = SamplesRunData.objects.filter(flowcell_id=flowcell_data.flowcell_barcode,
+                                                        sample_id__contains=sample[0].sample_id)
                 if len(samples) > 0:
                     return redirect('viewer:sample_report', barcode=flowcell_data.flowcell_barcode, sample=samples[0].sample_id)
             else:
