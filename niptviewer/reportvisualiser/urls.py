@@ -1,7 +1,9 @@
 from . import views
-from django.urls import re_path
+from django.urls import re_path, path
 from reportvisualiser.utils.pdf.sample_pdf import SampleReportPDF
 from reportvisualiser.utils.pdf.qc_pdf import QCReportPDF
+
+
 app_name = "viewer"
 
 urlpatterns = [
@@ -17,4 +19,6 @@ urlpatterns = [
             QCReportPDF.as_view(template_name='reportvisualiser/qc_report.html'),
             name='qc_report_pdf'),
     re_path(r'^upload$', views.upload, name='upload'),
+    path('search/', views.search_data, name='search'),
+
 ]
