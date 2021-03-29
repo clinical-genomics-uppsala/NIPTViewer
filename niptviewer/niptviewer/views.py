@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.template import loader
 from django.urls import reverse
 from reportvisualiser.utils import plots
+from reportvisualiser.forms import SearchResult
 
 import datetime
 from dateutil.relativedelta import *
@@ -68,7 +69,8 @@ def index(request, time_selection="12"):
         'num_samples': num_samples,
         'latest_flowcells': [],
         'latest_samples': [],
-        'time_selection': time_selection
+        'time_selection': time_selection,
+        "search_form": SearchResult()
     }
     if num_flowcells > 0:
         context['latest_flowcells'] = flowcells[:5]

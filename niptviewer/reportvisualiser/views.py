@@ -1,4 +1,4 @@
-from .forms import UploadFileForm
+from .forms import UploadFileForm, SearchResult
 from .utils import plots, colors, data
 from dataprocessor.models import Flowcell, SamplesRunData, BatchRun, SampleType
 from dataprocessor.utils.data import import_data_into_database
@@ -47,7 +47,8 @@ def index(request, active_page=1, time_selection="12"):
                "num_pages": math.ceil(num_flowcells/num_visible_flowcells),
                "pages": range(1, math.ceil(num_flowcells/num_visible_flowcells)+1),
                "time_selection": time_selection,
-               "active_page": active_page
+               "active_page": active_page,
+               "search_form": SearchResult()
     }
 
     if sample_run_data.exists():
@@ -89,7 +90,8 @@ def sample_report(request, barcode, sample):
                'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
                'upload_date': flowcell.created.strftime("%Y-%m-%d"),
                'page_type': "html", 'color_dict': color_dict,
-               'data_coverage_reads': plots.chromosome_percentage_reads(sample_run_data)}
+               'data_coverage_reads': plots.chromosome_percentage_reads(sample_run_data),
+               "search_form": SearchResult()}
 
     if sample_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=sample_run_data) + plots.chromosome_coverage(
@@ -133,7 +135,8 @@ def report(request, barcode, time_selection="12"):
         'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
         'run_date': flowcell.run_date.strftime("%Y-%m-%d"),
         'upload_date': flowcell.created.strftime("%Y-%m-%d"),
-        'color_dict': color_dict}
+        'color_dict': color_dict,
+        "search_form": SearchResult()}
     context.update(data_structure_generator(sample_info))
 
     if samples_run_data.exists():
@@ -170,3 +173,41 @@ def upload(request):
     else:
         context['form_data'] = UploadFileForm()
     return HttpResponse(template.render(context, request))
+
+
+
+def search_data(request):
+    if request.is_ajax():
+        term = request.GET.get("term",None)
+        if term is not None:
+            import json
+            data = {}
+            for flowcell in Flowcell.objects.filter(flowcell_barcode__contains=term):
+                data[flowcell.flowcell_barcode] = None
+            for sample in SamplesRunData.objects.filter(sample_id__contains=term):
+                data[sample.flowcell_id.flowcell_barcode + " ; " + sample.sample_id] = None
+            context = json.dumps(list(data))
+    if request.method == 'POST':
+        form = SearchResult(request.POST, request.FILES)
+        if form.is_valid():
+            search_string = form.cleaned_data['search_data']
+            if ";" in search_string:
+                flowcell, sample = search_string.split(" ; ")
+                flowcell_data = Flowcell.objects.get(flowcell_barcode=flowcell)
+                samples = SamplesRunData.objects.filter(flowcell_id=flowcell_data, sample_id=sample)
+                if len(samples) > 0:
+                    return redirect('viewer:sample_report', barcode=flowcell_data.flowcell_barcode, sample=samples[0].sample_id)
+                samples = SamplesRunData.objects.filter(flowcell_id=flowcell_data.flowcell_barcode, sample_id__contains=sample[0].sample_id)
+                if len(samples) > 0:
+                    return redirect('viewer:sample_report', barcode=flowcell_data.flowcell_barcode, sample=samples[0].sample_id)
+            else:
+                flowcells = Flowcell.objects.filter(flowcell_barcode=search_string)
+                if len(flowcells) > 0:
+                    return redirect('viewer:report', barcode=flowcells[0].flowcell_barcode)
+
+                flowcells = Flowcell.objects.filter(flowcell_barcode__contains=search_string)
+                if len(flowcells) > 0:
+                    return redirect('viewer:report', barcode=flowcells[0].flowcell_barcode)
+        html = "<html><body> Could not handle search result</body></html>"
+        return HttpResponse(html)
+    return HttpResponse(context, 'application/json')
