@@ -43,7 +43,8 @@ class QCReportPDF(PDFTemplateView):
             filter(sample_type=control_type, flowcell_id__run_date__gte=previous_time, flowcell_id__run_date__lte=next_time). \
             exclude(flowcell_id=flowcell).order_by('-flowcell_id__run_date')
         control_flowcell_data = SamplesRunData.objects.select_related(). \
-            filter(sample_type=control_type, flowcell_id=flowcell, flowcell_id__run_date__gte=previous_time, flowcell_id__run_date__lte=next_time)
+            filter(sample_type=control_type, flowcell_id=flowcell,
+                   flowcell_id__run_date__gte=previous_time, flowcell_id__run_date__lte=next_time)
         if control_flowcell_data.exists():
             context['ncd'] = plots.ncd_data(control_flowcell_data, context['barcode'], size=1.0)
             if control_other_flowcell_data.exists():
