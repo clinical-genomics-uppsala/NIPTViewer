@@ -41,8 +41,9 @@ nnc_per_batch_scoring_metrics = ['Median_13', 'Median_18', 'Median_21',
                                  'Stdev_13', 'Stdev_18', 'Stdev_21',
                                  'Stdev_X', 'Stdev_Y']
 
+current_version = "v1"
 
-csv_header_flowcell = [
+csv_header_flowcell = {"v1": [
     "UserID", "UserName", "SoftwareVersion",
     "SampleID", "SampleType", "Flowcell", "Created", "RunDate", "Description",
     "SampleProject", "IndexID", "Index", "Well",
@@ -62,8 +63,7 @@ csv_header_flowcell = [
     "Chr11", "Chr12", "Chr13", "Chr14", "Chr15", "Chr16", "Chr17", "Chr18", "Chr19", "Chr20",
     "Chr21", "Chr22", "ChrX", "ChrY",
     "Median_13", "Median_18", "Median_21", "Median_X", "Median_Y",
-    "Stdev_13", "Stdev_18", "Stdev_21", "Stdev_X", "Stdev_Y", "FF_Formatted"
-]
+    "Stdev_13", "Stdev_18", "Stdev_21", "Stdev_X", "Stdev_Y", "FF_Formatted"]}
 
 
 def decimal_from_value(value):
@@ -230,8 +230,8 @@ def export_flowcell_data():
             user.email
         ]))
     flowcells = Flowcell.objects.all().order_by('-run_date')
-    yield("##Flowcell data export")
-    yield("#" + ",".join(csv_header_flowcell))
+    yield("##Flowcell data export: " + current_version)
+    yield("#" + ",".join(csv_header_flowcell[current_version]))
     for flowcell in flowcells:
         batch = BatchRun.objects.filter(flowcell_id=flowcell.pk)
         if len(batch) != 1:
@@ -490,12 +490,17 @@ def import_flowcell_export(file_handle):
     if not first_line.startswith("##User export"):
         raise Exception("Missing user information at start of file")
     user_information = {}
+    version = None
     for line in file_handle:
         line = line.rstrip("\n")
         line = line.lstrip("\"").rstrip('"')
         if line.startswith("#id"):
             continue
         if line.startswith("##Flowcell data export"):
+            try:
+                version = re.search('Flowcell data export: (v[0-9]+)', line).group(1)
+            except AttributeError:
+                raise Exception("Could not extract version from line: " + line)
             break
         columns = line.rstrip().split(",")
         user = User.objects.filter(id=int(columns[0]))
@@ -511,7 +516,13 @@ def import_flowcell_export(file_handle):
 
     flowcell = None
 
-    header_map = {key: value for key, value in zip(csv_header_flowcell, range(0, len(csv_header_flowcell)))}
+    header_line = next(file_handle)
+    if not header_line.rstrip() == "#" + ",".join(csv_header_flowcell[version]):
+        raise Exception("Flowcell columns mismatch, found\n" +
+                        header_line +
+                        "\nExpected: \n" +
+                        "#" + ",".join(csv_header_flowcell[version]))
+    header_map = {key: value for key, value in zip(csv_header_flowcell[version], range(0, len(csv_header_flowcell[version])))}
 
     for line in file_handle:
         line = line.rstrip("\n")
