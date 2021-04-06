@@ -12,7 +12,7 @@ services:
       - static_volume:/home/app/web/staticfiles
       - ./dockerfiles/nginx.conf:/etc/nginx/conf.d/nginx.conf
     depends_on:
-      - web
+      - nipt-web-service
     networks:
       - private
   nipt-web-service:
@@ -29,7 +29,7 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
-      - db
+      - nipt-db-service
     networks:
       - private
   nipt-db-service:
