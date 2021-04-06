@@ -4,7 +4,9 @@ from reportvisualiser.utils.plots import extract_data, data_structure_generator
 from reportvisualiser.utils import colors, data
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+
 import datetime
+from dateutil.relativedelta import *
 
 
 @method_decorator(login_required, name='dispatch')
@@ -25,10 +27,14 @@ class SampleReportPDF(PDFTemplateView):
             datetime.date.today().strftime("%Y-%m-%d") + ".NIPT.pdf"
 
         flowcell = Flowcell.get_flowcell(flowcell_barcode=context['barcode'])
+
+        previous_time = flowcell.run_date + relativedelta(months=-24)
+        next_time = flowcell.run_date + relativedelta(months=+24)
+
         flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell)
 
         samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
-        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)
+        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell, start_time=previous_time, stop_time=next_time)
 
         sample_info = data.extract_info_samples(flowcell_other, data.sample_info(), size=0.5, label=lambda x: 'other',
                                                 color=colors.hist)
