@@ -4,7 +4,9 @@ from django.utils.decorators import method_decorator
 from reportvisualiser.utils import plots
 from reportvisualiser.utils import colors, data
 from wkhtmltopdf.views import PDFTemplateView
+
 import datetime
+from dateutil.relativedelta import *
 
 
 @method_decorator(login_required, name='dispatch')
@@ -25,8 +27,12 @@ class QCReportPDF(PDFTemplateView):
         self.filename = context['barcode'] + "_" + datetime.date.today().strftime("%Y-%m-%d") + ".QC.NIPT.pdf"
 
         flowcell = Flowcell.get_flowcell(flowcell_barcode=context['barcode'])
+
+        previous_time = flowcell.run_date + relativedelta(months=-12)
+        next_time = flowcell.run_date + relativedelta(months=+12)
+
         samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
-        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)
+        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell, start_time=previous_time, stop_time=next_time)
 
         qc_failure, qc_warning = data.extract_qc_status(samples_run_data)
         context['qc_warning'] = qc_warning
@@ -34,10 +40,10 @@ class QCReportPDF(PDFTemplateView):
 
         control_type = SampleType.objects.get(name="Control")
         control_other_flowcell_data = SamplesRunData.objects.select_related(). \
-            filter(sample_type=control_type). \
+            filter(sample_type=control_type, flowcell_id__run_date__gte=previous_time, flowcell_id__run_date__lte=next_time). \
             exclude(flowcell_id=flowcell).order_by('-flowcell_id__run_date')
         control_flowcell_data = SamplesRunData.objects.select_related(). \
-            filter(sample_type=control_type, flowcell_id=flowcell)
+            filter(sample_type=control_type, flowcell_id=flowcell, flowcell_id__run_date__gte=previous_time, flowcell_id__run_date__lte=next_time)
         if control_flowcell_data.exists():
             context['ncd'] = plots.ncd_data(control_flowcell_data, context['barcode'], size=1.0)
             if control_other_flowcell_data.exists():
