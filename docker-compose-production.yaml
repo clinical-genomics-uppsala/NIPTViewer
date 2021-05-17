@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: ./dockerfiles/nginx.prod.dockerfile
     image: cgu/nginx_https:0.5.8
+    restart: always
     ports:
       - 443:443
       - 80:80
@@ -22,6 +23,7 @@ services:
       dockerfile: ./dockerfiles/production.dockerfile
     image: cgu/niptweb:1.0.0
     volumes:
+      - ./niptviewer/niptviewer/settings.py:/home/app/web/niptviewer/settings.py
       - static_volume:/home/app/web/staticfiles
     expose:
       - 8000
@@ -31,7 +33,9 @@ services:
       - db
     networks:
       - private
-    #dns_search: .
+    dns_search: .
+    command: ["gunicorn", "--bind", ":8000", "--workers", "3", "niptviewer.wsgi:application"]
+    restart: always
 
   nipt-sb-service:
     image: postgres:12.0-alpine

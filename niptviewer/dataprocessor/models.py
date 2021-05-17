@@ -13,7 +13,7 @@ class Flowcell(models.Model):
     run_date = models.DateTimeField(blank=False)
 
     def __str__(self):
-        return "{} {}".format(self.flowcell_barcode, self.run_date).strftime("%Y-%m-%d %H:%M")
+        return self.flowcell_barcode #"{} {}".format(self.flowcell_barcode, self.run_date).strftime("%Y-%m-%d %H:%M")
 
     def create_flowcell(user, flowcell_barcode, run_date=None, upload_date=None):
         if upload_date is None:
