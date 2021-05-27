@@ -45,9 +45,10 @@ class QCReportPDF(PDFTemplateView):
 
         if samples_run_data.exists():
             context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
-            context['data_ff_time'] = plots.fetal_fraction(data=samples_run_data, label=lambda x: context['barcode'])
+            context['data_ff_time'] = plots.fetal_fraction(data=samples_run_data,
+                                                           label=lambda x: context['barcode'])['data_ff_time']
             if flowcell_other.exists():
-                context['data_ff_time'] = plots.fetal_fraction(data=flowcell_other, label=lambda x: "other") + \
+                context['data_ff_time'] = plots.fetal_fraction(data=flowcell_other, label=lambda x: "other")['data_ff_time'] + \
                                           context['data_ff_time']
             context['data_coverage_reads'] = plots.chromosome_percentage_reads(samples_run_data)
 

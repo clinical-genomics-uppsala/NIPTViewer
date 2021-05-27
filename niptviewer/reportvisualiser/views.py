@@ -53,7 +53,7 @@ def index(request, active_page=1, time_selection="12"):
 
     if sample_run_data.exists():
         context['data_coverage'] = [plots.chromosome_coverage(data=sample_run_data)]
-        context['data_ff_time'] = plots.fetal_fraction(data=sample_run_data)
+        context['data_ff_time'] = plots.fetal_fraction(data=sample_run_data)['data_ff_time']
 
     if control_flowcell_data.exists():
         context['ncd'] = plots.ncd_data(control_flowcell_data)
@@ -96,9 +96,9 @@ def sample_report(request, barcode, sample):
     if sample_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=sample_run_data) + plots.chromosome_coverage(
             data=flowcell_controls)
-        context['data_ff_time'] = plots.fetal_fraction(data=previous_samples) + plots.fetal_fraction(
-            data=flowcell_run_data, label=lambda x: barcode) + \
-            plots.fetal_fraction(data=sample_run_data, label=lambda x: sample, size=2.0)
+        context['data_ff_time'] = plots.fetal_fraction(data=previous_samples)['data_ff_time'] + plots.fetal_fraction(
+            data=flowcell_run_data, label=lambda x: barcode)['data_ff_time'] + \
+            plots.fetal_fraction(data=sample_run_data, label=lambda x: sample, size=2.0)['data_ff_time']
 
     qc_failure, qc_warning = data.extract_qc_status(sample_run_data)
     context['qc_warning'] = qc_warning
@@ -126,7 +126,7 @@ def report(request, barcode, time_selection="12"):
 
     color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id,
                                                          size=1.0, shape="circle", colors=colors.samples)
-    
+
     context = {
         'flowcell': flowcell,
         "time_selection": time_selection,
@@ -143,8 +143,8 @@ def report(request, barcode, time_selection="12"):
 
     if samples_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
-        context['data_ff_time'] = plots.fetal_fraction(data=flowcell_other) + \
-            plots.fetal_fraction(data=samples_run_data, label=lambda x: barcode)
+        context['data_ff_time'] = plots.fetal_fraction(data=flowcell_other)['data_ff_time'] + \
+            plots.fetal_fraction(data=samples_run_data, label=lambda x: barcode)['data_ff_time']
 
     qc_failure, qc_warning = data.extract_qc_status(samples_run_data)
     context['qc_warning'] = qc_warning

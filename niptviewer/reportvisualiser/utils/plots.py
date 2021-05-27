@@ -7,12 +7,11 @@ def data_structure_generator(samples_info):
         data = []
         data_points = []
         for sample in samples_info[comparison]['data']:
-            #print(sample)
             info_data = {
-                #'min_x': min(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
-                #'max_x': max(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
-                #'miiiin_y': min(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
-                #'max_y': max(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
+                # 'min_x': min(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
+                # 'max_x': max(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
+                # 'miiiin_y': min(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
+                # 'max_y': max(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
                 'key': sample,
                 'values': samples_info[comparison]['data'][sample]
                 }
@@ -25,7 +24,7 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_min_y'] = min(data_points, key=lambda v: v['y'])['y'] * 1.1
             information['data_' + comparison + '_max_y'] = max(data_points, key=lambda v: v['y'])['y'] * 1.1
         if comparison == "x_vs_y":
-            k,m = generate_regression_line_from_sample_data(data_points)
+            k, m = generate_regression_line_from_sample_data(data_points)
             info_data['slope'] = k
             info_data['intercept'] = m
             info_data['color'] = '#C70039'
@@ -175,4 +174,4 @@ def fetal_fraction(data, label=lambda x: 'hist', size=1):
     samples_info_ff_formatted = extract_data(data=data, info=samples_info_ff_formatted, size=size, label=label,
                                              x_format=lambda x: getattr(x, 'run_date').timestamp() * 1000,
                                              replace_NA_with=-0.01)
-    return data_structure_generator(samples_info_ff_formatted)['data_ff_time']
+    return data_structure_generator(samples_info_ff_formatted)

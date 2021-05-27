@@ -2,6 +2,7 @@ from decimal import Decimal
 
 import numpy
 
+
 def sample_info():
     return {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
             'x_vs_ff': {'data': {}, 'fields': ('ncv_X', 'ff_formatted')},
@@ -86,11 +87,12 @@ def extra_info_per_sample(data, info, label=lambda x: x.sample_id, size=1.0, sha
     return (color_dict, info)
 
 
-def generate_regression_line_from_sample_data(samples, x_value=lambda v: v['x'], y_value=lambda v: v['y'], filter=lambda v: v['y'] > 3.0):
+def generate_regression_line_from_sample_data(samples, x_value=lambda v: v['x'], y_value=lambda v: v['y'],
+                                              filter=lambda v: v['y'] > 3.0):
     x_value_list = list()
     y_value_list = list()
     for sample in samples:
         if filter(sample):
             x_value_list.append(x_value(sample))
             y_value_list.append(y_value(sample))
-    return numpy.polyfit(numpy.array(x_value_list), numpy.array(y_value_list),1)
+    return numpy.polyfit(numpy.array(x_value_list), numpy.array(y_value_list), 1)

@@ -9,7 +9,7 @@ services:
     ports:
       - 80:80
     volumes:
-      #- static_volume:/home/app/web/staticfiles
+      - static_volume:/home/app/web/staticfiles
       - ./dockerfiles/nginx.conf:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - nipt-web-service
@@ -23,9 +23,12 @@ services:
     volumes:
       - ./niptviewer/:/home/app/web:Z
       - ./dockerfiles/entrypoint-dev.sh:/home/app/web/entrypoint.sh
-      #- static_volume:/home/app/web/staticfiles
+      - static_volume:/home/app/web/staticfiles
     expose:
       - 8000
+    environment:
+      - DEBUG=1
+      #- DJANGO_SETTINGS_MODULE=niptviewer.settingsdev
     env_file:
       - ./.env.dev
     depends_on:
