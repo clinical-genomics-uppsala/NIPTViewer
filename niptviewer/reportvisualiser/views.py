@@ -126,9 +126,11 @@ def report(request, barcode, time_selection="12"):
 
     color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id,
                                                          size=1.0, shape="circle", colors=colors.samples)
+    
     context = {
         'flowcell': flowcell,
         "time_selection": time_selection,
+        'active_sample': None,
         'samples': [d.sample_id for d in samples_run_data],
         'flowcell_barcode': barcode,
         'flowcell_run_data': samples_run_data,

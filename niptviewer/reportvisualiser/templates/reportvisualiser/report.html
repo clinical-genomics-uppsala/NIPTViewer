@@ -2,6 +2,8 @@
 {% load tz %}
 {% load flag_sample %}
 {% load static %}
+{% load min_value %}
+{% load max_value %}
 {% load addstr %}
 {% block head_js %}
 
@@ -100,7 +102,7 @@
         </tr>
       </thead>
       <tbody>
-      {% for row in flowcell_data %}
+      {% for row in flowcell_run_data %}
         <tr><td>{{ row.sample_id }}</td><td {{ row.ncv_13|flag_sample }}>{{ row.ncv_13 }}</td><td {{ row.ncv_18|flag_sample }}>{{ row.ncv_18 }}</td><td {{ row.ncv_21|flag_sample }}>{{ row.ncv_21 }}</td><td {{ row.ncv_X|flag_sample }}>{{ row.ncv_X }}</td><td {{ row.ncv_Y|flag_sample }}>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
       {% endfor %}
       </tbody>
@@ -110,8 +112,10 @@
 
 <div class="section">
   <div class="row white ">
+    {% with "[[[-4,-4],["|addstr:data_x_vs_y_min_y|addstr:","|addstr:data_x_vs_y_max_y|addstr:"]],[[4,4],["|addstr:data_x_vs_y_min_y|addstr:","|addstr:data_x_vs_y_max_y|addstr:"]]]"  as vert_limits %}
+        {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_y plot_id="scatter_chart_chrx_vs_chry"|addstr:flowcell_barcode title="NCV X vs NCV Y" x_label='NCV ChrX' y_label='ChrY' x_format='0.02f' y_format='0.02f' x_min=data_x_vs_y_min_x|min_value:"-5" x_max=data_x_vs_y_max_x|max_value:"5" y_min=data_x_vs_y_min_y  y_max=data_x_vs_y_max_y limits=vert_limits highlight_area='[]' width="100%" height="450px" only %}
+    {% endwith %}
 
-    {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_y plot_id="scatter_chart_chrx_vs_chry"|addstr:flowcell_barcode title="NCV X vs NCV Y" x_label='NCV ChrX' y_label='ChrY' x_format='0.02f' y_format='0.02f' x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[-4,-4],[-200,800]], [[4,4],[-200,800]]]' highlight_area='[]' width="100%" height="450px" only %}
 
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
@@ -127,8 +131,11 @@
 
 <div class="section">
   <div class="row white">
-    {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="100%" height="450px" only  %}
-
+    {% with x_min_value=data_x_vs_ff_min_x|min_value:"-5" x_max_value=data_x_vs_ff_max_x|max_value:"5" y_min_value=0 y_max_value=data_x_vs_ff_max_y|max_value:"0.2" %}
+        {% with "[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]"  as vert_limits %}
+            {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value limits=vert_limits highlight_area='[]' width="100%" height="450px" only  %}
+        {% endwith %}
+    {% endwith %}
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
         <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
@@ -143,9 +150,11 @@
 
 <div class="section">
   <div class="row white">
-
-    {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="100%" height="450px" only %}
-
+      {% with x_min_value=data_y_vs_ff_min_x|min_value:"-5" x_max_value=data_y_vs_ff_max_x|max_value:"5" y_min_value=0 y_max_value=data_y_vs_ff_max_y|max_value:"0.2" %}
+          {% with "[[[10,10],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]"  as vert_limits %}
+              {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value limits=vert_limits highlight_area='[]' width="100%" height="450px" only %}
+          {% endwith %}
+      {% endwith %}
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
         <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
@@ -160,9 +169,11 @@
 
 <div class="section">
   <div class="row white">
-
-    {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="100%" height="450px" only %}
-
+      {% with x_min_value=data_chr13_vs_ff_min_x|min_value:"-5" x_max_value=data_chr13_vs_ff_max_x|max_value:"5" y_min_value=0.02 y_max_value=data_chr13_vs_ff_max_y|max_value:"0.2" %}
+          {% with vert_limits="[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]" highlight_area_value='[[[3,4],['|addstr:y_max_value|addstr:","|addstr:y_min_value|addstr:']]]' %}
+              {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value limits=vert_limits  highlight_area=highlight_area_value width="100%" height="450px" only %}
+          {% endwith %}
+      {% endwith %}
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
         <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
@@ -176,8 +187,11 @@
 
 <div class="section">
   <div class="row white">
-    {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="100%" height="450px" only %}
-
+      {% with x_min_value=data_chr18_vs_ff_min_x|min_value:"-5" x_max_value=data_chr18_vs_ff_max_x|max_value:"5" y_min_value=0.02 y_max_value=data_chr18_vs_ff_max_y|max_value:"0.2" %}
+          {% with vert_limits="[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]" highlight_area_value='[[[3,4],['|addstr:y_max_value|addstr:","|addstr:y_min_value|addstr:']]]' %}
+              {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value limits=vert_limits  highlight_area=highlight_area_value width="100%" height="450px" only %}
+          {% endwith %}
+      {% endwith %}
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
         <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>
@@ -192,9 +206,11 @@
 
 <div class="section">
   <div class="row white">
-
-    {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="sca1tter_chart_chr21_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="100%" height="450px" only  %}
-
+      {% with x_min_value=data_chr21_vs_ff_min_x|min_value:"-5" x_max_value=data_chr21_vs_ff_max_x|max_value:"5" y_min_value=0.02 y_max_value=data_chr21_vs_ff_max_y|max_value:"0.2" %}
+          {% with vert_limits="[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]" highlight_area_value='[[[3,4],['|addstr:y_max_value|addstr:","|addstr:y_min_value|addstr:']]]' %}
+              {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="sca1tter_chart_chr21_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value limits=vert_limits  highlight_area=highlight_area_value width="100%" height="450px" only  %}
+          {% endwith %}
+      {% endwith %}
     <ul class="collapsible z-depth-0" style="border:0px">
       <li>
         <div class="collapsible-header center"><i class="material-icons">folder</i>Data</div>

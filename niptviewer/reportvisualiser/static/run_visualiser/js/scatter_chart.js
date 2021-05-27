@@ -1,43 +1,6 @@
 function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, x_ticks = null, y_ticks = null}) {
-  data.forEach(function (data, item) {
-    if(data.min_y) {
-      if (y_min == null) {
-        y_min=data.min_y - Math.abs(data.min_y*0.1);
-      } else {
-        if(data.min_y && y_min > data.min_y) {
-          y_min = data.min_y - Math.abs(data.min_y*0.1);
-        }
-      }
-    }
 
-    if(data.max_y) {
-      if (y_max == null) {
-        y_max=data.max_y + Math.abs(data.max_y)*0.1;
-      } else {
-        if(y_max < data.max_y) {
-          y_max = data.max_y + Math.abs(data.max_y)*0.1;
-        }
-      }
-    }
-    if(data.min_x) {
-      if (x_min == null) {
-        x_min=data.min_x - Math.abs(data.min_x*0.1);
-      } else {
-        if(x_min > data.min_x) {
-          x_min = data.min_x - Math.abs(data.min_x*0.1);
-        }
-      }
-    }
-    if(data.max_x) {
-      if (x_max == null) {
-        x_max=data.max_x + Math.abs(data.max_x)*0.1;
-      } else {
-        if(x_max < data.max_x) {
-          x_max = data.max_x + Math.abs(data.max_x)*0.1;
-        }
-      }
-    }
-  })
+
     var chart = nv.models.scatterChart()
                   .showLegend(true)
                   .showDistX(true)
@@ -45,10 +8,10 @@ function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=nul
                   .useVoronoi(true)
                   .duration(300)
                   .pointRange([10, 50]);
+                  //.color(["red"]);
    if(x_min !== null && x_max !== null){chart.xDomain([x_min,x_max])}
    if(y_min !== null && y_max !== null ){chart.yDomain([y_min,y_max])}
 
-    chart.color(function(d, i) {return d.values[0].color;});
 
   chart.tooltip.contentGenerator(function(key) {
     return "<table><tr><td>Flowcell:</td><td><b>" + key.point.flowcell + "</td></tr><tr><td>Type:</td><td><b>" + key.point.type + "</td></tr><tr><td>Sample:</td><td><b>" + key.point.sample + "</td></tr><tr><td>y:</td><td><b>" + d3.format(y_format)(key.point.y) + "</b></td></tr><tr><td>x:</td><td><b>" + d3.format(x_format)(key.point.x) + "</b></td></tr></table>";

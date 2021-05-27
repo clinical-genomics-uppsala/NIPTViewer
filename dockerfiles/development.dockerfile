@@ -43,10 +43,8 @@ RUN adduser app
 
 # create the appropriate directories
 ENV HOME=/home/app
-ENV APP_HOME=/home/app/web
+ENV APP_HOME=/srv/app
 RUN mkdir $APP_HOME
-RUN mkdir $APP_HOME/staticfiles
-RUN ln -s $APP_HOME/staticfiles /staticfiles
 WORKDIR $APP_HOME
 
 # install dependencies
@@ -55,14 +53,15 @@ COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.prod.txt .
 RUN pip install --no-cache /wheels/*
 
-COPY ./dockerfiles/entrypoint.sh .
 
-COPY ./niptviewer $APP_HOME
+#COPY ./niptviewer $APP_HOME
+
+COPY ./dockerfiles/entrypoint-dev.sh /entrypoint.sh
 
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
 
 # change to the app user
 USER app
-
-ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+ENV DEBUG=1
+ENTRYPOINT ["/entrypoint.sh"]

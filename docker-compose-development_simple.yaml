@@ -1,0 +1,13 @@
+version: '3'
+services:
+  niptviewer_simple:
+    build:
+      context: .
+      dockerfile: dockerfiles/development.dockerfile
+    volumes:
+      - ./niptviewer:/srv/app
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=niptviewer.settingsdev
+    ports:
+      - 8001:8001

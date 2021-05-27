@@ -1,18 +1,34 @@
-from .data import extract_data, decimal_default
+from .data import extract_data, decimal_default, generate_regression_line_from_sample_data
 
 
 def data_structure_generator(samples_info):
     information = {}
     for comparison in samples_info.keys():
         data = []
-        for type in samples_info[comparison]['data']:
-            data.append({
-                'min_x': min(samples_info[comparison]['data'][type], key=lambda v: v['x'])['x'],
-                'max_x': max(samples_info[comparison]['data'][type], key=lambda v: v['x'])['x'],
-                'min_y': min(samples_info[comparison]['data'][type], key=lambda v: v['y'])['y'],
-                'max_y': max(samples_info[comparison]['data'][type], key=lambda v: v['y'])['y'],
-                'key': type, 'values': samples_info[comparison]['data'][type]})
+        data_points = []
+        for sample in samples_info[comparison]['data']:
+            #print(sample)
+            info_data = {
+                #'min_x': min(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
+                #'max_x': max(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
+                #'miiiin_y': min(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
+                #'max_y': max(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
+                'key': sample,
+                'values': samples_info[comparison]['data'][sample]
+                }
+            data_points += samples_info[comparison]['data'][sample]
+            data.append(info_data)
         information['data_' + comparison] = data
+        if len(data_points) > 0:
+            information['data_' + comparison + '_min_x'] = min(data_points, key=lambda v: v['x'])['x'] * 1.1
+            information['data_' + comparison + '_max_x'] = max(data_points, key=lambda v: v['x'])['x'] * 1.1
+            information['data_' + comparison + '_min_y'] = min(data_points, key=lambda v: v['y'])['y'] * 1.1
+            information['data_' + comparison + '_max_y'] = max(data_points, key=lambda v: v['y'])['y'] * 1.1
+        if comparison == "x_vs_y":
+            k,m = generate_regression_line_from_sample_data(data_points)
+            info_data['slope'] = k
+            info_data['intercept'] = m
+            info_data['color'] = '#C70039'
     return information
 
 
