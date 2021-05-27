@@ -780,22 +780,22 @@ class UtilPlotsTestTestsCase(TestCase):
         self.assertTrue(abs(data['data_ff_time_max_y'] - 0.1) > 0.00000001)
         self.assertEqual(data['data_ff_time'][0]['key'], 'hist')
         self.assertEqual(data['data_ff_time'][0]['values'], [{'x': 1596931200000.0, 'y': 0.08, 'shape': 'circle', 'size': 1,
-                                              'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
-                                              'sample': '120AB-1'},
-                                             {'x': 1596931200000.0, 'y': 0.07, 'shape': 'circle', 'size': 1,
-                                              'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
-                                              'sample': '130VY-2'},
-                                             {'x': 1596931200000.0, 'y': 0.1, 'shape': 'circle', 'size': 1,
-                                              'color': '#c62828', 'type': 'Control', 'flowcell': 'ABCDEFGHI',
-                                              'sample': 'XY012345'},
-                                             {'x': 1596931200000.0, 'y': 0.01, 'shape': 'circle', 'size': 1,
-                                              'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
-                                              'sample': 'LK19-4321-C-BM'}])
+                                                              'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
+                                                              'sample': '120AB-1'},
+                                                             {'x': 1596931200000.0, 'y': 0.07, 'shape': 'circle', 'size': 1,
+                                                              'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
+                                                              'sample': '130VY-2'},
+                                                             {'x': 1596931200000.0, 'y': 0.1, 'shape': 'circle', 'size': 1,
+                                                              'color': '#c62828', 'type': 'Control', 'flowcell': 'ABCDEFGHI',
+                                                              'sample': 'XY012345'},
+                                                             {'x': 1596931200000.0, 'y': 0.01, 'shape': 'circle', 'size': 1,
+                                                              'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
+                                                              'sample': 'LK19-4321-C-BM'}])
 
         self.assertEqual(data['data_ff_time'][1]['key'], 'NA')
         self.assertEqual(data['data_ff_time'][1]['values'], [{'x': 1596931200000.0, 'y': -0.01, 'shape': 'circle', 'size': 1,
-                                              'color': '#f44336', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
-                                              'sample': 'MN20-1234-BM'}])
+                                                              'color': '#f44336', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
+                                                              'sample': 'MN20-1234-BM'}])
 
     def test_template_tags(self):
         from .templatetags.addstr import addstr
