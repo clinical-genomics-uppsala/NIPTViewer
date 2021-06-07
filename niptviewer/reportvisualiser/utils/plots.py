@@ -24,10 +24,27 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_min_y'] = min(data_points, key=lambda v: v['y'])['y'] * 1.1
             information['data_' + comparison + '_max_y'] = max(data_points, key=lambda v: v['y'])['y'] * 1.1
         if comparison == "x_vs_y":
-            k, m = generate_regression_line_from_sample_data(data_points)
-            info_data['slope'] = k
-            info_data['intercept'] = m
+            slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(data_points)
+            info_data['slope'] = slope
+            info_data['intercept'] = intercept
             info_data['color'] = '#C70039'
+            information['data_' + comparison + '_slope'] = slope
+            information['data_' + comparison + '_intercept'] = intercept
+            information['data_' + comparison + '_std_err'] = std_err
+            information['data_' + comparison + '_p_value'] = p_value
+            information['data_' + comparison + '_r_value'] = r_value
+            information['data_' + comparison + '_color'] = '#C70039'
+        else:
+            information['data_' + comparison + '_slope'] = None
+            information['data_' + comparison + '_intercept'] = None
+            information['data_' + comparison + '_std_err'] = None
+            information['data_' + comparison + '_p_value'] = None
+            information['data_' + comparison + '_r_value'] = None
+            information['data_' + comparison + '_color'] = None
+
+
+
+
     return information
 
 

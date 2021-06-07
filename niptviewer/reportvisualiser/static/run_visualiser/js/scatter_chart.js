@@ -1,6 +1,4 @@
-function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, x_ticks = null, y_ticks = null}) {
-
-
+function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, slope=null, intercept=null, std_err=null, x_ticks = null, y_ticks = null}) {
     var chart = nv.models.scatterChart()
                   .showLegend(true)
                   .showDistX(true)
@@ -27,18 +25,46 @@ function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=nul
       //.attr('width', 400)
       //.attr('hieght', 400)
         .call(chart);
+ if(std_err) {
+     dev = 4.5
+     var reg_std_h = d3.select(id).select('.nv-scatterWrap');
+     reg_std_h
+     .append('line')
+       .attr({
+           class: "high_error",
+           x1: chart.xAxis.scale()((y_max-intercept-std_err*dev)/slope),
+           y1: chart.yAxis.scale()(y_max),
+           x2: chart.xAxis.scale()((y_min-intercept-std_err*dev)/slope),
+           y2: chart.yAxis.scale()(y_min)
+            })
+            .style("stroke-dasharray","5,10")
+            .style("stroke", "#C70039");
+     var reg_std_l = d3.select(id).select('.nv-scatterWrap');
+     reg_std_l
+     .append('line')
+       .attr({
+          class: "low_error",
+          x1: chart.xAxis.scale()(x_min),
+          y1: chart.yAxis.scale()(x_min*slope+intercept-std_err*dev),
+          x2: chart.xAxis.scale()((y_min-intercept+std_err*dev)/slope),
+          y2: chart.yAxis.scale()(y_min)
+           })
+           .style("stroke-dasharray","5,10")
+           .style("stroke", "#C70039");
+ }
 
   if (limits !== null) {
-    var custLine = d3.select(id).select('.nv-scatterWrap').datum(data).append('g');
+    var custLine = d3.select(id).select('.nv-scatterWrap').datum(data).append('g');;
     custLine.selectAll('line')
       .data(limits)
         .enter()
           .append('line')
             .attr({
-                     x1: function(d){ return chart.xAxis.scale()(d[0][0]) },
-                     y1: function(d){ return chart.yAxis.scale()(d[1][0]) },
+                     class: "limits",
+                     x1: function(d){ return chart.xAxis.scale()(d[0][0])},
+                     y1: function(d){ return chart.yAxis.scale()(d[1][0])},
                      x2: function(d){ return chart.xAxis.scale()(d[0][1])},
-                     y2: function(d){ return chart.yAxis.scale()(d[1][1]) }
+                     y2: function(d){ return chart.yAxis.scale()(d[1][1])}
                  })
                  .style("stroke", "#C70039");
   }
@@ -52,11 +78,45 @@ function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=nul
           .attr("width",  function(d){return chart.xAxis.scale()(d[0][1])-chart.xAxis.scale()(d[0][0])})
           .attr("height", function(d){return chart.yAxis.scale()(d[1][1])-chart.yAxis.scale()(d[1][0]);})
           .attr("fill", "red")
+          .attr("class", "highlight_area")
           .attr("opacity", 0.1);
   }
-
-
-  nv.utils.windowResize(function() {chart.update(); })
+  nv.utils.windowResize(function() {
+     chart.update();
+     custLine.selectAll('.limits').
+        transition().attr({
+                 x1: function(d){ return chart.xAxis.scale()(d[0][0])},
+                 y1: function(d){ return chart.yAxis.scale()(d[1][0])},
+                 x2: function(d){ return chart.xAxis.scale()(d[0][1])},
+                 y2: function(d){ return chart.yAxis.scale()(d[1][1])}
+             });
+     if(std_err) {
+         reg_std_h.
+            selectAll('.high_error').
+                transition().attr({
+               x1: chart.xAxis.scale()((y_max-intercept-std_err*dev)/slope),
+               y1: chart.yAxis.scale()(y_max),
+               x2: chart.xAxis.scale()((y_min-intercept-std_err*dev)/slope),
+               y2: chart.yAxis.scale()(y_min)
+           });
+         reg_std_l.
+            selectAll('.low_error').
+                transition().attr({
+              x1: chart.xAxis.scale()(x_min),
+              y1: chart.yAxis.scale()(x_min*slope+intercept-std_err*dev),
+              x2: chart.xAxis.scale()((y_min-intercept+std_err*dev)/slope),
+              y2: chart.yAxis.scale()(y_min)
+         });
+     }
+     if (highlight_area !== null) {
+         custRect.selectAll('.highlight_area').
+             transition().attr({
+                    x: function(d){ return chart.xAxis.scale()(d[0][0])},
+                    y: function(d){ return chart.yAxis.scale()(d[1][0])},
+                    width: function(d){return chart.xAxis.scale()(d[0][1])-chart.xAxis.scale()(d[0][0])},
+                    height: function(d){return chart.yAxis.scale()(d[1][1])-chart.yAxis.scale()(d[1][0])}})
+     }
+  })
   return chart;
 };
 
@@ -138,6 +198,18 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
                    .style("stroke", "#C70039");
     }
 
-  nv.utils.windowResize(function() {chart.update();})
+  nv.utils.windowResize(function() {
+      chart.update();
+      if (limits !== null) {
+      custLine.selectAll('line').
+        transition().
+            attr({
+                 x1: function(d){ return chart.xAxis.scale()(x_min) },
+                 y1: function(d){ return chart.yAxis.scale()(d[0]) },
+                 x2: function(d){ return chart.xAxis.scale()(x_max)},
+                 y2: function(d){ return chart.yAxis.scale()(d[1]) }
+             });
+         }
+  })
   return chart;
 };
