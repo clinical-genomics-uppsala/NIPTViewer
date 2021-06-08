@@ -6,16 +6,17 @@ def data_structure_generator(samples_info):
     for comparison in samples_info.keys():
         data = []
         data_points = []
+        data_points_current_run = []
         for sample in samples_info[comparison]['data']:
             info_data = {
-                # 'min_x': min(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
-                # 'max_x': max(samples_info[comparison]['data'][sample], key=lambda v: v['x'])['x'],
-                # 'miiiin_y': min(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
-                # 'max_y': max(samples_info[comparison]['data'][sample], key=lambda v: v['y'])['y'],
                 'key': sample,
                 'values': samples_info[comparison]['data'][sample]
                 }
-            data_points += samples_info[comparison]['data'][sample]
+            if sample == "other":
+                data_points += samples_info[comparison]['data'][sample]
+            else:
+                data_points += samples_info[comparison]['data'][sample]
+                data_points_current_run += samples_info[comparison]['data'][sample]
             data.append(info_data)
         information['data_' + comparison] = data
         if len(data_points) > 0:
@@ -23,6 +24,10 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_max_x'] = max(data_points, key=lambda v: v['x'])['x'] * 1.1
             information['data_' + comparison + '_min_y'] = min(data_points, key=lambda v: v['y'])['y'] * 1.1
             information['data_' + comparison + '_max_y'] = max(data_points, key=lambda v: v['y'])['y'] * 1.1
+            information['data_' + comparison + '_min_x_current_run'] = min(data_points_current_run, key=lambda v: v['x'])['x'] * 1.1
+            information['data_' + comparison + '_max_x_current_run'] = max(data_points_current_run, key=lambda v: v['x'])['x'] * 1.1
+            information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y'] * 1.1
+            information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y'] * 1.1
         if comparison == "x_vs_y":
             slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(data_points)
             info_data['slope'] = slope

@@ -60,6 +60,10 @@ function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=nul
   return chart;
 };
 
+//function updateScatterChart(id, x_min=null, x_max=null, y_min=null, y_max=null) {
+//
+//}
+
 function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=null, x_max=null, y_min=null, y_max=null, x_ticks=null, y_ticks=null,limits=null}) {
   data.forEach(function (data, item) {
     if(data.min_y) {
