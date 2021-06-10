@@ -72,7 +72,7 @@
           <br />
           <small>Time span</small>
         </div>
-      {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart"|addstr:flowcell_barcode width="100%" height="450px" only %}
+        {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart"|addstr:flowcell_barcode x_min_value=data_ff_time_min_x x_max_value=data_ff_time_max_x y_min_value=data_ff_time_min_y|min_value:"-0.01" y_max_value=data_ff_time_max_y|max_value:"0.2" width="100%" height="450px" only %}
   </div>
   <div class="row white">
     <ul class="collapsible z-depth-0" style="border:0px">

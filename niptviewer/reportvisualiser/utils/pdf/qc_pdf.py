@@ -42,14 +42,24 @@ class QCReportPDF(PDFTemplateView):
             context['ncd'] = plots.ncd_data(control_flowcell_data, context['barcode'], size=1.0)
             if control_other_flowcell_data.exists():
                 context['ncd'] = plots.ncd_data(control_other_flowcell_data, "other", size=0.5) + context['ncd']
-
+                print("FKSKD")
         if samples_run_data.exists():
             context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
-            context['data_ff_time'] = plots.fetal_fraction(data=samples_run_data,
-                                                           label=lambda x: context['barcode'])['data_ff_time']
+            current_fetal = plots.fetal_fraction(data=samples_run_data, label=lambda x: context['barcode'])
+            context['data_ff_time'] = current_fetal['data_ff_time']
+            context['data_ff_time_min_x'] = current_fetal['data_ff_time_min_x']
+            context['data_ff_time_min_y'] = current_fetal['data_ff_time_min_y']
+            context['data_ff_time_max_x'] = current_fetal['data_ff_time_max_x']
+            context['data_ff_time_max_y'] = current_fetal['data_ff_time_max_y']
+
+            print("DATA: " +str(flowcell_other))
             if flowcell_other.exists():
-                context['data_ff_time'] = plots.fetal_fraction(data=flowcell_other, label=lambda x: "other")['data_ff_time'] + \
-                                          context['data_ff_time']
+                other_fetal = plots.fetal_fraction(data=flowcell_other, label=lambda x: "other")
+                context['data_ff_time'] = other_fetal['data_ff_time'] + context['data_ff_time']
+                context['data_ff_time_min_x'] = min(other_fetal['data_ff_time_min_x'], context['data_ff_time_min_x'])
+                context['data_ff_time_min_y'] = min(other_fetal['data_ff_time_min_y'], context['data_ff_time_min_y'])
+                context['data_ff_time_max_x'] = max(other_fetal['data_ff_time_max_x'], context['data_ff_time_max_x'])
+                context['data_ff_time_max_y'] = max(other_fetal['data_ff_time_max_y'], context['data_ff_time_max_y'])
             context['data_coverage_reads'] = plots.chromosome_percentage_reads(samples_run_data)
 
         context.update({

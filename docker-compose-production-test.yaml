@@ -12,7 +12,7 @@ services:
     volumes:
       - static_volume_test:/home/app/web/staticfiles
       - ./dockerfiles/nginx-test.conf:/etc/nginx/conf.d/nginx.conf
-      - /etc/letsencrypt/live/cgu.igp.uu.se:/etc/letsencrypt/live/cgu.igp.uu.se
+      #- /etc/letsencrypt/live/cgu.igp.uu.se:/etc/letsencrypt/live/cgu.igp.uu.se
     depends_on:
       - nipt-web-service-test
     networks:
@@ -31,7 +31,7 @@ services:
     expose:
       - 8000
     env_file:
-      - ./.env.dev
+      - ./.env.dev-test
     environment:
         DEBUG: 1
     depends_on:

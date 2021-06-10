@@ -1,6 +1,7 @@
 {% load static %}
 {% load tz %}
-
+{% load min_value %}
+{% load max_value %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +93,9 @@
               <svg style="width:100%;height:400px;"></svg>
             </div>
           <script>
-            scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min:0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
+            {% with x_min_value=data_ff_time_min_x x_max_value=data_ff_time_max_x y_min_value=data_ff_time_min_y|min_value:"-0.01" y_max_value=data_ff_time_max_y|max_value:"0.2" %}
+                scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', x_min:{{ x_min_value }}, x_max: {{ x_max_value}}, y_min: {{ y_min_value }}, y_max: {{ y_max_value}}, limits:[[0.02,0.02]]{{ '}' }});
+            {% endwith %}
           </script>
           {% else %}
           <div class=center-align>
