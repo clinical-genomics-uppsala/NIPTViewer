@@ -774,10 +774,10 @@ class UtilPlotsTestTestsCase(TestCase):
         from .utils.plots import fetal_fraction
 
         data = fetal_fraction(samples)
-        self.assertTrue(abs(data['data_ff_time_min_x'] - 1596931200000.0) > 0.00000001)
-        self.assertTrue(abs(data['data_ff_time_max_x'] - 1756624320000.0) > 0.00000001)
-        self.assertTrue(abs(data['data_ff_time_min_y'] - -0.01) > 0.00000001)
-        self.assertTrue(abs(data['data_ff_time_max_y'] - 0.1) > 0.00000001)
+        self.assertTrue(abs(data['data_ff_time_min_x'] - 1596931200000.0) > 0.00000001 or abs(data['data_ff_time_min_x'] - 1596931200000.0) == 0)
+        self.assertTrue(abs(data['data_ff_time_max_x'] - 1756624320000.0) > 0.00000001 or abs(data['data_ff_time_max_x'] - 1756624320000.0) == 0)
+        self.assertTrue(abs(data['data_ff_time_min_y'] - -0.01) > 0.00000001 or abs(data['data_ff_time_min_y'] - -0.01) == 0)
+        self.assertTrue(abs(data['data_ff_time_max_y'] - 0.1) > 0.00000001 or abs(data['data_ff_time_max_y'] - 0.1) == 0)
         self.assertEqual(data['data_ff_time'][0]['key'], 'hist')
         self.assertEqual(data['data_ff_time'][0]['values'], [{'x': 1596931200000.0, 'y': 0.08, 'shape': 'circle', 'size': 1,
                                                               'color': '#c62828', 'type': 'Test', 'flowcell': 'ABCDEFGHI',
