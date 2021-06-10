@@ -53,7 +53,7 @@ def index(request, active_page=1, time_selection="12"):
 
     if sample_run_data.exists():
         context['data_coverage'] = [plots.chromosome_coverage(data=sample_run_data)]
-        context['data_ff_time'] = plots.fetal_fraction(data=sample_run_data)['data_ff_time']
+        context.update(plots.fetal_fraction(data=sample_run_data))
 
     if control_flowcell_data.exists():
         context['ncd'] = plots.ncd_data(control_flowcell_data)

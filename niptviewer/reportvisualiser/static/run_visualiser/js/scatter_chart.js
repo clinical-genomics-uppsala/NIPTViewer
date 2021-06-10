@@ -142,56 +142,13 @@
       chart.update()
       update_limits()
 
-      //chart.scatter.trigger('resize')
   });
 
   return chart;
 };
 
-//function updateScatterChartDomain(id, x_min=null, x_max=null, y_min=null, y_max=null) {
-//    chart = d3.select(id).transition()
-//    chart.select/
-// /}
 
 function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=null, x_max=null, y_min=null, y_max=null, x_ticks=null, y_ticks=null,limits=null}) {
-  data.forEach(function (data, item) {
-    if(data.min_y) {
-      if (y_min == null) {
-          y_min=data.min_y - Math.abs(data.min_y*0.1);
-      } else {
-        if(y_min > data.min_y) {
-          y_min = data.min_y - Math.abs(data.min_y*0.1);
-        }
-      }
-    }
-    if(data.max_y) {
-      if (y_max == null) {
-        y_max=data.max_y + Math.abs(data.max_y)*0.1;
-      } else {
-        if(y_max < data.max_y) {
-          y_max = data.max_y + Math.abs(data.max_y)*0.1;
-        }
-      }
-    }
-    if(data.min_x) {
-      if (x_min == null) {
-        x_min=data.min_x - 86400000*5;
-      } else {
-        if(x_min > data.min_x - 86400000*5) {
-          x_min = data.min_x - 86400000*5;
-        }
-      }
-    }
-    if(data.max_x) {
-      if (x_max == null) {
-        x_max=data.max_x + 86400000*5;
-      } else {
-        if(x_max < data.max_x + 86400000*5) {
-          x_max = data.max_x + 86400000*5;
-        }
-      }
-    }
-  });
   var chart = nv.models.scatterChart()
                   .showDistX(true)
                   .showDistY(true)
