@@ -1,5 +1,4 @@
-from .models import Flowcell, SamplesRunData
-
+from .models import BatchRun, Flowcell, SamplesRunData
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -50,4 +49,5 @@ class FlowcellAdmin(admin.ModelAdmin):
         return my_urls + urls
 
 
+admin.site.register(BatchRun)
 admin.site.register(SamplesRunData)
