@@ -1,7 +1,7 @@
 from decimal import Decimal
-
 import numpy
 from scipy import stats
+
 
 def sample_info():
     return {'x_vs_y': {'data': {}, 'fields': ('ncv_X', 'ncv_Y')},
@@ -95,4 +95,4 @@ def generate_regression_line_from_sample_data(samples, x_value=lambda v: v['x'],
         if filter(sample):
             x_value_list.append(x_value(sample))
             y_value_list.append(y_value(sample))
-    return stats.linregress(x_value_list,y_value_list)
+    return stats.linregress(x_value_list, y_value_list)

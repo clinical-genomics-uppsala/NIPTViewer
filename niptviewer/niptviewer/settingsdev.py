@@ -126,8 +126,7 @@ print(str(BASE_DIR) + "\n\n")
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
-#   BASE_DIR / "static",
-   'assets/',
+   'assets/'
 )
 
 STATICFILES_FINDERS = (
@@ -171,26 +170,26 @@ if os.environ.get('DATABASE', "sqlite3") == "postgres":
 LOGGING_CONFIG = None
 
 # # Get loglevel from env
-#LOGLEVEL = os.getenv('DJANGO_LOGLEVEL', 'debug').upper()
+LOGLEVEL = os.getenv('DJANGO_LOGLEVEL', 'debug').upper()
 # #
-# logging.config.dictConfig({
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'console': {
-#             'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s',
-#         },
-#     },
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'console',
-#         },
-#     },
-#     'loggers': {
-#         '': {
-#             'level': LOGLEVEL,
-#             'handlers': ['console', ],
-#         },
-#     },
-# })
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': LOGLEVEL,
+            'handlers': ['console', ],
+        },
+    },
+})

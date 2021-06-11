@@ -27,7 +27,7 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_min_x_current_run'] = min(data_points_current_run, key=lambda v: v['x'])['x']
             information['data_' + comparison + '_max_x_current_run'] = max(data_points_current_run, key=lambda v: v['x'])['x']
             information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y']
-            information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y'] 
+            information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y']
         if comparison == "x_vs_y":
             slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(data_points)
             info_data['slope'] = slope
@@ -46,9 +46,6 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_p_value'] = None
             information['data_' + comparison + '_r_value'] = None
             information['data_' + comparison + '_color'] = None
-
-
-
 
     return information
 

@@ -42,7 +42,6 @@ class QCReportPDF(PDFTemplateView):
             context['ncd'] = plots.ncd_data(control_flowcell_data, context['barcode'], size=1.0)
             if control_other_flowcell_data.exists():
                 context['ncd'] = plots.ncd_data(control_other_flowcell_data, "other", size=0.5) + context['ncd']
-                print("FKSKD")
         if samples_run_data.exists():
             context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
             current_fetal = plots.fetal_fraction(data=samples_run_data, label=lambda x: context['barcode'])
@@ -52,7 +51,6 @@ class QCReportPDF(PDFTemplateView):
             context['data_ff_time_max_x'] = current_fetal['data_ff_time_max_x']
             context['data_ff_time_max_y'] = current_fetal['data_ff_time_max_y']
 
-            print("DATA: " +str(flowcell_other))
             if flowcell_other.exists():
                 other_fetal = plots.fetal_fraction(data=flowcell_other, label=lambda x: "other")
                 context['data_ff_time'] = other_fetal['data_ff_time'] + context['data_ff_time']
