@@ -19,16 +19,16 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/development.dockerfile
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8001
     volumes:
-      - ./niptviewer/:/home/app/web:Z
+      - ./niptviewer:/usr/src/app:Z
       - ./dockerfiles/entrypoint-dev.sh:/home/app/web/entrypoint.sh
       - static_volume:/home/app/web/staticfiles
     expose:
-      - 8000
+      - 8001
     environment:
       - DEBUG=1
-      #- DJANGO_SETTINGS_MODULE=niptviewer.settingsdev
+      - DJANGO_SETTINGS_MODULE=niptviewer.settingsdev
     env_file:
       - ./.env.dev
     depends_on:

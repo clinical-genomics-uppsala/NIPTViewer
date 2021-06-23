@@ -37,7 +37,7 @@ def login(request):
 
 
 @login_required
-def index(request, time_selection="12"):
+def index(request, time_selection="9999"):
     now = datetime.datetime.now()
     time_selection = int(time_selection)
     previous_time = now + relativedelta(months=-time_selection)

@@ -13,7 +13,7 @@ import math
 
 
 @login_required
-def index(request, active_page=1, time_selection="12"):
+def index(request, active_page=1, time_selection="9999"):
     """
             Information page showing flowcells that have been run and plot
             showing fetal fraction over time and NCV over time for controls
@@ -110,7 +110,7 @@ def sample_report(request, barcode, sample):
 
 
 @login_required
-def report(request, barcode, time_selection="12"):
+def report(request, barcode, time_selection="9999"):
     time_selection = int(time_selection)
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)

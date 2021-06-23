@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, x_min_current_run=null, x_max_current_run=null, y_min_current_run=null, y_max_current_run=null, slope=null, intercept=null, std_err=null, x_ticks = null, y_ticks = null}) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, x_min_current_run=null, x_max_current_run=null, y_min_current_run=null, y_max_current_run=null, slope=null, intercept=null, stdev=null, x_ticks = null, y_ticks = null}) {
     var chart = nv.models.scatterChart()
                   .showLegend(true)
                   .showDistX(true)
@@ -33,21 +33,21 @@
                  x2: function(d){ return chart.xAxis.scale()(d[0][1])},
                  y2: function(d){ return chart.yAxis.scale()(d[1][1])}
              });
-     if(std_err) {
+     if(stdev) {
          reg_std_h.
             selectAll('.high_error').
                 transition().attr({
-               x1: chart.xAxis.scale()((y_max_used-intercept-std_err*dev)/slope),
+               x1: chart.xAxis.scale()((y_max_used-intercept-stdev*dev)/slope),
                y1: chart.yAxis.scale()(y_max_used),
-               x2: chart.xAxis.scale()((y_min_used-intercept-std_err*dev)/slope),
+               x2: chart.xAxis.scale()((y_min_used-intercept-stdev*dev)/slope),
                y2: chart.yAxis.scale()(y_min_used)
            });
          reg_std_l.
             selectAll('.low_error').
                 transition().attr({
               x1: chart.xAxis.scale()(x_min_used),
-              y1: chart.yAxis.scale()(x_min_used*slope+intercept-std_err*dev),
-              x2: chart.xAxis.scale()((y_min_used-intercept+std_err*dev)/slope),
+              y1: chart.yAxis.scale()(x_min_used*slope+intercept-stdev*dev),
+              x2: chart.xAxis.scale()((y_min_used-intercept+stdev*dev)/slope),
               y2: chart.yAxis.scale()(y_min_used)
          });
      }
@@ -62,16 +62,17 @@
  }
 
 
- if(std_err) {
-     dev = 4.5
+ if(stdev) {
+     dev = 3.0
+     console.log(stdev)
      var reg_std_h = d3.select(id).select('.nv-scatterWrap');
      reg_std_h
      .append('line')
        .attr({
            class: "high_error",
-           x1: chart.xAxis.scale()((y_max_used-intercept-std_err*dev)/slope),
+           x1: chart.xAxis.scale()((y_max_used-intercept-stdev*dev)/slope),
            y1: chart.yAxis.scale()(y_max_used),
-           x2: chart.xAxis.scale()((y_min_used-intercept-std_err*dev)/slope),
+           x2: chart.xAxis.scale()((y_min_used-intercept-stdev*dev)/slope),
            y2: chart.yAxis.scale()(y_min_used)
             })
             .style("stroke-dasharray","5,10")
@@ -82,8 +83,8 @@
        .attr({
           class: "low_error",
           x1: chart.xAxis.scale()(x_min_used),
-          y1: chart.yAxis.scale()(x_min_used*slope+intercept-std_err*dev),
-          x2: chart.xAxis.scale()((y_min_used-intercept+std_err*dev)/slope),
+          y1: chart.yAxis.scale()(x_min_used*slope+intercept-stdev*dev),
+          x2: chart.xAxis.scale()((y_min_used-intercept+stdev*dev)/slope),
           y2: chart.yAxis.scale()(y_min_used)
            })
            .style("stroke-dasharray","5,10")
@@ -98,7 +99,7 @@
           .append('line')
             .attr({
                      class: "limits",
-                     x1: function(d){ console.log(chart.xDomain()); return chart.xAxis.scale()(d[0][0])},
+                     x1: function(d){ return chart.xAxis.scale()(d[0][0])},
                      y1: function(d){ return chart.yAxis.scale()(d[1][0])},
                      x2: function(d){ return chart.xAxis.scale()(d[0][1])},
                      y2: function(d){ return chart.yAxis.scale()(d[1][1])}

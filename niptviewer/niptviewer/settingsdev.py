@@ -124,9 +124,9 @@ USE_TZ = True
 print(str(BASE_DIR) + "\n\n")
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = "/home/app/web/staticfiles"
 STATICFILES_DIRS = (
-   'assets/'
+  'assets/',
 )
 
 STATICFILES_FINDERS = (
