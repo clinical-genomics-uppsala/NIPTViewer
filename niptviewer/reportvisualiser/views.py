@@ -96,9 +96,18 @@ def sample_report(request, barcode, sample):
     if sample_run_data.exists():
         context['data_coverage'] = plots.chromosome_coverage(data=sample_run_data) + plots.chromosome_coverage(
             data=flowcell_controls)
-        context['data_ff_time'] = plots.fetal_fraction(data=previous_samples)['data_ff_time'] + plots.fetal_fraction(
-            data=flowcell_run_data, label=lambda x: barcode)['data_ff_time'] + \
-            plots.fetal_fraction(data=sample_run_data, label=lambda x: sample, size=2.0)['data_ff_time']
+        fetal_fraction_current_run_sample = plots.fetal_fraction(data=sample_run_data, label=lambda x: sample, size=2.0)
+        fetal_fraction_current_run_other_samples = plots.fetal_fraction(data=flowcell_run_data, label=lambda x: barcode)
+        fetal_fraction_current_other = plots.fetal_fraction(data=previous_samples)
+        context['data_ff_time'] = fetal_fraction_current_other['data_ff_time'] + \
+            fetal_fraction_current_run_other_samples['data_ff_time'] + \
+            fetal_fraction_current_run_sample['data_ff_time']
+        context['data_ff_time_min_x'] = min(fetal_fraction_current_run_sample['data_ff_time_min_x'],
+                                            fetal_fraction_current_run_other_samples['data_ff_time_min_x'],
+                                            fetal_fraction_current_other['data_ff_time_min_x'])
+        context['data_ff_time_max_x'] = max(fetal_fraction_current_run_sample['data_ff_time_max_x'],
+                                            fetal_fraction_current_run_other_samples['data_ff_time_max_x'],
+                                            fetal_fraction_current_other['data_ff_time_max_x'])
 
     qc_failure, qc_warning = data.extract_qc_status(sample_run_data)
     context['qc_warning'] = qc_warning

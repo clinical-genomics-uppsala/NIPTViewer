@@ -358,11 +358,21 @@ class Line(models.Model):
             line[0].r_value = r_value
             line[0].save()
         else:
-            return Line.objects.create(plot_type=type, slope=slope, intercept=intercept, stderr=stderr, stdev=stdev, p_value=p_value, r_value=r_value)
-
+            return Line.objects.create(plot_type=type,
+                                       slope=slope,
+                                       intercept=intercept,
+                                       stderr=stderr,
+                                       stdev=stdev,
+                                       p_value=p_value,
+                                       r_value=r_value)
 
     def get_line(type):
         return Line.objects.filter(plot_type=type)
 
     def __str__(self):
-        return "y={}*x + {}, stderr: {}, stdev: {}, P: {}, R: {}".format(self.slope, self.intercept, self.stderr, self.stdev, self.p_value, self.r_value)
+        return "y={}*x + {}, stderr: {}, stdev: {}, P: {}, R: {}".format(self.slope,
+                                                                         self.intercept,
+                                                                         self.stderr,
+                                                                         self.stdev,
+                                                                         self.p_value,
+                                                                         self.r_value)

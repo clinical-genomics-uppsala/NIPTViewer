@@ -5,7 +5,7 @@ from django.template.defaulttags import register
 def max_value(value1, value2):
     try:
         return max(float(value1), float(value2))
-    except:
+    except ValueError:
         if value1 == '':
             return value2
         else:

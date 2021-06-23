@@ -219,7 +219,13 @@ def import_data_into_database(user, file):
             all_samples = SamplesRunData.objects.all()
             slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(all_samples)
             stdev = math.sqrt(len(all_samples))*std_err
-            Line.create_or_update_line(type="x_vs_y", slope=slope, intercept=intercept, stderr=std_err, stdev=stdev, p_value=p_value, r_value=r_value)
+            Line.create_or_update_line(type="x_vs_y",
+                                       slope=slope,
+                                       intercept=intercept,
+                                       stderr=std_err,
+                                       stdev=stdev,
+                                       p_value=p_value,
+                                       r_value=r_value)
     except IntegrityError as e:
         raise e
     return flowcell.flowcell_barcode
@@ -567,7 +573,9 @@ def import_flowcell_export(file_handle):
             create_sample(columns)
 
 
-def generate_regression_line_from_sample_data(samples, x_value=lambda v: getattr(v, 'ncv_X'), y_value=lambda v: getattr(v, 'ncv_Y'),
+def generate_regression_line_from_sample_data(samples,
+                                              x_value=lambda v: getattr(v, 'ncv_X'),
+                                              y_value=lambda v: getattr(v, 'ncv_Y'),
                                               filter=lambda v: getattr(v, 'ncv_Y') is not None and getattr(v, 'ncv_Y') > 3.0):
     x_value_list = list()
     y_value_list = list()

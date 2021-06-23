@@ -13,16 +13,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='batchrun',
             name='median_18',
-            field=models.DecimalField(decimal_places=20, help_text='Batch median of chromosomal ratios for putative diploid samples. ChrX and chrY are based on putative female samples only.', max_digits=25),
+            field=models.DecimalField(decimal_places=20,
+                                      help_text='Batch median of chromosomal ratios for putative diploid samples. ' +
+                                                'ChrX and chrY are based on putative female samples only.', max_digits=25),
         ),
         migrations.AlterField(
             model_name='batchrun',
             name='median_x',
-            field=models.DecimalField(decimal_places=20, help_text='Batch median of chromosomal ratios for putative diploid samples. ChrX and chrY are based on putative female samples only.', max_digits=25),
+            field=models.DecimalField(decimal_places=20,
+                                      help_text='Batch median of chromosomal ratios for putative diploid samples. ' +
+                                                'ChrX and chrY are based on putative female samples only.', max_digits=25),
         ),
         migrations.AlterField(
             model_name='batchrun',
             name='median_y',
-            field=models.DecimalField(decimal_places=20, help_text='Batch median of chromosomal ratios for putative diploid samples. ChrX and chrY are based on putative female samples only.', max_digits=25),
+            field=models.DecimalField(decimal_places=20,
+                                      help_text='Batch median of chromosomal ratios for putative diploid samples. ' +
+                                                'ChrX and chrY are based on putative female samples only.', max_digits=25),
         ),
     ]
