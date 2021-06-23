@@ -1,4 +1,4 @@
-from .data import extract_data, decimal_default, generate_regression_line_from_sample_data
+from .data import extract_data, decimal_default
 
 
 def data_structure_generator(samples_info):
@@ -29,18 +29,18 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y']
             information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y']
         if comparison == "x_vs_y":
-            slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(data_points)
-            import math
-            info_data['slope'] = slope
-            info_data['intercept'] = intercept
-            info_data['color'] = '#C70039'
-            information['data_' + comparison + '_slope'] = slope
-            information['data_' + comparison + '_intercept'] = intercept
 
-            information['data_' + comparison + '_std_err'] = std_err
-            information['data_' + comparison + '_stdev'] = math.sqrt(len(data_points))*std_err
-            information['data_' + comparison + '_p_value'] = p_value
-            information['data_' + comparison + '_r_value'] = r_value
+            from dataprocessor.models import Line
+            line = Line.get_line(comparison)[0]
+            info_data['slope'] = decimal_default(line.slope)
+            info_data['intercept'] = decimal_default(line.intercept)
+            info_data['color'] = '#C70039'
+            information['data_' + comparison + '_slope'] = decimal_default(line.slope)
+            information['data_' + comparison + '_intercept'] = decimal_default(line.intercept)
+            information['data_' + comparison + '_std_err'] = decimal_default(line.stderr)
+            information['data_' + comparison + '_stdev'] = decimal_default(line.stdev)
+            information['data_' + comparison + '_p_value'] = decimal_default(line.p_value)
+            information['data_' + comparison + '_r_value'] = decimal_default(line.r_value)
             information['data_' + comparison + '_color'] = '#C70039'
         else:
             information['data_' + comparison + '_slope'] = None

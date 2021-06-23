@@ -64,7 +64,6 @@
 
  if(stdev) {
      dev = 3.0
-     console.log(stdev)
      var reg_std_h = d3.select(id).select('.nv-scatterWrap');
      reg_std_h
      .append('line')

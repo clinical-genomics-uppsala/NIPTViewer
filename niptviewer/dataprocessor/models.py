@@ -38,7 +38,7 @@ class SampleType(models.Model):
     def __str__(self):
         return self.name
 
-    def create_sample_type(name=name):
+    def create_sample_type(name):
         return SampleType.objects.create(name=name)
 
     def get_sample_type(name):
@@ -336,3 +336,33 @@ class SamplesRunData(models.Model):
                 return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
             else:
                 return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample)
+
+
+class Line(models.Model):
+    slope = models.DecimalField(blank=False, help_text="Slope of line", decimal_places=5, max_digits=15)
+    intercept = models.DecimalField(blank=False, help_text="Intercept point", decimal_places=5, max_digits=15)
+    stderr = models.DecimalField(blank=False, help_text="Stderr", decimal_places=5, max_digits=15)
+    stdev = models.DecimalField(blank=False, help_text="Stderr", decimal_places=5, max_digits=15)
+    p_value = models.DecimalField(blank=False, help_text="P value", decimal_places=5, max_digits=15)
+    r_value = models.DecimalField(blank=False, help_text="R value", decimal_places=5, max_digits=15)
+    plot_type = models.CharField(max_length=20, help_text="Comparison type", blank=False, unique=True)
+
+    def create_or_update_line(type, slope, intercept, stderr, stdev, p_value, r_value):
+        line = Line.objects.filter(plot_type=type)
+        if line and len(line) == 1:
+            line[0].slope = slope
+            line[0].intercept = intercept
+            line[0].stderr = stderr
+            line[0].stdev = stdev
+            line[0].p_value = p_value
+            line[0].r_value = r_value
+            line[0].save()
+        else:
+            return Line.objects.create(plot_type=type, slope=slope, intercept=intercept, stderr=stderr, stdev=stdev, p_value=p_value, r_value=r_value)
+
+
+    def get_line(type):
+        return Line.objects.filter(plot_type=type)
+
+    def __str__(self):
+        return "y={}*x + {}, stderr: {}, stdev: {}, P: {}, R: {}".format(self.slope, self.intercept, self.stderr, self.stdev, self.p_value, self.r_value)

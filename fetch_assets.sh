@@ -9,3 +9,4 @@ wget https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.mi
 wget https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js -O niptviewer/assets/js/materialize.min.1.0.0.js
 wget https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js -O niptviewer/assets/js/jquery-2.1.1.min.js
 wget https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.map -O niptviewer/assets/js/jquery.min.map
+wget https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js -O niptviewer/assets/js/clipboard.min.js

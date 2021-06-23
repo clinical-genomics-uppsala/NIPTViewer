@@ -10,7 +10,7 @@ services:
       - 80:80
     volumes:
       - static_volume:/home/app/web/staticfiles
-      - ./dockerfiles/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./dockerfiles/nginx-test.conf:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - nipt-web-service
     networks:
@@ -19,13 +19,13 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/development.dockerfile
-    command: python3 manage.py runserver 0.0.0.0:8001
+    command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./niptviewer:/usr/src/app:Z
       - ./dockerfiles/entrypoint-dev.sh:/home/app/web/entrypoint.sh
       - static_volume:/home/app/web/staticfiles
     expose:
-      - 8001
+      - 8000
     environment:
       - DEBUG=1
       - DJANGO_SETTINGS_MODULE=niptviewer.settingsdev

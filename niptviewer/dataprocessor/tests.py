@@ -1,4 +1,4 @@
-from .models import Flowcell, SampleType, Index, Flowcell, BatchRun, SamplesRunData, Index
+from .models import Flowcell, SampleType, Index, Flowcell, BatchRun, Line, SamplesRunData, Index
 from decimal import Decimal
 from django.contrib.auth.models import User
 from django.core.management import call_command
@@ -2461,3 +2461,15 @@ class UtilTestTestsCase(TestCase):
         self.assertEqual(sample.Chrx, 860100)
         self.assertEqual(sample.chry, 64)
         self.assertTrue(abs(sample.ff_formatted - Decimal("0.01")) < 0.00000001)
+
+    def test_regression_line_calc(self):
+        csv = open("./dataprocessor/tests/200809_NDX123456_RUO_0001_ABCDEFGHIJ_NIPT_RESULTS.csv")
+        from .utils.data import import_data_into_database
+        import_data_into_database(self.user, csv)
+        line = Line.get_line("x_vs_y")[0]
+        self.assertEqual(float(line.slope), -15.59289)
+        self.assertEqual(float(line.intercept), 2.07243)
+        self.assertEqual(float(line.r_value), -0.99891)
+        self.assertEqual(float(line.p_value), 0.02967)
+        self.assertEqual(float(line.stderr), 0.72715)
+        self.assertEqual(float(line.stdev), 1.62596)
