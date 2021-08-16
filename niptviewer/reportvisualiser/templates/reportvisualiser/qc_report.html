@@ -10,11 +10,11 @@
     <head>
         <title>NIPT Sample Report</title>
 
-        <link rel="stylesheet" href="{% static "css/nv.d3.1.8.6.css" %}">
+        <link rel="stylesheet" href="{% static "css/nv.d3.min.1.8.6.css" %}">
         <link rel="stylesheet" href="{% static "css/materialize.min.1.0.0.css" %}">
 
         <script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
-        <script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
+        <script src="{% static "js/nv.d3.min.1.8.6.js" %}"></script>
         <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
         <script src="{% static "run_visualiser/js/chromosome_line_chart.js" %}" charset="utf-8"></script>
         <script src="{% static "run_visualiser/js/grouped_barchart.js" %}" charset="utf-8"></script>
@@ -74,7 +74,7 @@
         <br /><br />
 
         <p>
-        {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart"|addstr:flowcell_barcode width="880px" height="450px" only %}
+        {% include "reportvisualiser/plots/fetal_fraction_time.html" with data=data_ff_time plot_id="ff_chart"|addstr:flowcell_barcode x_min_value=data_ff_time_min_x x_max_value=data_ff_time_max_x y_min_value=data_ff_time_min_y|min_value:"-0.01" y_max_value=data_ff_time_max_y|max_value:"0.2" width="880px" height="450px" only %}
         </p>
         <br />
         <p>

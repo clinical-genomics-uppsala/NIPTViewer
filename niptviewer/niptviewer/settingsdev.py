@@ -73,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'niptviewer.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -122,9 +121,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = "/staticfiles/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-print(STATIC_ROOT)
+print(str(BASE_DIR) + "\n\n")
+
+STATIC_URL = '/static/'
+STATIC_ROOT = "/home/app/web/staticfiles"
 STATICFILES_DIRS = (
   'assets/',
 )
@@ -168,7 +168,28 @@ if os.environ.get('DATABASE', "sqlite3") == "postgres":
     }
 
 LOGGING_CONFIG = None
-#
+
 # # Get loglevel from env
 LOGLEVEL = os.getenv('DJANGO_LOGLEVEL', 'debug').upper()
-#
+# #
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': LOGLEVEL,
+            'handlers': ['console', ],
+        },
+    },
+})

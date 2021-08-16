@@ -1,3 +1,5 @@
+{% load min_value %}
+{% load max_value %}
 
 {% load hex_to_rgb %}
 {% load static %}
@@ -7,11 +9,11 @@
     <head>
         <title>NIPT Sample Report</title>
 
-        <link rel="stylesheet" href="{% static "css/nv.d3.1.8.6.css" %}">
+        <link rel="stylesheet" href="{% static "css/nv.d3.min.1.8.6.css" %}">
         <link rel="stylesheet" href="{% static "css/materialize.min.1.0.0.css" %}">
 
         <script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
-        <script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
+        <script src="{% static "js/nv.d3.min.1.8.6.js" %}"></script>
         <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
         <script src="{% static "run_visualiser/js/chromosome_line_chart.js" %}"></script>
         <script src="{% static "run_visualiser/js/grouped_barchart.js" %}" charset="utf-8"></script>
@@ -68,7 +70,9 @@
         <br /><br />
 
         <p>
-            {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_y plot_id="scatter_chart_chrx_vs_chry" title="NCV X vs NCV Y" x_label='NCV ChrX' y_label='ChrY' x_format='0.02f' y_format='0.02f' x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[-4,-4],[-200,800]], [[4,4],[-200,800]]]' highlight_area='[]' width="880px" height="400px" only %}
+            {% with "[[[-4,-4],["|addstr:data_x_vs_y_min_y|addstr:","|addstr:data_x_vs_y_max_y|addstr:"]],[[4,4],["|addstr:data_x_vs_y_min_y|addstr:","|addstr:data_x_vs_y_max_y|addstr:"]]]"  as vert_limits %}
+                {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_y plot_id="scatter_chart_chrx_vs_chry" title="NCV X vs NCV Y" x_label='NCV ChrX' y_label='ChrY' x_format='0.02f' y_format='0.02f' x_min=data_x_vs_y_min_x|min_value:"-5" x_max=data_x_vs_y_max_x|max_value:"5" y_min=data_x_vs_y_min_y  y_max=data_x_vs_y_max_y x_min_current_run=data_x_vs_y_min_x_current_run|min_value:"-5" x_max_current_run=data_x_vs_y_max_x_current_run|max_value:"5" y_min_current_run=data_x_vs_y_min_y_current_run  y_max_current_run=data_x_vs_y_max_y_current_run slope=data_x_vs_y_slope intercept=data_x_vs_y_intercept stdev=data_x_vs_y_stdev limits=vert_limits highlight_area='[]' highlight_area='[]' width="880px" height="400px" only %}
+            {% endwith %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV X" title_2="NCV Y" field_1="ncv_X" field_2="ncv_Y" format_field_1=".3f" format_field_2=".3f" color_dict=color_dict only %}
           </div>
@@ -78,7 +82,13 @@
         <br /><br />
 
         <p>
-            {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="880px" height="400px" only  %}
+            {% with x_min_value=data_x_vs_ff_min_x|min_value:"-5" x_max_value=data_x_vs_ff_max_x|max_value:"5" y_min_value=0 y_max_value=data_x_vs_ff_max_y|max_value:"0.2" %}
+                {% with "[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]"  as vert_limits %}
+                    {% with x_min_value_current_run=data_x_vs_ff_min_x_current_run|min_value:"-5" x_max_value_current_run=data_x_vs_ff_max_x_current_run|max_value:"5" y_min_value_current_run=0 y_max_value_current_run=data_x_vs_ff_max_y_current_run|max_value:"0.2"  %}
+                        {% include "reportvisualiser/plots/ncv.html" with data=data_x_vs_ff plot_id="scatter_chart_chrx_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV X" x_label='NCV ChrX' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value x_min_current_run=x_min_value_current_run x_max_current_run=x_max_value_current_run y_min_current_run=y_min_value_current_run y_max_current_run=y_max_value_current_run slope=data_x_vs_ff_slope intercept=data_x_vs_ff_intercept stdev=data_x_vs_ff_stdev limits=vert_limits highlight_area='[]' width="880px" height="400px" only  %}
+                     {% endwith %}
+                {% endwith %}
+            {% endwith %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV X" title_2="Fetal fraction" field_1="ncv_X" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -88,7 +98,13 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[10,10],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[]' width="880px" height="400px" only %}
+            {% with x_min_value=data_y_vs_ff_min_x|min_value:"-5" x_max_value=data_y_vs_ff_max_x|max_value:"5" y_min_value=0 y_max_value=data_y_vs_ff_max_y|max_value:"0.2" %}
+                {% with "[[[10,10],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]"  as vert_limits %}
+                    {% with x_min_value_current_run=data_y_vs_ff_min_x_current_run|min_value:"-5" x_max_value_current_run=data_y_vs_ff_max_x_current_run|max_value:"5" y_min_value_current_run=0 y_max_value_current_run=data_y_vs_ff_max_y_current_run|max_value:"0.2" %}
+                        {% include "reportvisualiser/plots/ncv.html" with data=data_y_vs_ff plot_id="scatter_chart_chry_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV Y" x_label='NCV ChrY' y_label='FF' x_format='0.02f' y_format='%'  x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value x_min_current_run=x_min_value_current_run x_max_current_run=x_max_value_current_run y_min_current_run=y_min_value_current_run y_max_current_run=y_max_value_current_run slope=data_y_vs_ff_slope intercept=data_y_vs_ff_intercept stdev=data_y_vs_ff_stdev limits=vert_limits highlight_area='[]' width="880px" height="400px" only %}
+                    {% endwith %}
+                {% endwith %}
+            {% endwith %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV Y" title_2="Fetal fraction" field_1="ncv_Y" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -98,7 +114,13 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
+            {% with x_min_value=data_chr13_vs_ff_min_x|min_value:"-5" x_max_value=data_chr13_vs_ff_max_x|max_value:"5" y_min_value=0.02 y_max_value=data_chr13_vs_ff_max_y|max_value:"0.2" %}
+                {% with vert_limits="[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]" highlight_area_value='[[[3,4],['|addstr:y_max_value|addstr:","|addstr:y_min_value|addstr:']]]' %}
+                    {% with x_min_value_current_run=data_chr13_vs_ff_min_x_current_run|min_value:"-5" x_max_value_current_run=data_chr13_vs_ff_max_x_current_run|max_value:"5" y_min_value_current_run=0.02 y_max_value_current_run=data_chr13_vs_ff_max_y_current_run|max_value:"0.2" %}
+                        {% include "reportvisualiser/plots/ncv.html" with data=data_chr13_vs_ff plot_id="scatter_chart_chr13_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 13" x_label='NCV Chr13' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value x_min_current_run=x_min_value_current_run x_max_current_run=x_max_value_current_run y_min_current_run=y_min_value_current_run y_max_current_run=y_max_value_current_run limits=vert_limits slope=data_chr13_vs_ff_slope intercept=data_chr13_vs_ff_intercept stdev=data_chr13_vs_ff_stdev highlight_area=highlight_area_value width="880px" height="400px" only %}
+                    {% endwith %}
+                {% endwith %}
+            {% endwith %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 13" title_2="Fetal fraction" field_1="ncv_13" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -108,7 +130,13 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
+            {% with x_min_value=data_chr18_vs_ff_min_x|min_value:"-5" x_max_value=data_chr18_vs_ff_max_x|max_value:"5" y_min_value=0.02 y_max_value=data_chr18_vs_ff_max_y|max_value:"0.2" %}
+                {% with vert_limits="[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]" highlight_area_value='[[[3,4],['|addstr:y_max_value|addstr:","|addstr:y_min_value|addstr:']]]' %}
+                    {% with x_min_value_current_run=data_chr18_vs_ff_min_x_current_run|min_value:"-5" x_max_value_current_run=data_chr18_vs_ff_max_x_current_run|max_value:"5" y_min_value_current_run=0.02 y_max_value_current_run=data_chr18_vs_ff_max_y_current_run|max_value:"0.2" %}
+                        {% include "reportvisualiser/plots/ncv.html" with data=data_chr18_vs_ff plot_id="scatter_chart_chr18_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 18" x_label='NCV Chr18' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value x_min_current_run=x_min_value_current_run x_max_current_run=x_max_value_current_run y_min_current_run=y_min_value_current_run y_max_current_run=y_max_value_current_run slope=data_chr18_vs_ff_slope intercept=data_chr18_vs_ff_intercept stdev=data_chr18_vs_ff_stdev limits=vert_limits  highlight_area=highlight_area_value width="880px" height="400px" only %}
+                    {% endwith %}
+                {% endwith %}
+            {% endwith %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 18" title_2="Fetal fraction" field_1="ncv_18" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>
@@ -118,7 +146,13 @@
         <br /><br />
 
         <p>
-          {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="scatter_chart_chr21_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%'  x_min=-5 x_max=5 y_min=0  y_max=0.2 limits='[[[4,4],[-200,800]], [[-400,400],[0.02,0.02]]]' highlight_area='[[[3,4],[0.3,0.02]],]' width="880px" height="400px" only %}
+            {% with x_min_value=data_chr21_vs_ff_min_x|min_value:"-5" x_max_value=data_chr21_vs_ff_max_x|max_value:"5" y_min_value=0.02 y_max_value=data_chr21_vs_ff_max_y|max_value:"0.2" %}
+                {% with x_min_value_current_run=data_chr21_vs_ff_min_x_current_run|min_value:"-5" x_max_value_current_run=data_chr21_vs_ff_max_x_current_run|max_value:"5" y_min_value_current_run=0.02 y_max_value_current_run=data_chr21_vs_ff_max_y_current_run|max_value:"0.2" %}
+                    {% with vert_limits="[[[4,4],["|addstr:y_min_value|addstr:","|addstr:y_max_value|addstr:"]],[["|addstr:x_min_value|addstr:","|addstr:x_max_value|addstr:"],[0.02,0.02]]]" highlight_area_value='[[[3,4],['|addstr:y_max_value|addstr:","|addstr:y_min_value|addstr:']]]' %}
+                        {% include "reportvisualiser/plots/ncv.html" with data=data_chr21_vs_ff plot_id="sca1tter_chart_chr21_vs_ff"|addstr:flowcell_barcode title="Fetal fraction vs NCV 21" x_label='NCV Chr21' y_label='FF' x_format='0.02f' y_format='%' x_min=x_min_value x_max=x_max_value y_min=y_min_value y_max=y_max_value x_min_current_run=x_min_value_current_run x_max_current_run=x_max_value_current_run y_min_current_run=y_min_value_current_run y_max_current_run=y_max_value_current_run limits=vert_limits  slope=data_chr21_vs_ff_slope intercept=data_chr21_vs_ff_intercept stdev=data_chr21_vs_ff_stdev highlight_area=highlight_area_value width="880px" height="400px" only  %}
+                    {% endwith %}
+                {% endwith %}
+            {% endwith %}
           <div class="row">
             {% include "reportvisualiser/tables/sub_ncv.html" with data=flowcell_run_data  title_1="NCV 21" title_2="Fetal fraction" field_1="ncv_21" field_2="ff_formatted" format_field_1=".3f" format_field_2=".1%" color_dict=color_dict only %}
           </div>

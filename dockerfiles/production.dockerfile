@@ -1,3 +1,5 @@
+ARG VERSION="master"
+
 ###########
 # BUILDER #
 ###########
@@ -20,6 +22,9 @@ RUN pip install --upgrade pip
 # copy project
 COPY . .
 #RUN flake8 --ignore=E501,F401 .
+
+RUN apt-get update && apt-get install -y git
+#RUN git checkout ${VERSION}
 
 COPY ./requirements.prod.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.prod.txt

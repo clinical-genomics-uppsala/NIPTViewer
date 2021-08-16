@@ -4,6 +4,6 @@
     <svg style="width:{{ width }};height:{{ height }};"></svg>
   </div>
   <script>
-    scatterChartTime({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min: 0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
+    scatterChartTime({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', x_min:{{ x_min_value }}, x_max: {{ x_max_value}}, y_min: {{ y_min_value }}, y_max: {{ y_max_value}}, limits:[[0.02,0.02]]{{ '}' }});
   </script>
 </div>

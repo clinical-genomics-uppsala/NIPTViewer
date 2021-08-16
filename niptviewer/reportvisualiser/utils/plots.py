@@ -5,14 +5,52 @@ def data_structure_generator(samples_info):
     information = {}
     for comparison in samples_info.keys():
         data = []
-        for type in samples_info[comparison]['data']:
-            data.append({
-                'min_x': min(samples_info[comparison]['data'][type], key=lambda v: v['x'])['x'],
-                'max_x': max(samples_info[comparison]['data'][type], key=lambda v: v['x'])['x'],
-                'min_y': min(samples_info[comparison]['data'][type], key=lambda v: v['y'])['y'],
-                'max_y': max(samples_info[comparison]['data'][type], key=lambda v: v['y'])['y'],
-                'key': type, 'values': samples_info[comparison]['data'][type]})
+        data_points = []
+        data_points_current_run = []
+        for sample in samples_info[comparison]['data']:
+            info_data = {
+                'key': sample,
+                'values': samples_info[comparison]['data'][sample]
+                }
+            if sample == "other":
+                data_points += samples_info[comparison]['data'][sample]
+            else:
+                data_points += samples_info[comparison]['data'][sample]
+                data_points_current_run += samples_info[comparison]['data'][sample]
+            data.append(info_data)
         information['data_' + comparison] = data
+        if len(data_points) > 0:
+            information['data_' + comparison + '_min_x'] = min(data_points, key=lambda v: v['x'])['x']
+            information['data_' + comparison + '_max_x'] = max(data_points, key=lambda v: v['x'])['x']
+            information['data_' + comparison + '_min_y'] = min(data_points, key=lambda v: v['y'])['y']
+            information['data_' + comparison + '_max_y'] = max(data_points, key=lambda v: v['y'])['y']
+            information['data_' + comparison + '_min_x_current_run'] = min(data_points_current_run, key=lambda v: v['x'])['x']
+            information['data_' + comparison + '_max_x_current_run'] = max(data_points_current_run, key=lambda v: v['x'])['x']
+            information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y']
+            information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y']
+        if comparison == "x_vs_y":
+
+            from dataprocessor.models import Line
+            line = Line.get_line(comparison)[0]
+            info_data['slope'] = decimal_default(line.slope)
+            info_data['intercept'] = decimal_default(line.intercept)
+            info_data['color'] = '#C70039'
+            information['data_' + comparison + '_slope'] = decimal_default(line.slope)
+            information['data_' + comparison + '_intercept'] = decimal_default(line.intercept)
+            information['data_' + comparison + '_std_err'] = decimal_default(line.stderr)
+            information['data_' + comparison + '_stdev'] = decimal_default(line.stdev)
+            information['data_' + comparison + '_p_value'] = decimal_default(line.p_value)
+            information['data_' + comparison + '_r_value'] = decimal_default(line.r_value)
+            information['data_' + comparison + '_color'] = '#C70039'
+        else:
+            information['data_' + comparison + '_slope'] = None
+            information['data_' + comparison + '_intercept'] = None
+            information['data_' + comparison + '_std_err'] = None
+            information['data_' + comparison + '_stdev'] = None
+            information['data_' + comparison + '_p_value'] = None
+            information['data_' + comparison + '_r_value'] = None
+            information['data_' + comparison + '_color'] = None
+
     return information
 
 
@@ -159,4 +197,4 @@ def fetal_fraction(data, label=lambda x: 'hist', size=1):
     samples_info_ff_formatted = extract_data(data=data, info=samples_info_ff_formatted, size=size, label=label,
                                              x_format=lambda x: getattr(x, 'run_date').timestamp() * 1000,
                                              replace_NA_with=-0.01)
-    return data_structure_generator(samples_info_ff_formatted)['data_ff_time']
+    return data_structure_generator(samples_info_ff_formatted)

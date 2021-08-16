@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from pandas import read_csv, to_numeric
+from scipy import stats
 import datetime
 import os
 import re
@@ -213,6 +214,18 @@ def import_data_into_database(user, file):
                     qc_status.append("Warnings (" + str(len(warn)) + ")")
                 flowcell.qc_status = ", ".join(qc_status)
                 flowcell.save()
+            from ..models import Line
+            import math
+            all_samples = SamplesRunData.objects.all()
+            slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(all_samples)
+            stdev = math.sqrt(len(all_samples))*std_err
+            Line.create_or_update_line(type="x_vs_y",
+                                       slope=slope,
+                                       intercept=intercept,
+                                       stderr=std_err,
+                                       stdev=stdev,
+                                       p_value=p_value,
+                                       r_value=r_value)
     except IntegrityError as e:
         raise e
     return flowcell.flowcell_barcode
@@ -558,3 +571,16 @@ def import_flowcell_export(file_handle):
             compare_flowcell(flowcell, columns, header_map, user_information)
             compare_batch(batch, columns, header_map)
             create_sample(columns)
+
+
+def generate_regression_line_from_sample_data(samples,
+                                              x_value=lambda v: getattr(v, 'ncv_X'),
+                                              y_value=lambda v: getattr(v, 'ncv_Y'),
+                                              filter=lambda v: getattr(v, 'ncv_Y') is not None and getattr(v, 'ncv_Y') > 3.0):
+    x_value_list = list()
+    y_value_list = list()
+    for sample in samples:
+        if filter(sample):
+            x_value_list.append(float(x_value(sample)))
+            y_value_list.append(float(y_value(sample)))
+    return stats.linregress(x_value_list, y_value_list)

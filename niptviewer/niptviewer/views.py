@@ -37,7 +37,7 @@ def login(request):
 
 
 @login_required
-def index(request, time_selection="12"):
+def index(request, time_selection="9999"):
     now = datetime.datetime.now()
     time_selection = int(time_selection)
     previous_time = now + relativedelta(months=-time_selection)
@@ -77,7 +77,7 @@ def index(request, time_selection="12"):
         context['latest_samples'] = sample_run_data[:5]
 
         if sample_run_data.exists():
-            context['data_ff_time'] = plots.fetal_fraction(data=sample_run_data)
+            context.update(plots.fetal_fraction(data=sample_run_data))
 
         if control_flowcell_data.exists():
             context['ncd'] = plots.ncd_data(control_flowcell_data)

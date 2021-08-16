@@ -1,4 +1,6 @@
 from decimal import Decimal
+import numpy
+from scipy import stats
 
 
 def sample_info():
