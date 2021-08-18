@@ -22,7 +22,6 @@ services:
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./niptviewer:/usr/src/app:Z
-      - ./dockerfiles/entrypoint-dev.sh:/home/app/web/entrypoint.sh
       - static_volume:/home/app/web/staticfiles
     expose:
       - 8000
