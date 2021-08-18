@@ -1,35 +1,44 @@
 from django.db import models
 from django.contrib.auth.models import User
-
 import pandas
+import datetime
 
-# Create your models here.
 
 class Flowcell(models.Model):
     flowcell_barcode = models.CharField(max_length=9, help_text="Flowcell identification.", blank=False, unique=True)
-    uploading_user = models.ForeignKey(User,on_delete=models.RESTRICT,null=False,blank=False, default=1, help_text="User that uploaded the flowcell identification.",)
+    uploading_user = models.ForeignKey(User, on_delete=models.RESTRICT, null=False, blank=False, default=1,
+                                       help_text="User that uploaded the flowcell identification.",)
     qc_status = models.CharField(help_text="QC summary for samples", max_length=200, blank=False, default="PASS")
     created = models.DateTimeField(auto_now_add=True)
     run_date = models.DateTimeField(blank=False)
 
     def __str__(self):
-        return "{} {}".format(self.flowcell_barcode, self.created.strftime("%Y-%m-%d %H:%M") )
+        return "{} {}".format(self.flowcell_barcode, self.run_date.strftime("%Y-%m-%d %H:%M"))
 
-    def create_flowcell(user, flowcell_barcode, run_date=None):
-        return Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
+    def create_flowcell(user, flowcell_barcode, run_date=None, upload_date=None):
+        if upload_date is None:
+            return Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
+        else:
+            flowcell = Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
+            flowcell.created = datetime.datetime.strptime(upload_date, '%Y-%m-%d %H:%M:%S.%f+00:00')
+            return flowcell
 
     def get_flowcell(flowcell_barcode):
         return Flowcell.objects.get(flowcell_barcode=flowcell_barcode)
 
     def save(self, *args, **kwargs):
         if not self.id and not self.run_date:
-                self.run_date = timezone.now()
+            self.run_date = timezone.now()
         return super(Flowcell, self).save(*args, **kwargs)
+
 
 class SampleType(models.Model):
     name = models.CharField(max_length=9, help_text="Sample type.", blank=False, unique=True)
 
-    def create_sample_type(name=name):
+    def __str__(self):
+        return self.name
+
+    def create_sample_type(name):
         return SampleType.objects.create(name=name)
 
     def get_sample_type(name):
@@ -40,16 +49,21 @@ class Index(models.Model):
     index_id = models.CharField(max_length=6, help_text="Index id.", blank=False, unique=True)
     index = models.CharField(max_length=6, help_text="Index sequence.", blank=False, unique=True)
 
+    def __str__(self):
+        return self.index
+
     def create_index(index_id, index):
         return Index.objects.create(index_id=index_id, index=index)
 
     def get_index(index_id, index):
         return Index.objects.get(index_id=index_id, index=index)
 
-from decimal import *
+
 class BatchRun(models.Model):
-    __help_text_median="Batch median of chromosomal ratios for putative diploid samples. ChrX and chrY are based on putative female samples only."
-    __help_text_stdev="Batch standard deviation of chromosomal ratios for putative diploid samples. ChrX and chrY based on putative female samples only"
+    __help_text_median = "Batch median of chromosomal ratios for putative diploid samples. ChrX and chrY are based on " + \
+                         "putative female samples only."
+    __help_text_stdev = "Batch standard deviation of chromosomal ratios for putative diploid samples. ChrX and chrY based on " +\
+                        "putative female samples only"
     flowcell_id = models.ForeignKey(Flowcell, on_delete=models.CASCADE, help_text="Flowcell ID")
     median_13 = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=25, decimal_places=20)
     median_18 = models.DecimalField(blank=False, help_text=__help_text_median, max_digits=25, decimal_places=20)
@@ -64,11 +78,11 @@ class BatchRun(models.Model):
     software_version = models.CharField(help_text="Illumina analysis software version", max_length=10, blank=False)
 
     def __str__(self):
-        return self.software_version
+        return self.software_version + ";" + str(self.flowcell_id)
 
     def create_batch_run(flowcell_entry, median_13, median_18, median_21,
-                            median_x, median_y, stdev_13, stdev_18, stdev_21,
-                            stdev_X, stdev_Y, software_version):
+                         median_x, median_y, stdev_13, stdev_18, stdev_21,
+                         stdev_X, stdev_Y, software_version):
         return BatchRun.objects.create(flowcell_id=flowcell_entry,
                                        median_13=median_13,
                                        median_18=median_18,
@@ -84,8 +98,8 @@ class BatchRun(models.Model):
 
 
 class SamplesRunData(models.Model):
-    __help_text_chr="Total number of NonExcludedSites used for analysis of a corresponding chromosome (integer value)"
-    __help_text_chr_coverage="Normalized coverage of each chromosome used in evaluation of chromosomal ratios"
+    __help_text_chr = "Total number of NonExcludedSites used for analysis of a corresponding chromosome (integer value)"
+    __help_text_chr_coverage = "Normalized coverage of each chromosome used in evaluation of chromosomal ratios"
     flowcell_id = models.ForeignKey(Flowcell, on_delete=models.CASCADE, help_text="Flowcell ID")
     sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE, help_text="Flowcell ID")
     sample_id = models.CharField(help_text="SampleID", max_length=20)
@@ -97,33 +111,55 @@ class SamplesRunData(models.Model):
     qc_flag = models.IntegerField(choices=((0, 'Pass'), (1, 'Warning'), (2, 'Failure')), blank=False, unique=False)
     qc_failure = models.TextField(help_text="Description.", blank=False, unique=False, default="")
     qc_warning = models.TextField(help_text="Description.", blank=False, unique=False, default="")
-    ncv_13 = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) 13", max_digits=25, decimal_places=20)
-    ncv_18 = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) 18", max_digits=25, decimal_places=20)
-    ncv_21 = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) 21", max_digits=25, decimal_places=20)
-    ncv_X = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) X", max_digits=25, decimal_places=20)
-    ncv_Y = models.DecimalField(blank=True, null=True, help_text="Normalized Chromosomal Value (z-score) Y", max_digits=25, decimal_places=20)
+    ncv_13 = models.DecimalField(blank=True, null=True,
+                                 help_text="Normalized Chromosomal Value (z-score) 13", max_digits=25, decimal_places=20)
+    ncv_18 = models.DecimalField(blank=True, null=True,
+                                 help_text="Normalized Chromosomal Value (z-score) 18", max_digits=25, decimal_places=20)
+    ncv_21 = models.DecimalField(blank=True, null=True,
+                                 help_text="Normalized Chromosomal Value (z-score) 21", max_digits=25, decimal_places=20)
+    ncv_X = models.DecimalField(blank=True, null=True,
+                                help_text="Normalized Chromosomal Value (z-score) X", max_digits=25, decimal_places=20)
+    ncv_Y = models.DecimalField(blank=True, null=True,
+                                help_text="Normalized Chromosomal Value (z-score) Y", max_digits=25, decimal_places=20)
     ratio_13 = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio 13", max_digits=25, decimal_places=20)
     ratio_18 = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio 18", max_digits=25, decimal_places=20)
     ratio_21 = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio 21", max_digits=25, decimal_places=20)
     ratio_X = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio X", max_digits=25, decimal_places=20)
     ratio_y = models.DecimalField(blank=True, null=True, help_text="Chromosomal Ratio Y", max_digits=25, decimal_places=20)
     clusters = models.IntegerField(blank=False, help_text="Total number of clusters across lanes (Reported per flow cell)")
-    total_reads_2_clusters = models.DecimalField(blank=False, help_text="Ratio of recovered reads to number of clusters across lanes (Reported per flow cell)", max_digits=25, decimal_places=20)
-    max_misindexed_reads_2_clusters = models.FloatField(blank=False, help_text="Ratio of misindexed reads across lanes to clusters in a virtual lane (Reported per flow cell)")
+    total_reads_2_clusters = models.DecimalField(blank=False,
+                                                 help_text="Ratio of recovered reads to number of clusters across lanes " +
+                                                           "(Reported per flow cell)", max_digits=25, decimal_places=20)
+    max_misindexed_reads_2_clusters = models.FloatField(blank=False,
+                                                        help_text="Ratio of misindexed reads across lanes to clusters in a " +
+                                                                  "virtual lane (Reported per flow cell)")
     indexed_reads = models.IntegerField(blank=False, help_text="Total number of indexed reads per sample across lanes")
-    total_indexed_reads_2_clusters = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Ratio of indexed reads to clusters (Reported per flow cell)")
+    total_indexed_reads_2_clusters = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                                         help_text="Ratio of indexed reads to clusters (Reported per flow cell)")
     tags = models.IntegerField(blank=False, help_text="Number of reads mapped to a unique place in the genome")
-    non_excluded_sites = models.IntegerField(blank=False, help_text="Number of tags excluding filtered genome regions and duplicate reads mapping to the same location")
-    non_excluded_sites_2_tags = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Ratio of NonExcludedSites to tags")
-    tags_2_indexed_reads = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Ratio of tags to indexed reads")
-    perfect_match_tags_2_tags = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Ratio of perfectly mapped tags to all tags")
-    gc_bias = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Residual GC bias in the read distribution after correction")
-    gcr2 = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="R2 of the GC correction (percentage of variance explained by GC correction)")
-    ncd_13 = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Likelihood score for chromosome 13 denominators")
-    ncd_18 = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Likelihood score for chromosome 18 denominators")
-    ncd_21 = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Likelihood score for chromosome 21 denominators")
-    ncd_x = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Likelihood score for chromosome X denominators")
-    ncd_y = models.DecimalField(blank=False, max_digits=25, decimal_places=20, help_text="Likelihood score for chromosome Y denominators")
+    non_excluded_sites = models.IntegerField(blank=False,
+                                             help_text="Number of tags excluding filtered genome regions and duplicate reads " +
+                                                       "mapping to the same location")
+    non_excluded_sites_2_tags = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                                    help_text="Ratio of NonExcludedSites to tags")
+    tags_2_indexed_reads = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                               help_text="Ratio of tags to indexed reads")
+    perfect_match_tags_2_tags = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                                    help_text="Ratio of perfectly mapped tags to all tags")
+    gc_bias = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                  help_text="Residual GC bias in the read distribution after correction")
+    gcr2 = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                               help_text="R2 of the GC correction (percentage of variance explained by GC correction)")
+    ncd_13 = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                 help_text="Likelihood score for chromosome 13 denominators")
+    ncd_18 = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                 help_text="Likelihood score for chromosome 18 denominators")
+    ncd_21 = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                 help_text="Likelihood score for chromosome 21 denominators")
+    ncd_x = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                help_text="Likelihood score for chromosome X denominators")
+    ncd_y = models.DecimalField(blank=False, max_digits=25, decimal_places=20,
+                                help_text="Likelihood score for chromosome Y denominators")
     chr1_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=25, decimal_places=20)
     chr2_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=25, decimal_places=20)
     chr3_coverage = models.DecimalField(blank=False, help_text=__help_text_chr_coverage, max_digits=25, decimal_places=20)
@@ -172,23 +208,27 @@ class SamplesRunData(models.Model):
     chr22 = models.IntegerField(blank=False, help_text=__help_text_chr)
     Chrx = models.IntegerField(blank=False, help_text=__help_text_chr)
     chry = models.IntegerField(blank=False, help_text=__help_text_chr)
-    ff_formatted = models.DecimalField(blank=True, null=True, max_digits=25, decimal_places=20, help_text="Estimated fetal component of cfDNA recovered by the assay. Reported as a discreet, rounded percentage that provides additional information for each sample.")
+    ff_formatted = models.DecimalField(blank=True, null=True, max_digits=25, decimal_places=20,
+                                       help_text="Estimated fetal component of cfDNA recovered by the assay. Reported as a " +
+                                                 "discreet, rounded percentage that provides additional information for each " +
+                                                 "sample.")
 
     def __str__(self):
-        return str(self.index)
+        return self.sample_id + ";  " + str(self.sample_type) + "; " + str(self.index)
 
-    def create_sample_data(flowcell_id_entry, sample_type_entry, sample_id, sample_project, index, well, description, library_nm, qc_flag, qc_failure, qc_warning,
-                            ncv_13, ncv_18, ncv_21, ncv_x, ncv_y, ratio_13, ratio_18, ratio_21, ratio_X, ratio_y,
-                            clusters, total_reads_2_clusters, max_misindexed_reads_2_clusters, indexed_reads, total_indexed_reads_2_clusters, tags,
-                            non_excluded_sites, non_excluded_sites_2_tags, tags_2_indexed_reads, perfect_match_tags_2_tags, gc_bias, gcr2,
-                            ncd_13, ncd_18, ncd_21, ncd_x, ncd_y,
-                            chr1_coverage, chr2_coverage, chr3_coverage, chr4_coverage, chr5_coverage, chr6_coverage, chr7_coverage,
-                            chr8_coverage, chr9_coverage, chr10_coverage, chr11_coverage, chr12_coverage, chr13_coverage, chr14_coverage,
-                            chr15_coverage, chr16_coverage, chr17_coverage, chr18_coverage, chr19_coverage, chr20_coverage,
-                            chr21_coverage, chr22_coverage, chrx_coverage, chry_coverage,
-                            chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9,
-                            chr10, chr11, chr12, chr13, chr14, chr15, chr16, chr17,
-                            chr18, chr19, chr20, chr21, chr22, chrx, chry, ff_formatted):
+    def create_sample_data(flowcell_id_entry, sample_type_entry, sample_id, sample_project, index, well, description, library_nm,
+                           qc_flag, qc_failure, qc_warning,
+                           ncv_13, ncv_18, ncv_21, ncv_x, ncv_y, ratio_13, ratio_18, ratio_21, ratio_X, ratio_y,
+                           clusters, total_reads_2_clusters, max_misindexed_reads_2_clusters, indexed_reads,
+                           total_indexed_reads_2_clusters, tags, non_excluded_sites, non_excluded_sites_2_tags,
+                           tags_2_indexed_reads, perfect_match_tags_2_tags, gc_bias, gcr2, ncd_13, ncd_18, ncd_21, ncd_x, ncd_y,
+                           chr1_coverage, chr2_coverage, chr3_coverage, chr4_coverage, chr5_coverage, chr6_coverage,
+                           chr7_coverage, chr8_coverage, chr9_coverage, chr10_coverage, chr11_coverage, chr12_coverage,
+                           chr13_coverage, chr14_coverage, chr15_coverage, chr16_coverage, chr17_coverage, chr18_coverage,
+                           chr19_coverage, chr20_coverage, chr21_coverage, chr22_coverage, chrx_coverage, chry_coverage,
+                           chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9,
+                           chr10, chr11, chr12, chr13, chr14, chr15, chr16, chr17,
+                           chr18, chr19, chr20, chr21, chr22, chrx, chry, ff_formatted):
         return SamplesRunData.objects.create(
                 flowcell_id=flowcell_id_entry,
                 sample_type=sample_type_entry,
@@ -278,14 +318,61 @@ class SamplesRunData(models.Model):
                 chry=chry,
                 ff_formatted=ff_formatted if not pandas.isna(ff_formatted) else None)
 
-    def get_samples(flowcell,sample=None):
+    def get_samples(flowcell, sample=None):
         if sample is None:
             return SamplesRunData.objects.filter(flowcell_id=flowcell)
         else:
             return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
 
-    def get_samples_not_included(flowcell,sample=None):
-        if sample is None:
-            return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+    def get_samples_not_included(flowcell, start_time=None, stop_time=None, sample=None):
+        if start_time is not None or stop_time is not None:
+            flowcells = Flowcell.objects.filter(run_date__lte=stop_time, run_date__gte=start_time)
+            if sample is None:
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell)
+            else:
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell, sample_id=sample)
         else:
-            return SamplesRunData.objects.all().exclude(flowcell_id=flowcell,sample_id=sample)
+            if sample is None:
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+            else:
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample)
+
+
+class Line(models.Model):
+    slope = models.DecimalField(blank=False, help_text="Slope of line", decimal_places=5, max_digits=15)
+    intercept = models.DecimalField(blank=False, help_text="Intercept point", decimal_places=5, max_digits=15)
+    stderr = models.DecimalField(blank=False, help_text="Stderr", decimal_places=5, max_digits=15)
+    stdev = models.DecimalField(blank=False, help_text="Stderr", decimal_places=5, max_digits=15)
+    p_value = models.DecimalField(blank=False, help_text="P value", decimal_places=5, max_digits=15)
+    r_value = models.DecimalField(blank=False, help_text="R value", decimal_places=5, max_digits=15)
+    plot_type = models.CharField(max_length=20, help_text="Comparison type", blank=False, unique=True)
+
+    def create_or_update_line(type, slope, intercept, stderr, stdev, p_value, r_value):
+        line = Line.objects.filter(plot_type=type)
+        if line and len(line) == 1:
+            line[0].slope = slope
+            line[0].intercept = intercept
+            line[0].stderr = stderr
+            line[0].stdev = stdev
+            line[0].p_value = p_value
+            line[0].r_value = r_value
+            line[0].save()
+        else:
+            return Line.objects.create(plot_type=type,
+                                       slope=slope,
+                                       intercept=intercept,
+                                       stderr=stderr,
+                                       stdev=stdev,
+                                       p_value=p_value,
+                                       r_value=r_value)
+
+    def get_line(type):
+        return Line.objects.filter(plot_type=type)
+
+    def __str__(self):
+        return "y={}*x + {}, stderr: {}, stdev: {}, P: {}, R: {}".format(self.slope,
+                                                                         self.intercept,
+                                                                         self.stderr,
+                                                                         self.stdev,
+                                                                         self.p_value,
+                                                                         self.r_value)

@@ -55,3 +55,7 @@
 .icon-stack-3x {
   font-size: 2em;
 }
+
+.dashed {
+            stroke-dasharray: 5,5;
+        }

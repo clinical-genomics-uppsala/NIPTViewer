@@ -4,5 +4,5 @@
     <svg style="width:{{ width }};height:{{ height }};"></svg>
   </div>
 
-  <script>scatterChart({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_format: '{{ x_format }}', y_format: '{{ y_format }}', x_label: '{{ x_label }}', y_label: '{{ y_label }}', limits: {{ limits }}, highlight_area: {{ highlight_area }}, x_min:{{ x_min }}, x_max:{{ x_max }}, y_min: {{ y_min}}, y_max: {{ y_max }}{{ '}' }});</script>
+  <script>scatterChart({{ '{' }}data: {{ data|safe }}, id: '#{{ plot_id }} svg', x_format: '{{ x_format }}', y_format: '{{ y_format }}', x_label: '{{ x_label }}', y_label: '{{ y_label }}', limits: {{ limits }}, highlight_area: {{ highlight_area }}, x_min:{{ x_min }}, x_max:{{ x_max }}, y_min: {{ y_min }}, y_max: {{ y_max }}, x_min_current_run:{{ x_min_current_run }}, x_max_current_run:{{ x_max_current_run }}, y_min_current_run: {{ y_min_current_run }}, y_max_current_run: {{ y_max_current_run }}, slope: {{ slope|default_if_none:"''" }}, intercept: {{ intercept|default_if_none:"''" }}, stdev: {{ stdev|default_if_none:"''" }} {{ '}'}});</script>
 </div>

@@ -5,9 +5,13 @@
 NIPTViewer: Flowcells run
 {% endblock %}
 
+{% block head_css %}
+  <link href="{% static "css/nv.d3.min.1.8.6.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+{% endblock %}
+
 {% block head_js %}
 <script src="{% static "js/d3.min.3.5.2.js" %}" charset="utf-8"></script>
-<script src="{% static "js/nv/1.8.6/nv.d3.min.js" %}"></script>
+<script src="{% static "js/nv.d3.min.1.8.6.js" %}"></script>
 <script src="{% static "run_visualiser/js/scatter_chart.js" %}"></script>
 <script src="{% static "run_visualiser/js/line_chart.js" %}"></script>
 {% endblock %}
@@ -19,6 +23,15 @@ NIPTViewer: Flowcells run
 
 <div class="section">
   <div class="row white">
+      <div class="col s12 m12 white center">
+        <a class="waves-effect {% if time_selection == 1 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=1 %}">1 month</a>
+        <a class="waves-effect {% if time_selection == 3 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=2 %}">3 month</a>
+        <a class="waves-effect {% if time_selection == 6 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=6 %}">6 month</a>
+        <a class="waves-effect {% if time_selection == 12 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=12 %}">1 year</a>
+        <a class="waves-effect {% if time_selection == 24 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=24 %}">2 year</a>
+        <a class="waves-effect {% if time_selection == 70 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=60 %}">5 year</a>
+        <a class="waves-effect {% if time_selection == 9999 %} btn {% else %} btn-flat {% endif %}" href="{% url 'viewer:index' active_page=1 time_selection=9999 %}">All</a>
+      </div>
     <div class="col s12 m12 white">
       <div class=center-align>
         <h4> Fetal fraction</h4>
@@ -28,7 +41,9 @@ NIPTViewer: Flowcells run
           <svg style="width:100%;height:400px;"></svg>
         </div>
       <script>
-        scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', y_min:0, y_max:0.2,limits:[[0.02,0.02]]{{ '}' }});
+      {% with x_min_value=data_ff_time_min_x x_max_value=data_ff_time_max_x y_min_value=0 y_max_value=data_ff_time_max_y|max_value:"0.2" %}
+        scatterChartTime({{ '{' }}data: {{ data_ff_time|safe }}, id: '#scatter_chart_ff svg', x_label: 'Date', y_label: 'Fetal fraction', x_format: '0.02f', y_format: '0.02%', x_min:{{ x_min_value }}, x_max: {{ x_max_value}}, y_min:{{ y_min_value }}, y_max: {{ y_max_value}}, limits:[[0.02,0.02]]{{ '}' }});
+      {% endwith %}
       </script>
       {% else %}
       <div class=center-align>
@@ -92,6 +107,16 @@ NIPTViewer: Flowcells run
     {% endif %}
     </tbody>
   </table>
+  {% if num_pages >= 2 %}
+  <ul class="pagination center-align">
+
+      <li {% if 1 == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %}><a href="{% url 'viewer:index' active_page=active_page|add:-1 time_selection=time_selection %}"><i class="material-icons">chevron_left</i></a></li>
+    {% for page in pages %}
+        <li {% if page == active_page %} class="active" {% endif %}><a href="{% url 'viewer:index' active_page=page time_selection=time_selection %}">{{ page }}</a></li>
+    {% endfor %}
+    <li {% if num_pages == active_page %} class="disabled" {% else %} class="waves-effect" {% endif %} ><a href="{% url 'viewer:index' active_page=active_page|add:1 time_selection=time_selection %}"><i class="material-icons">chevron_right</i></a></li>
+  </ul>
+ {% endif %}
 </div>
 </div>
 {% endblock %}

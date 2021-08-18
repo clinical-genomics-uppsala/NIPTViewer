@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    re_path('^(?P<time_selection>[0-9]+)m$', views.index, name='index'),
     path('index', views.index, name='index'),
+    re_path('index/^(?P<time_selection>[0-9]+)m$', views.index, name='index'),
     path('login', views.login, name='login'),
     path('logout', views.logout, name='logout'),
     path('viewer/', include('reportvisualiser.urls')),
