@@ -178,7 +178,9 @@ def upload(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                flowcell = import_data_into_database(request.user, request.FILES['file'], skip_samples=form.cleaned_data['allow_filter_away_data'])
+                flowcell = import_data_into_database(request.user,
+                                                     request.FILES['file'],
+                                                     skip_samples=form.cleaned_data['allow_filter_away_data'])
                 if isinstance(flowcell, Flowcell):
                     context['form_data'] = form
                     context['file_validation'] = (flowcell.flowcell_barcode, flowcell.created)
