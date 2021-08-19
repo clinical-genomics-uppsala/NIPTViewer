@@ -2,6 +2,7 @@ from ..models import Flowcell, BatchRun, SamplesRunData, Index, Flowcell, Sample
 from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
+from numpy import isnan
 from pandas import read_csv, to_numeric
 from scipy import stats
 import datetime
@@ -102,8 +103,9 @@ def parse_niptool_csv(file=None, sep=","):
     return version, run_date, data
 
 
-def import_data_into_database(user, file):
+def import_data_into_database(user, file, skip_samples=False):
     version, run_date, data = parse_niptool_csv(file)
+    num_imported_samples = 0
     try:
         with transaction.atomic():
             rundata = data.loc[:, ['Flowcell'] + nnc_per_batch_scoring_metrics]
@@ -145,8 +147,10 @@ def import_data_into_database(user, file):
                                         c_sample_data + nnc_per_samplesheet].iterrows():
                 sample_type = SampleType.get_sample_type(name=row['SampleType'])
                 index = Index.get_index(row['IndexID'], row['Index'])
-
-                entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type,
+                if isnan(row['QCFlag']) and skip_samples:
+                    continue
+                try:
+                    entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type,
                                                           sample_id=row['SampleID'], sample_project=row["SampleProject"],
                                                           index=index,
                                                           well=row['Well'], description=row['Description'],
@@ -201,6 +205,12 @@ def import_data_into_database(user, file):
                                                           chr20=row['Chr20'], chr21=row['Chr21'], chr22=row['Chr22'],
                                                           chrx=row['ChrX'], chry=row['ChrY'],
                                                           ff_formatted=row['FF_Formatted'])
+                    num_imported_samples += 1
+                except ValueError as err:
+                    if skip_samples:
+                        pass
+                    else:
+                        raise ValueError(row['SampleID'] + ": " + str(err))
                 if not entry.qc_flag == 0:
                     if not entry.qc_failure == "":
                         fail.append(entry.qc_failure)
@@ -214,6 +224,8 @@ def import_data_into_database(user, file):
                     qc_status.append("Warnings (" + str(len(warn)) + ")")
                 flowcell.qc_status = ", ".join(qc_status)
                 flowcell.save()
+            if num_imported_samples == 0:
+                raise ValueError("No samples imported")
             from ..models import Line
             import math
             all_samples = SamplesRunData.objects.all()
