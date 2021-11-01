@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: 2021-10-25T10:42:09Z
+  labels:
+    app: niptviewer
+  name: niptviewer
+spec:
+  containers:
+  - name: nginx
+    image: smeds84/nginx:1.0.0
+    ports:
+    - containerPort: 80
+      hostport: 80
+      protocol: TCP
+    - containerPort: 443
+      hostport: 443
+      protocol: TCP
+    volumeMounts:
+     - name: staticfiles
+       mountPath: /home/app/web/staticfiles
+#    - name: nipt-crt
+#      mountPath: /etc/certs/public.crt
+#    - name: nipt-rsa
+#      mountPath:  /etc/certs/private.rsa
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+  - name: web
+    image: smeds84/niptviewer:1.1.0
+    env:
+    - name: DJANGO_ALLOWED_HOSTS
+      value: gollum.lul.se 127.0.0.1 localhost
+    - name: DEBUG
+      value: 1
+    volumeMounts:
+     - name: staticfiles
+       mountPath: /home/app/web/staticfiles
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: false
+      readOnlyRootFilesystem: false
+      seLinuxOptions: {}
+  volumes:
+    - name: staticfiles
+      persistentVolumeClaim:
+        claimName: niptviewer-staticfiles
+#      emptyDir: {}
+#      hostPath: 
+#        path: /home/smp002sa/NIPTViewer/certs/public.crt
+#    - name: nipt-rsa
+#      hostPath:
+#        path: /home/smp002sa/NIPTViewer/certs/private.rsa
+         
+
+status: {}
+
