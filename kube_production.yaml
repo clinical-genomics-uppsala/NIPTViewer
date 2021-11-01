@@ -11,11 +11,18 @@ spec:
     image: smeds84/nginx:1.0.0
     ports:
     - containerPort: 80
-      hostport: 8081
+      hostport: 80
       protocol: TCP
     - containerPort: 443
-      hostport: 4443
+      hostport: 443
       protocol: TCP
+    volumeMounts:
+     - name: staticfiles
+       mountPath: /home/app/web/staticfiles
+#    - name: nipt-crt
+#      mountPath: /etc/certs/public.crt
+#    - name: nipt-rsa
+#      mountPath:  /etc/certs/private.rsa
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
@@ -30,6 +37,9 @@ spec:
       value: gollum.lul.se 127.0.0.1 localhost
     - name: DEBUG
       value: 1
+    volumeMounts:
+     - name: staticfiles
+       mountPath: /home/app/web/staticfiles
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
@@ -38,3 +48,4 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
 status: {}
+
