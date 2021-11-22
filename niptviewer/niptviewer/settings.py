@@ -155,6 +155,17 @@ DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL', "DUMMAY")
 
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', "DUMMY")
 
+
+def get_secrets(variable, default):
+    if os.path.isfile(os.getenv(variable, default)):
+        data = ""
+        with open(os.getenv(variable), "r") as myfile:
+            data = myfile.readlines()
+        return data
+    else:
+        return os.getenv(variable, default)
+
+
 if os.environ.get('DATABASE', "sqlite3") == "postgres":
     DATABASES = {
         "default": {
@@ -164,6 +175,17 @@ if os.environ.get('DATABASE', "sqlite3") == "postgres":
             "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
             "HOST": os.environ.get("SQL_HOST", "localhost"),
             "PORT": os.environ.get("SQL_PORT", "5432"),
+        }
+    }
+elif os.environ.get('DATABASE', "sqlite3") == "mssql":
+    DATABASES = {
+        "default": {
+            "ENGINE": 'mssql',
+            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+            "USER": get_secrets("SQL_USER", "user"),
+            "PASSWORD": get_seccrets("SQL_PASSWORD", "password"),
+            "HOST": os.environ.get("SQL_HOST", "localhost"),
+            "PORT": os.environ.get("SQL_PORT", ""),
         }
     }
 

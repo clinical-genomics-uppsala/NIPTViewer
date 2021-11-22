@@ -37,9 +37,21 @@ spec:
       value: gollum.lul.se 127.0.0.1 localhost
     - name: DEBUG
       value: 1
+    - name: "SQL_ENGINE"
+      value: "mssql"
+    - name: "SQL_DATABASE"
+      value: "niptviewer"
+    - name: "SQL_HOST"
+      value: "SQLH-DB-19.lul-net.ad.uu.se"
     volumeMounts:
      - name: staticfiles
        mountPath: /home/app/web/staticfiles
+     - name: username:
+       mountPath: /etc/username
+       readOnly: true
+     - name: password
+       mountPath: /etc/password
+       readOnly: true  
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
@@ -51,6 +63,12 @@ spec:
     - name: staticfiles
       persistentVolumeClaim:
         claimName: niptviewer-staticfiles
+    - name: username
+      secret:
+        secretName: username
+    - name: password
+      secret:
+        secretName: password
 #      emptyDir: {}
 #      hostPath: 
 #        path: /home/smp002sa/NIPTViewer/certs/public.crt
