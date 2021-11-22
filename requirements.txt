@@ -10,3 +10,4 @@ django-wkhtmltopdf==3.3.0
 gunicorn==20.0.4
 coverage==5.3
 python-dateutil==2.8.1
+mssql-django==1.0
