@@ -379,16 +379,16 @@ def import_flowcell_export(file_handle):
                             )
 
     def compare_batch(batch, columns, header_map):
-        if batch.median_13 == columns[header_map["Median_13"]] and \
-           batch.median_18 == columns[header_map["Median_18"]] and \
-           batch.median_21 == columns[header_map["Median_21"]] and \
-           batch.median_x == columns[header_map["Median_X"]] and \
-           batch.median_y == columns[header_map["Median_Y"]] and \
-           batch.stdev_13 == columns[header_map["Stdev_13"]] and \
-           batch.stdev_18 == columns[header_map["Stdev_18"]] and \
-           batch.stdev_21 == columns[header_map["Stdev_21"]] and \
-           batch.stdev_X == columns[header_map["Stdev_X"]] and \
-           batch.stdev_Y == columns[header_map["Stdev_Y"]] and \
+        if batch.median_13 == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and \
+           batch.median_18 == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and \
+           batch.median_21 == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and \
+           batch.median_x == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and \
+           batch.median_y == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and \
+           batch.stdev_13 == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and \
+           batch.stdev_18 == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and \
+           batch.stdev_21 == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and \
+           batch.stdev_X == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and \
+           batch.stdev_Y == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and \
            batch.software_version == columns[header_map["SoftwareVersion"]]:
             pass
         else:
@@ -554,16 +554,16 @@ def import_flowcell_export(file_handle):
             )
             batch = BatchRun.create_batch_run(
                 flowcell_entry=flowcell,
-                median_13=columns[header_map["Median_13"]],
-                median_18=columns[header_map["Median_18"]],
-                median_21=columns[header_map["Median_21"]],
-                median_x=columns[header_map["Median_X"]],
-                median_y=columns[header_map["Median_Y"]],
-                stdev_13=columns[header_map["Stdev_13"]],
-                stdev_18=columns[header_map["Stdev_18"]],
-                stdev_21=columns[header_map["Stdev_21"]],
-                stdev_X=columns[header_map["Stdev_X"]],
-                stdev_Y=columns[header_map["Stdev_Y"]],
+                median_13=columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0,
+                median_18=columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0,
+                median_21=columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0,
+                median_x=columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0,
+                median_y=columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0,
+                stdev_13=columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0,
+                stdev_18=columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0,
+                stdev_21=columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0,
+                stdev_X=columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0,
+                stdev_Y=columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0,
                 software_version=columns[header_map["SoftwareVersion"]]
             )
             create_sample(columns)
