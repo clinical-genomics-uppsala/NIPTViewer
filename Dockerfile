@@ -16,15 +16,6 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN pip install --upgrade pip
-#RUN pip install flake8
-
-
-# copy project
-COPY . .
-#RUN flake8 --ignore=E501,F401 .
-
-RUN apt-get update && apt-get install -y git
-#RUN git checkout ${VERSION}
 
 COPY ./requirements.prod.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
@@ -43,12 +34,13 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN mkdir -p /home/app
 
-#RUN addgroup --disabled-password --gecos "" app
 RUN adduser app
 
 # create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
+ENV APP_WORKERS=3
+ENV APP_PORT=8000
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
@@ -71,4 +63,4 @@ USER app
 
 ENTRYPOINT ["/home/app/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "niptviewer.wsgi:application"]
+CMD ["gunicorn", "--bind", ":$APP_PORT" , "--workers", $APP_WORKERS, "niptviewer.wsgi:application"]
