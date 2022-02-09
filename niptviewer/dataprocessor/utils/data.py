@@ -379,17 +379,17 @@ def import_flowcell_export(file_handle):
                             )
 
     def compare_batch(batch, columns, header_map):
-        if batch.median_13 == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.median_18 == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.median_21 == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.median_x == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.median_y == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.stdev_13 == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.stdev_18 == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.stdev_21 == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.stdev_X == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.stdev_Y == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and \  # noqa
-           batch.software_version == columns[header_map["SoftwareVersion"]]:
+        if (batch.median_13 == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_18 == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_21 == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_x == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_y == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_13 == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_18 == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_21 == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_X == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_Y == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.software_version == columns[header_map["SoftwareVersion"]]):
             pass
         else:
             raise Exception("batch information inconsistent for flowcell: " +
