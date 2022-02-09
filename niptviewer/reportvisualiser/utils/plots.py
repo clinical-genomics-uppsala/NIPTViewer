@@ -32,7 +32,7 @@ def data_structure_generator(samples_info):
 
             from dataprocessor.models import Line
             line = Line.get_line(comparison)
-            if line:   
+            if line:
                 line = Line.get_line(comparison)[0]
                 info_data['slope'] = decimal_default(line.slope)
                 info_data['intercept'] = decimal_default(line.intercept)
