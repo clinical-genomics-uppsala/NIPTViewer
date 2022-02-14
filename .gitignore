@@ -11,3 +11,4 @@ assets
 .coverage
 coverage_html
 .idea
+admin_settings.*

@@ -23,9 +23,6 @@ RUN pip install --upgrade pip
 COPY . .
 #RUN flake8 --ignore=E501,F401 .
 
-RUN apt-get update && apt-get install -y git
-#RUN git checkout ${VERSION}
-
 COPY ./requirements.prod.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
 
@@ -34,7 +31,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.8-slim
+pFROM ubuntu:20.04
 
 ENV LANG C.UTF-8
 ENV TZ=Europe/Stockholm
@@ -54,7 +51,11 @@ RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
 # install dependencies
-RUN apt update && apt install netcat libpq-dev wkhtmltopdf vim curl wget -y
+RUN apt update && apt install curl gnupg2 -y
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+RUN apt update && ACCEPT_EULA=Y  apt install unixodbc-dev build-essential libpq-dev wkhtmltopdf vim wget msodbcsql17 -y
+RUN apt update && apt install python3-pip -y
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.prod.txt .
 RUN pip install --no-cache /wheels/*
@@ -62,7 +63,7 @@ RUN pip install --no-cache /wheels/*
 COPY ./dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
-
+RUN apt purge build-essential unixodbc-dev -y
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
 

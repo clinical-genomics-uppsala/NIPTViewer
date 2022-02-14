@@ -162,7 +162,7 @@ def get_secrets(variable, default):
             data = myfile.readlines()
         return data
     else:
-        return os.getenv(variable, default)
+        return os.getenv(os.getenv(variable, default))
 
 
 if os.environ.get('DATABASE', "sqlite3") == "postgres":
@@ -182,12 +182,20 @@ elif os.environ.get('DATABASE', "sqlite3") == "mssql":
             "ENGINE": 'mssql',
             "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
             "USER": get_secrets("SQL_USER", "user"),
-            "PASSWORD": get_seccrets("SQL_PASSWORD", "password"),
+            "PASSWORD": get_secrets("SQL_PASSWORD", "password"),
             "HOST": os.environ.get("SQL_HOST", "localhost"),
             "PORT": os.environ.get("SQL_PORT", ""),
+            "OPTIONS": {
+                'driver': 'ODBC Driver 17 for SQL Server',
+                'host_is_server': True,
+                'connection_timeout': 30,
+                'collation': 'SQL_Latin1_General_CP1_CI_AS',
+                'extra_params': 'Trusted_Connection=yes;Encrypt=yes',
+            }
         }
     }
 
+print(DATABASES)
 LOGGING_CONFIG = None
 #
 # # Get loglevel from env
