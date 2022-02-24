@@ -567,9 +567,9 @@ def generate_regression_line_from_sample_data(samples,
                                               x_value=lambda v: getattr(v, 'ncv_X'),
                                               y_value=lambda v: getattr(v, 'ncv_Y'),
                                               filter=lambda v: getattr(v, 'ncv_Y') is not None and
-                                                               getattr(v, 'ncv_Y') > 3.0 and
-                                                               getattr(v, 'ncv_X') is not None and
-                                                               getattr(v, 'ncv_X') > -25.0):
+                                              getattr(v, 'ncv_Y') > 3.0 and
+                                              getattr(v, 'ncv_X') is not None and
+                                              getattr(v, 'ncv_X') > -25.0):
     x_value_list = list()
     y_value_list = list()
     for sample in samples:
@@ -577,6 +577,7 @@ def generate_regression_line_from_sample_data(samples,
             x_value_list.append(float(x_value(sample)))
             y_value_list.append(float(y_value(sample)))
     return stats.linregress(x_value_list, y_value_list)
+
 
 def create_trendlines():
     from ..models import Line
