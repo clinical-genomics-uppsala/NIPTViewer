@@ -29,7 +29,8 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y']
             information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y']
         if comparison == "x_vs_y":
-
+            information['data_' + comparison + '_min_x_current_run'] = -25
+            information['data_' + comparison + '_max_y_current_run'] = 400
             from dataprocessor.models import Line
             line = Line.get_line(comparison)
             if line:
