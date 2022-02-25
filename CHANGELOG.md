@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.2.0...v1.3.0) (2022-02-25)
+
+
+### Features
+
+* set version when doing a release ([5204671](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/5204671ace2486236571f46a4fac7d7d685106d0))
+
+
+### Bug Fixes
+
+* fix dockerfile ([4f1cc4d](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/4f1cc4d430b8246b9e0a76346226f5d161e1c042))
+
+
+### Documentation
+
+* set labels in dockerfile ([580cd27](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/580cd272271d7bd20391eb40d026b44e400bfada))
+
 ## [1.2.0](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.1.0...v1.2.0) (2022-02-25)
 
 
