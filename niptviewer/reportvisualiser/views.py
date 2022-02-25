@@ -177,13 +177,19 @@ def upload(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            flowcell = import_data_into_database(request.user, request.FILES['file'])
-            if isinstance(flowcell, Flowcell):
+            try:
+                flowcell = import_data_into_database(request.user,
+                                                     request.FILES['file'],
+                                                     skip_samples=form.cleaned_data['allow_filter_away_data'])
+                if isinstance(flowcell, Flowcell):
+                    context['form_data'] = form
+                    context['file_validation'] = (flowcell.flowcell_barcode, flowcell.created)
+                    return HttpResponse(template.render(context, request))
+                else:
+                    return redirect('viewer:report', barcode=flowcell)
+            except ValueError as err:
                 context['form_data'] = form
-                context['file_validation'] = (flowcell.flowcell_barcode, flowcell.created)
-                return HttpResponse(template.render(context, request))
-            else:
-                return redirect('viewer:report', barcode=flowcell)
+                context['form_data_err'] = str(err)
         else:
             context['form_data'] = form
     else:
