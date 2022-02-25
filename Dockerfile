@@ -19,7 +19,6 @@ RUN pip install --upgrade pip
 
 COPY ./requirements.prod.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
- -r requirements.prod.txt
 
 # pull official base image
 FROM ubuntu:20.04
