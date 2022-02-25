@@ -27,6 +27,9 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 # pull official base image
 FROM python:3.8-slim
 
+LABEL maintainer="patrik.smeds@scilifelab.uu.se"
+LABEL version=$VERSION
+
 ENV LANG C.UTF-8
 ENV TZ=Europe/Stockholm
 ENV DEBIAN_FRONTEND=noninteractive
