@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.3.0...v1.4.0) (2022-02-25)
+
+
+### Features
+
+* lint test for dockerfile ([5d3fc20](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/5d3fc200d40ef797fc7252afbc6a256c3a58fef2))
+* mssql settings ([369f2aa](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/369f2aab01e4d166edba1513faec6a21c1f769e6))
+
+
+### Bug Fixes
+
+* code style. ([1e4ad42](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/1e4ad42d7a0cb3f236bf365cef373200b4ad70bf))
+
 ## [1.3.0](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.2.0...v1.3.0) (2022-02-25)
 
 
