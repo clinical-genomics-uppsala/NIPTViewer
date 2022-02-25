@@ -1,0 +1,10 @@
+env
+.env
+.eggs
+images
+misc
+docs
+tutorial
+tests
+examples
+db.sqlite3
