@@ -2,6 +2,7 @@ from ..models import Flowcell, BatchRun, SamplesRunData, Index, Flowcell, Sample
 from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
+from numpy import isnan
 from pandas import read_csv, to_numeric
 from scipy import stats
 import datetime
@@ -102,8 +103,9 @@ def parse_niptool_csv(file=None, sep=","):
     return version, run_date, data
 
 
-def import_data_into_database(user, file):
+def import_data_into_database(user, file, skip_samples=False):
     version, run_date, data = parse_niptool_csv(file)
+    num_imported_samples = 0
     try:
         with transaction.atomic():
             rundata = data.loc[:, ['Flowcell'] + nnc_per_batch_scoring_metrics]
@@ -145,62 +147,75 @@ def import_data_into_database(user, file):
                                         c_sample_data + nnc_per_samplesheet].iterrows():
                 sample_type = SampleType.get_sample_type(name=row['SampleType'])
                 index = Index.get_index(row['IndexID'], row['Index'])
-
-                entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type,
-                                                          sample_id=row['SampleID'], sample_project=row["SampleProject"],
-                                                          index=index,
-                                                          well=row['Well'], description=row['Description'],
-                                                          library_nm=row['Library_nM'], qc_flag=row['QCFlag'],
-                                                          qc_failure=row['QCFailure'], qc_warning=row['QCWarning'],
-                                                          ncv_13=row['NCV_13'], ncv_18=row['NCV_18'], ncv_21=row['NCV_21'],
-                                                          ncv_x=row['NCV_X'], ncv_y=row['NCV_Y'],
-                                                          ratio_13=row['Ratio_13'], ratio_18=row['Ratio_18'],
-                                                          ratio_21=row['Ratio_21'], ratio_X=row['Ratio_X'],
-                                                          ratio_y=row['Ratio_Y'],
-                                                          clusters=row['Clusters'],
-                                                          total_reads_2_clusters=row['TotalReads2Clusters'],
-                                                          max_misindexed_reads_2_clusters=row['MaxMisindexedReads2Clusters'],
-                                                          indexed_reads=row['IndexedReads'],
-                                                          total_indexed_reads_2_clusters=row['TotalIndexedReads2Clusters'],
-                                                          tags=row['Tags'],
-                                                          non_excluded_sites=row['NonExcludedSites'],
-                                                          non_excluded_sites_2_tags=row['NonExcludedSites2Tags'],
-                                                          tags_2_indexed_reads=row['Tags2IndexedReads'],
-                                                          perfect_match_tags_2_tags=row['PerfectMatchTags2Tags'],
-                                                          gc_bias=row['GCBias'], gcr2=row['GCR2'], ncd_13=row['NCD_13'],
-                                                          ncd_18=row['NCD_18'], ncd_21=row['NCD_21'],
-                                                          ncd_x=row['NCD_X'], ncd_y=row['NCD_Y'],
-                                                          chr1_coverage=row['Chr1_Coverage'], chr2_coverage=row['Chr2_Coverage'],
-                                                          chr3_coverage=row['Chr3_Coverage'], chr4_coverage=row['Chr4_Coverage'],
-                                                          chr5_coverage=row['Chr5_Coverage'],
-                                                          chr6_coverage=row['Chr6_Coverage'], chr7_coverage=row['Chr7_Coverage'],
-                                                          chr8_coverage=row['Chr8_Coverage'],
-                                                          chr9_coverage=row['Chr9_Coverage'],
-                                                          chr10_coverage=row['Chr10_Coverage'],
-                                                          chr11_coverage=row['Chr11_Coverage'],
-                                                          chr12_coverage=row['Chr12_Coverage'],
-                                                          chr13_coverage=row['Chr13_Coverage'],
-                                                          chr14_coverage=row['Chr14_Coverage'],
-                                                          chr15_coverage=row['Chr15_Coverage'],
-                                                          chr16_coverage=row['Chr16_Coverage'],
-                                                          chr17_coverage=row['Chr17_Coverage'],
-                                                          chr18_coverage=row['Chr18_Coverage'],
-                                                          chr19_coverage=row['Chr19_Coverage'],
-                                                          chr20_coverage=row['Chr20_Coverage'],
-                                                          chr21_coverage=row['Chr21_Coverage'],
-                                                          chr22_coverage=row['Chr22_Coverage'],
-                                                          chrx_coverage=row['ChrX_Coverage'],
-                                                          chry_coverage=row['ChrY_Coverage'], chr1=row['Chr1'], chr2=row['Chr2'],
-                                                          chr3=row['Chr3'], chr4=row['Chr4'],
-                                                          chr5=row['Chr5'], chr6=row['Chr6'], chr7=row['Chr7'], chr8=row['Chr8'],
-                                                          chr9=row['Chr9'],
-                                                          chr10=row['Chr10'], chr11=row['Chr11'], chr12=row['Chr12'],
-                                                          chr13=row['Chr13'], chr14=row['Chr14'],
-                                                          chr15=row['Chr15'], chr16=row['Chr16'], chr17=row['Chr17'],
-                                                          chr18=row['Chr18'], chr19=row['Chr19'],
-                                                          chr20=row['Chr20'], chr21=row['Chr21'], chr22=row['Chr22'],
-                                                          chrx=row['ChrX'], chry=row['ChrY'],
-                                                          ff_formatted=row['FF_Formatted'])
+                if isnan(row['QCFlag']) and skip_samples:
+                    continue
+                try:
+                    entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type,
+                                                              sample_id=row['SampleID'], sample_project=row["SampleProject"],
+                                                              index=index,
+                                                              well=row['Well'], description=row['Description'],
+                                                              library_nm=row['Library_nM'], qc_flag=row['QCFlag'],
+                                                              qc_failure=row['QCFailure'], qc_warning=row['QCWarning'],
+                                                              ncv_13=row['NCV_13'], ncv_18=row['NCV_18'], ncv_21=row['NCV_21'],
+                                                              ncv_x=row['NCV_X'], ncv_y=row['NCV_Y'],
+                                                              ratio_13=row['Ratio_13'], ratio_18=row['Ratio_18'],
+                                                              ratio_21=row['Ratio_21'], ratio_X=row['Ratio_X'],
+                                                              ratio_y=row['Ratio_Y'],
+                                                              clusters=row['Clusters'],
+                                                              total_reads_2_clusters=row['TotalReads2Clusters'],
+                                                              max_misindexed_reads_2_clusters=row['MaxMisindexedReads2Clusters'],
+                                                              indexed_reads=row['IndexedReads'],
+                                                              total_indexed_reads_2_clusters=row['TotalIndexedReads2Clusters'],
+                                                              tags=row['Tags'],
+                                                              non_excluded_sites=row['NonExcludedSites'],
+                                                              non_excluded_sites_2_tags=row['NonExcludedSites2Tags'],
+                                                              tags_2_indexed_reads=row['Tags2IndexedReads'],
+                                                              perfect_match_tags_2_tags=row['PerfectMatchTags2Tags'],
+                                                              gc_bias=row['GCBias'], gcr2=row['GCR2'], ncd_13=row['NCD_13'],
+                                                              ncd_18=row['NCD_18'], ncd_21=row['NCD_21'],
+                                                              ncd_x=row['NCD_X'], ncd_y=row['NCD_Y'],
+                                                              chr1_coverage=row['Chr1_Coverage'],
+                                                              chr2_coverage=row['Chr2_Coverage'],
+                                                              chr3_coverage=row['Chr3_Coverage'],
+                                                              chr4_coverage=row['Chr4_Coverage'],
+                                                              chr5_coverage=row['Chr5_Coverage'],
+                                                              chr6_coverage=row['Chr6_Coverage'],
+                                                              chr7_coverage=row['Chr7_Coverage'],
+                                                              chr8_coverage=row['Chr8_Coverage'],
+                                                              chr9_coverage=row['Chr9_Coverage'],
+                                                              chr10_coverage=row['Chr10_Coverage'],
+                                                              chr11_coverage=row['Chr11_Coverage'],
+                                                              chr12_coverage=row['Chr12_Coverage'],
+                                                              chr13_coverage=row['Chr13_Coverage'],
+                                                              chr14_coverage=row['Chr14_Coverage'],
+                                                              chr15_coverage=row['Chr15_Coverage'],
+                                                              chr16_coverage=row['Chr16_Coverage'],
+                                                              chr17_coverage=row['Chr17_Coverage'],
+                                                              chr18_coverage=row['Chr18_Coverage'],
+                                                              chr19_coverage=row['Chr19_Coverage'],
+                                                              chr20_coverage=row['Chr20_Coverage'],
+                                                              chr21_coverage=row['Chr21_Coverage'],
+                                                              chr22_coverage=row['Chr22_Coverage'],
+                                                              chrx_coverage=row['ChrX_Coverage'],
+                                                              chry_coverage=row['ChrY_Coverage'],
+                                                              chr1=row['Chr1'], chr2=row['Chr2'],
+                                                              chr3=row['Chr3'], chr4=row['Chr4'],
+                                                              chr5=row['Chr5'], chr6=row['Chr6'],
+                                                              chr7=row['Chr7'], chr8=row['Chr8'],
+                                                              chr9=row['Chr9'],
+                                                              chr10=row['Chr10'], chr11=row['Chr11'], chr12=row['Chr12'],
+                                                              chr13=row['Chr13'], chr14=row['Chr14'],
+                                                              chr15=row['Chr15'], chr16=row['Chr16'], chr17=row['Chr17'],
+                                                              chr18=row['Chr18'], chr19=row['Chr19'],
+                                                              chr20=row['Chr20'], chr21=row['Chr21'], chr22=row['Chr22'],
+                                                              chrx=row['ChrX'], chry=row['ChrY'],
+                                                              ff_formatted=row['FF_Formatted'])
+                    num_imported_samples += 1
+                except ValueError as err:
+                    if skip_samples:
+                        pass
+                    else:
+                        raise ValueError(row['SampleID'] + ": " + str(err))
                 if not entry.qc_flag == 0:
                     if not entry.qc_failure == "":
                         fail.append(entry.qc_failure)
@@ -214,18 +229,9 @@ def import_data_into_database(user, file):
                     qc_status.append("Warnings (" + str(len(warn)) + ")")
                 flowcell.qc_status = ", ".join(qc_status)
                 flowcell.save()
-            from ..models import Line
-            import math
-            all_samples = SamplesRunData.objects.all()
-            slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(all_samples)
-            stdev = math.sqrt(len(all_samples))*std_err
-            Line.create_or_update_line(type="x_vs_y",
-                                       slope=slope,
-                                       intercept=intercept,
-                                       stderr=std_err,
-                                       stdev=stdev,
-                                       p_value=p_value,
-                                       r_value=r_value)
+            if num_imported_samples == 0:
+                raise ValueError("No samples imported")
+            create_trendlines()
     except IntegrityError as e:
         raise e
     return flowcell.flowcell_barcode
@@ -571,12 +577,16 @@ def import_flowcell_export(file_handle):
             compare_flowcell(flowcell, columns, header_map, user_information)
             compare_batch(batch, columns, header_map)
             create_sample(columns)
+    create_trendlines()
 
 
 def generate_regression_line_from_sample_data(samples,
                                               x_value=lambda v: getattr(v, 'ncv_X'),
                                               y_value=lambda v: getattr(v, 'ncv_Y'),
-                                              filter=lambda v: getattr(v, 'ncv_Y') is not None and getattr(v, 'ncv_Y') > 3.0):
+                                              filter=lambda v: getattr(v, 'ncv_Y') is not None and
+                                              getattr(v, 'ncv_Y') > 3.0 and
+                                              getattr(v, 'ncv_X') is not None and
+                                              getattr(v, 'ncv_X') > -25.0):
     x_value_list = list()
     y_value_list = list()
     for sample in samples:
@@ -584,3 +594,18 @@ def generate_regression_line_from_sample_data(samples,
             x_value_list.append(float(x_value(sample)))
             y_value_list.append(float(y_value(sample)))
     return stats.linregress(x_value_list, y_value_list)
+
+
+def create_trendlines():
+    from ..models import Line
+    import math
+    all_samples = SamplesRunData.objects.all()
+    slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(all_samples)
+    stdev = math.sqrt(len(all_samples))*std_err
+    Line.create_or_update_line(type="x_vs_y",
+                               slope=slope,
+                               intercept=intercept,
+                               stderr=std_err,
+                               stdev=stdev,
+                               p_value=p_value,
+                               r_value=r_value)

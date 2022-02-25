@@ -7,3 +7,4 @@ class SearchResult(forms.Form):
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
+    allow_filter_away_data = forms.BooleanField(required=False)

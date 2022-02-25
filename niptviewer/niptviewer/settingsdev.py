@@ -122,7 +122,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/staticfiles/'
-STATIC_ROOT = "/home/app/web/staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = (
   'assets/',
 )
@@ -169,7 +169,7 @@ LOGGING_CONFIG = None
 
 # # Get loglevel from env
 LOGLEVEL = os.getenv('DJANGO_LOGLEVEL', 'debug').upper()
-# #
+#
 logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,

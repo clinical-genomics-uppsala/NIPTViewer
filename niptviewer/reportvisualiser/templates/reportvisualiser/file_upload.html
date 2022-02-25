@@ -22,7 +22,9 @@ NIPTViewer: Flowcells run
         </div>
        </blockquote>
       {% endif %}
-      <div class="col l12 m12  s12">
+        {% if form_data_err %}
+        <blockquote><p>One or more samples are missing data and will have to be removed, i.e will not be imported to the database. <br/><br /><i class="material-icons left">warning</i> To proceed, select the file again and check "Filter Sample" box.</p> <p><small>Error:<br/> - {{ form_data_err }}<br/><b>Note that there coulde be more failing sampes, this is the first one that was found</b>.</small></p></blockquote>
+        {% endif %}
         <div class="file-field input-field">
           <div class="btn">
             <span>File</span>
@@ -33,11 +35,22 @@ NIPTViewer: Flowcells run
           </div>
           {{ form_data.file.errors }}
           {% if form_data.file.help_text %}
-          { form_data.file.help_text|safe }}
+          {{ form_data.file.help_text|safe }}
           {% endif %}
-
         </div>
+        {% if form_data_err %}
+        <div class="input-field">
+          <label>
+          {{ form_data.allow_filter_away_data }}
+          <span> Filter samples</span></label>
+          {% if form_data.allow_filter_away_data.help_text %}
+          <small>
+            <br /><span id="helpBlock" class="help-block">{{ form_data.allow_filter_away_data.help_text|safe }}</span>
+          </small>
+          {% endif %}
+        {% endif %}
       </div>
+      <br />
       <div class="col l12 m12 s12 center-align">
         <button class="btn-large waves-effect waves-light " type="submit" value="Upload" name="upload_csv" ><i class="material-icons right">file_upload</i>Upload</button>
       </div>
