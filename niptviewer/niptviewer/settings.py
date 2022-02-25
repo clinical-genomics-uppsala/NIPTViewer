@@ -71,19 +71,55 @@ TEMPLATES = [
     },
 ]
 
+
+def get_secrets(variable, default):
+    if os.path.isfile(os.getenv(variable, default)):
+        data = ""
+        with open(os.getenv(variable), "r") as myfile:
+            data = myfile.readlines()
+        return data
+    else:
+        return os.getenv(os.getenv(variable, default))
+
+
+if os.environ.get('DATABASE', "sqlite3") == "postgres":
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+            "USER": os.environ.get("SQL_USER", "user"),
+            "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+            "HOST": os.environ.get("SQL_HOST", "localhost"),
+            "PORT": os.environ.get("SQL_PORT", "5432"),
+        }
+    }
+elif os.environ.get('DATABASE', "sqlite3") == "mssql":
+    DATABASES = {
+        "default": {
+            "ENGINE": 'mssql',
+            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+            "USER": get_secrets("SQL_USER", "user"),
+            "PASSWORD": get_secrets("SQL_PASSWORD", "password"),
+            "HOST": os.environ.get("SQL_HOST", "localhost"),
+            "PORT": os.environ.get("SQL_PORT", ""),
+            "OPTIONS": {
+                'driver': 'ODBC Driver 17 for SQL Server',
+                'host_is_server': True,
+                'connection_timeout': 30,
+                'collation': 'SQL_Latin1_General_CP1_CI_AS',
+                'extra_params': 'Trusted_Connection=yes;Encrypt=yes',
+            }
+        }
+    }
+
 WSGI_APPLICATION = 'niptviewer.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if os.environ.get('DATABASE', "sqlite3") == "sqlite3":
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+
+
 
 
 # Password validation
@@ -153,18 +189,6 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(" ")
 DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL', "DUMMAY")
 
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', "DUMMY")
-
-if os.environ.get('DATABASE', "sqlite3") == "postgres":
-    DATABASES = {
-        "default": {
-            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-            "USER": os.environ.get("SQL_USER", "user"),
-            "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-            "HOST": os.environ.get("SQL_HOST", "localhost"),
-            "PORT": os.environ.get("SQL_PORT", "5432"),
-        }
-    }
 
 LOGGING_CONFIG = None
 #
