@@ -29,6 +29,7 @@ jobs:
           
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@2.16
+        if: ${{ steps.release.outputs.release_created }}
         with:
           name: smeds84/niptviewer
           username: ${{ secrets.DOCKER_USERNAME }}
