@@ -1,5 +1,26 @@
 ARG VERSION="master"
 
+###########
+# BUILDER #
+###########
+
+# pull official base image
+FROM python:3.8-slim as builder
+
+# set work directory
+WORKDIR /usr/src/app
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dependencies
+RUN pip install --upgrade pip
+
+COPY ./requirements.prod.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
+ -r requirements.prod.txt
+
 # pull official base image
 FROM ubuntu:20.04
 
@@ -13,13 +34,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN mkdir -p /home/app
 
-#RUN addgroup --disabled-password --gecos "" app
-RUN adduser app
+RUN adduser -rm -d /home/app -s /bin/bash -g root -G sudo app
 
 # create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
-RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
