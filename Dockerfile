@@ -33,7 +33,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN mkdir -p /home/app
 
-RUN adduser -rm -d /home/app -s /bin/bash -g root -G sudo app
+RUN adduser --system  --home /home/app --shell /bin/bash --gid root --groups sudo app
 
 # create the appropriate directories
 ENV HOME=/home/app
