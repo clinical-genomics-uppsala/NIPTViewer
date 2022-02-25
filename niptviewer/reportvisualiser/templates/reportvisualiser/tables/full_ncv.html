@@ -34,22 +34,22 @@
       <td>
         {{ f.sample_id }}
       </td>
-      <td {{ f.ncv_13|flag_sample }}>
+      <td { flag_sample f.ncv_13 'ncv_13' %}>
         {{ f.ncv_13|stringformat_custom:".3f" }}
       </td>
-      <td {{ f.ncv_13|flag_sample }}>
+      <td { flag_sample f.ncv_18  'ncv_18' %}>
         {{ f.ncv_18|stringformat_custom:".3f" }}
       </td>
-      <td {{ f.ncv_13|flag_sample }}>
+      <td {% flag_sample f.ncv_21 'ncv_21' %}>
         {{ f.ncv_21|stringformat_custom:".3f" }}
       </td>
-      <td {{ f.ncv_13|flag_sample }}>
+      <td {% flag_sample f.ncv_X 'ncv_X' %}>
         {{ f.ncv_X|stringformat_custom:".3f" }}
       </td>
-      <td {{ f.ncv_13|flag_sample }}>
+      <td {% flag_sample f.ncv_Y 'ncv_Y' %}>
         {{ f.ncv_Y|stringformat_custom:".3f" }}
       </td>
-      <td {{ f.ncv_13|flag_sample }}>
+      <td {% flag_sample f.ff_formatted 'ff_formatted' %}>
         {{ f.ff_formatted|stringformat_custom:".1%" }}
       </td>
   </tr>
