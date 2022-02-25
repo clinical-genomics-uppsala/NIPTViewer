@@ -231,18 +231,7 @@ def import_data_into_database(user, file, skip_samples=False):
                 flowcell.save()
             if num_imported_samples == 0:
                 raise ValueError("No samples imported")
-            from ..models import Line
-            import math
-            all_samples = SamplesRunData.objects.all()
-            slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(all_samples)
-            stdev = math.sqrt(len(all_samples))*std_err
-            Line.create_or_update_line(type="x_vs_y",
-                                       slope=slope,
-                                       intercept=intercept,
-                                       stderr=std_err,
-                                       stdev=stdev,
-                                       p_value=p_value,
-                                       r_value=r_value)
+            create_trendlines()
     except IntegrityError as e:
         raise e
     return flowcell.flowcell_barcode
@@ -396,17 +385,17 @@ def import_flowcell_export(file_handle):
                             )
 
     def compare_batch(batch, columns, header_map):
-        if batch.median_13 == columns[header_map["Median_13"]] and \
-           batch.median_18 == columns[header_map["Median_18"]] and \
-           batch.median_21 == columns[header_map["Median_21"]] and \
-           batch.median_x == columns[header_map["Median_X"]] and \
-           batch.median_y == columns[header_map["Median_Y"]] and \
-           batch.stdev_13 == columns[header_map["Stdev_13"]] and \
-           batch.stdev_18 == columns[header_map["Stdev_18"]] and \
-           batch.stdev_21 == columns[header_map["Stdev_21"]] and \
-           batch.stdev_X == columns[header_map["Stdev_X"]] and \
-           batch.stdev_Y == columns[header_map["Stdev_Y"]] and \
-           batch.software_version == columns[header_map["SoftwareVersion"]]:
+        if (batch.median_13 == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_18 == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_21 == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_x == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.median_y == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_13 == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_18 == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_21 == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_X == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.stdev_Y == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+           batch.software_version == columns[header_map["SoftwareVersion"]]):
             pass
         else:
             raise Exception("batch information inconsistent for flowcell: " +
@@ -571,16 +560,16 @@ def import_flowcell_export(file_handle):
             )
             batch = BatchRun.create_batch_run(
                 flowcell_entry=flowcell,
-                median_13=columns[header_map["Median_13"]],
-                median_18=columns[header_map["Median_18"]],
-                median_21=columns[header_map["Median_21"]],
-                median_x=columns[header_map["Median_X"]],
-                median_y=columns[header_map["Median_Y"]],
-                stdev_13=columns[header_map["Stdev_13"]],
-                stdev_18=columns[header_map["Stdev_18"]],
-                stdev_21=columns[header_map["Stdev_21"]],
-                stdev_X=columns[header_map["Stdev_X"]],
-                stdev_Y=columns[header_map["Stdev_Y"]],
+                median_13=columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0,
+                median_18=columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0,
+                median_21=columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0,
+                median_x=columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0,
+                median_y=columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0,
+                stdev_13=columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0,
+                stdev_18=columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0,
+                stdev_21=columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0,
+                stdev_X=columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0,
+                stdev_Y=columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0,
                 software_version=columns[header_map["SoftwareVersion"]]
             )
             create_sample(columns)
@@ -588,12 +577,16 @@ def import_flowcell_export(file_handle):
             compare_flowcell(flowcell, columns, header_map, user_information)
             compare_batch(batch, columns, header_map)
             create_sample(columns)
+    create_trendlines()
 
 
 def generate_regression_line_from_sample_data(samples,
                                               x_value=lambda v: getattr(v, 'ncv_X'),
                                               y_value=lambda v: getattr(v, 'ncv_Y'),
-                                              filter=lambda v: getattr(v, 'ncv_Y') is not None and getattr(v, 'ncv_Y') > 3.0):
+                                              filter=lambda v: getattr(v, 'ncv_Y') is not None and
+                                              getattr(v, 'ncv_Y') > 3.0 and
+                                              getattr(v, 'ncv_X') is not None and
+                                              getattr(v, 'ncv_X') > -25.0):
     x_value_list = list()
     y_value_list = list()
     for sample in samples:
@@ -601,3 +594,18 @@ def generate_regression_line_from_sample_data(samples,
             x_value_list.append(float(x_value(sample)))
             y_value_list.append(float(y_value(sample)))
     return stats.linregress(x_value_list, y_value_list)
+
+
+def create_trendlines():
+    from ..models import Line
+    import math
+    all_samples = SamplesRunData.objects.all()
+    slope, intercept, r_value, p_value, std_err = generate_regression_line_from_sample_data(all_samples)
+    stdev = math.sqrt(len(all_samples))*std_err
+    Line.create_or_update_line(type="x_vs_y",
+                               slope=slope,
+                               intercept=intercept,
+                               stderr=std_err,
+                               stdev=stdev,
+                               p_value=p_value,
+                               r_value=r_value)

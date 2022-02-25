@@ -29,27 +29,30 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y']
             information['data_' + comparison + '_max_y_current_run'] = max(data_points_current_run, key=lambda v: v['y'])['y']
         if comparison == "x_vs_y":
-
+            information['data_' + comparison + '_min_x_current_run'] = -25
+            information['data_' + comparison + '_max_y_current_run'] = 400
             from dataprocessor.models import Line
-            line = Line.get_line(comparison)[0]
-            info_data['slope'] = decimal_default(line.slope)
-            info_data['intercept'] = decimal_default(line.intercept)
-            info_data['color'] = '#C70039'
-            information['data_' + comparison + '_slope'] = decimal_default(line.slope)
-            information['data_' + comparison + '_intercept'] = decimal_default(line.intercept)
-            information['data_' + comparison + '_std_err'] = decimal_default(line.stderr)
-            information['data_' + comparison + '_stdev'] = decimal_default(line.stdev)
-            information['data_' + comparison + '_p_value'] = decimal_default(line.p_value)
-            information['data_' + comparison + '_r_value'] = decimal_default(line.r_value)
-            information['data_' + comparison + '_color'] = '#C70039'
-        else:
-            information['data_' + comparison + '_slope'] = None
-            information['data_' + comparison + '_intercept'] = None
-            information['data_' + comparison + '_std_err'] = None
-            information['data_' + comparison + '_stdev'] = None
-            information['data_' + comparison + '_p_value'] = None
-            information['data_' + comparison + '_r_value'] = None
-            information['data_' + comparison + '_color'] = None
+            line = Line.get_line(comparison)
+            if line:
+                line = Line.get_line(comparison)[0]
+                info_data['slope'] = decimal_default(line.slope)
+                info_data['intercept'] = decimal_default(line.intercept)
+                info_data['color'] = '#C70039'
+                information['data_' + comparison + '_slope'] = decimal_default(line.slope)
+                information['data_' + comparison + '_intercept'] = decimal_default(line.intercept)
+                information['data_' + comparison + '_std_err'] = decimal_default(line.stderr)
+                information['data_' + comparison + '_stdev'] = decimal_default(line.stdev)
+                information['data_' + comparison + '_p_value'] = decimal_default(line.p_value)
+                information['data_' + comparison + '_r_value'] = decimal_default(line.r_value)
+                information['data_' + comparison + '_color'] = '#C70039'
+                continue
+        information['data_' + comparison + '_slope'] = None
+        information['data_' + comparison + '_intercept'] = None
+        information['data_' + comparison + '_std_err'] = None
+        information['data_' + comparison + '_stdev'] = None
+        information['data_' + comparison + '_p_value'] = None
+        information['data_' + comparison + '_r_value'] = None
+        information['data_' + comparison + '_color'] = None
 
     return information
 
