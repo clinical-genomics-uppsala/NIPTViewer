@@ -20,12 +20,11 @@ RUN pip install --upgrade pip
 COPY ./requirements.prod.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.prod.txt
 
-#########
-# FINAL #
-#########
-
 # pull official base image
-FROM python:3.8-slim
+FROM ubuntu:20.04
+
+LABEL maintainer="patrik.smeds@scilifelab.uu.se"
+LABEL version=$VERSION
 
 ENV LANG C.UTF-8
 ENV TZ=Europe/Stockholm
@@ -34,19 +33,22 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN mkdir -p /home/app
 
-RUN adduser app
+#RUN groupadd app
+RUN adduser --system  --home /home/app --shell /bin/bash --group app
 
 # create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
-ENV APP_WORKERS=3
-ENV APP_PORT=8000
-RUN mkdir $APP_HOME
+RUN mkdir -p $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
 # install dependencies
-RUN apt update && apt install netcat libpq-dev wkhtmltopdf vim -y
+RUN apt update && apt install curl gnupg2 -y
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+RUN apt update && ACCEPT_EULA=Y  apt install unixodbc-dev build-essential libpq-dev wkhtmltopdf vim wget msodbcsql17 -y
+RUN apt update && apt install python3-pip -y
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.prod.txt .
 RUN pip install --no-cache /wheels/*
@@ -54,7 +56,7 @@ RUN pip install --no-cache /wheels/*
 COPY ./dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
-
+RUN apt purge build-essential unixodbc-dev -y
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
 
@@ -63,4 +65,4 @@ USER app
 
 ENTRYPOINT ["/home/app/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", ":$APP_PORT" , "--workers", $APP_WORKERS, "niptviewer.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "niptviewer.wsgi:application"]rkers", "3", "niptviewer.wsgi:application"]
