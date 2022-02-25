@@ -82,6 +82,9 @@ def get_secrets(variable, default):
         return os.getenv(os.getenv(variable, default))
 
 
+# Database
+# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
 if os.environ.get('DATABASE', "sqlite3") == "postgres":
     DATABASES = {
         "default": {
@@ -113,14 +116,6 @@ elif os.environ.get('DATABASE', "sqlite3") == "mssql":
     }
 
 WSGI_APPLICATION = 'niptviewer.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
