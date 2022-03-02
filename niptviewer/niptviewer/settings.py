@@ -91,7 +91,7 @@ if os.environ.get('DATABASE', "sqlite3") == "sqlite3":
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
-    } 
+    }
 elif os.environ.get('DATABASE', "sqlite3") == "postgres":
     DATABASES = {
         "default": {
@@ -102,7 +102,7 @@ elif os.environ.get('DATABASE', "sqlite3") == "postgres":
             "HOST": os.environ.get("SQL_HOST", "localhost"),
             "PORT": os.environ.get("SQL_PORT", "5432"),
         }
-    } 
+    }
 elif os.environ.get('DATABASE', "sqlite3") == "mssql":
     DATABASES = {
         "default": {
