@@ -65,4 +65,4 @@ USER app
 
 ENTRYPOINT ["/home/app/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "niptviewer.wsgi:application"]rkers", "3", "niptviewer.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "niptviewer.wsgi:application"]
