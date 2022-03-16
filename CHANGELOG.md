@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.4.1](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.4.0...v1.4.1) (2022-03-16)
+
+
+### Bug Fixes
+
+* fix function used to extract secrets ([d57b9b5](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/d57b9b56a3719128b6b81ab8c999e1bf9f6200a9))
+* update Dockerfile style to comply with hadolint ([0cf2010](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/commit/0cf20108e34f3d0cbaf2c1e5b6440ea8bc3d6fdf))
+
 ## [1.4.0](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.3.0...v1.4.0) (2022-02-25)
 
 
