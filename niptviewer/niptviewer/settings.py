@@ -79,13 +79,20 @@ def get_secrets(variable, default):
             data = myfile.readlines()
         return data
     else:
-        return os.getenv(os.getenv(variable, default))
+        return os.getenv(variable, default)
 
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if os.environ.get('DATABASE', "sqlite3") == "postgres":
+if os.environ.get('DATABASE', "sqlite3") == "sqlite3":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+elif os.environ.get('DATABASE', "sqlite3") == "postgres":
     DATABASES = {
         "default": {
             "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
@@ -100,17 +107,17 @@ elif os.environ.get('DATABASE', "sqlite3") == "mssql":
     DATABASES = {
         "default": {
             "ENGINE": 'mssql',
-            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-            "USER": get_secrets("SQL_USER", "user"),
-            "PASSWORD": get_secrets("SQL_PASSWORD", "password"),
-            "HOST": os.environ.get("SQL_HOST", "localhost"),
-            "PORT": os.environ.get("SQL_PORT", ""),
+            "NAME": get_secrets('SQL_DATABASE', os.path.join(BASE_DIR, 'db.sqlite3')),
+            "USER": get_secrets('SQL_USER', 'user'),
+            "PASSWORD": get_secrets('SQL_PASSWORD', 'password'),
+            "HOST": os.environ.get('SQL_HOST', 'localhost'),
+            "PORT": os.environ.get('SQL_PORT', ''),
             "OPTIONS": {
                 'driver': 'ODBC Driver 17 for SQL Server',
                 'host_is_server': True,
                 'connection_timeout': 30,
                 'collation': 'SQL_Latin1_General_CP1_CI_AS',
-                'extra_params': 'Trusted_Connection=yes;Encrypt=yes',
+                'extra_params': 'TrustServerCertificate=yes;Encrypt=yes',
             }
         }
     }
