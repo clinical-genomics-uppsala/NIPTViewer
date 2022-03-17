@@ -12,3 +12,6 @@ assets
 coverage_html
 .idea
 admin_settings.*
+secret_password.json
+secret_user.json
+certs
