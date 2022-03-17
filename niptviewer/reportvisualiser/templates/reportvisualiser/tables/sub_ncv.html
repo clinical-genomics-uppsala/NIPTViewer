@@ -29,10 +29,10 @@
       <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
         <b>{{ f.sample_id }}</b>
       </td>
-      <td {{ value_1|flag_sample }}>
+      <td {% flag_sample value_1 field_1 %}>
         {{ value_1|stringformat_custom:format_field_1 }}
       </td>
-      <td {{ value_2|flag_sample }}>
+      <td {% flag_sample value_2 field_2 %}>
         {{ value_2|stringformat_custom:format_field_2 }}
       </td>
   </tr>
