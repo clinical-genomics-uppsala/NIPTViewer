@@ -18,7 +18,7 @@ spec:
       protocol: TCP
     volumeMounts:
      - name: staticfiles
-       mountPath: /home/app/web/staticfiles
+       mountPath: /staticfiles
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
@@ -27,7 +27,7 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
   - name: web
-    image: smeds84/niptviewer:kube_files_for_ap2_rb
+    image: smeds84/niptviewer:v1.4.0
     env:
     - name: DJANGO_ALLOWED_HOSTS
       value: gollum.lul.se 127.0.0.1 localhost
@@ -52,7 +52,7 @@ spec:
         name: password_secret
     volumeMounts:
      - name: staticfiles
-       mountPath: /home/app/web/staticfiles
+       mountPath: /staticfiles
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
