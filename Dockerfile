@@ -41,7 +41,7 @@ RUN apt-get update \
 
 
 
-COPY ./dockerfiles/entrypoint.sh /home/app/
+COPY ./docker/dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
 COPY requirements.prod.txt $APP_HOME
