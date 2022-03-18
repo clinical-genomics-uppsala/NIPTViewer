@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/production.dockerfile
-    image: smeds84/niptviewer:1.1.0
+    image: smeds84/niptviewer:v1.4.1
     volumes:
       - static_volume:/home/app/web/staticfiles
     expose:
