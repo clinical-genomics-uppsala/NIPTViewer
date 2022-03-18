@@ -9,13 +9,14 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
+      - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
         with:
           release-type: python
           package-name: niptviewer
           default-branch: master
-          extra_files: niptviewer/niptviewer/__init__.py
+          extra-files: |
+             niptviewer/niptviewer/__init__.py
 
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}
