@@ -16,7 +16,7 @@ jobs:
           package-name: niptviewer
           default-branch: master
           extra_files: : |
-             niptviewer/__init__.py
+             niptviewer/niptviewer/__init__.py
 
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}
