@@ -192,6 +192,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('FROM_EMAIL', "DUMMAY")
 
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', "DUMMY")
 
+
 def get_secrets(variable, default):
     if os.path.isfile(os.getenv(variable, default)):
         data = ""
