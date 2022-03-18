@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.4.1...v1.5.0) (2022-03-18)
+
+
+### Features
+
+* add version ([8713d0c](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/8713d0c36a024ee59755db2069cf3b17fbbe08b8))
+* add version ([6694497](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/66944975b68e15b9094f93420b453de83224e89d))
+* add version number access ([#102](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/102)) ([6694497](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/66944975b68e15b9094f93420b453de83224e89d))
+
 ### [1.4.1](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.4.0...v1.4.1) (2022-03-16)
 
 
