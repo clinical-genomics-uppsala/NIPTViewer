@@ -17,4 +17,4 @@ jobs:
         name: smeds84/niptviewer
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
-        buildargs: "VERSION=${{ env.STATE_RELEASE_VERSION }}"
+        buildargs: "VERSION=${GITHUB_REF##*/}"
