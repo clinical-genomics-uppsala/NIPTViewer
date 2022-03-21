@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.6.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.0...v1.6.1) (2022-03-21)
+
+
+### Bug Fixes
+
+* update how version is set. ([abe5a43](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/abe5a4373475b2b025483c3cb073270ecc9b532d))
+
 ### [1.4.1](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.4.0...v1.4.1) (2022-03-16)
 
 
