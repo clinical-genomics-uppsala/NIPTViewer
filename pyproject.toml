@@ -1,0 +1,23 @@
+[project]
+name = "niptviewer"
+description = "web page use to view nipt data from Illumina"
+version = "0.0.0"
+authors = [
+    { name = "Patrik Smeds", email = "patrik.smeds@scilifelab.uu.se" }
+]
+dependencies = [
+    "django",
+    "scipy",
+    "pandas",
+    "psycopg2-binary",
+    "django-wkhtmltopdf",
+    "gunicorn",    
+    "python-dateutil",
+    "mssql-django"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pycodestyle",
+    "coverage"
+]
