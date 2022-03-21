@@ -7,7 +7,7 @@ authors = [
 ]
 dependencies = [
     "django",
-    "scipy".
+    "scipy",
     "pandas",
     "psycopg2-binary",
     "django-wkhtmltopdf",
