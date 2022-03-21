@@ -30,6 +30,7 @@
   <nav class="cyan darken-4 nav-extended" role="navigation">
     <div class="nav-wrapper container">
       <a id="logo-container" href="{% url 'index' %}" class="brand-logo">CGU</a>
+      <a class="right small" href="https://github.com/clinical-genomics-uppsala/NIPTViewer/releases/tag/v{{ niptviewer_version }}">v{{ niptviewer_version }}</a>
       <ul class="right hide-on-med-and-down">
         {% if user.is_authenticated %}
         <li>
@@ -45,7 +46,8 @@
         <li><a class="btn btn-primary mt-5" href="{% url 'logout' %}"><i class="material-icons">exit_to_app</i></a></li>
       </ul>
       {% endif %}
-      <div class="center appname" >NIPT Viewer</div>
+      <div class="center appname">NIPT Viewer</div>
+
       {% if user.is_authenticated %}
       <ul id="nav-mobile" class="sidenav">
         <li><a href="{% url "index" %}"><i class="material-icons">home</i></a></li>
