@@ -13,11 +13,7 @@ jobs:
         id: release
         with:
           release-type: python
-          package-name: niptviewer
-          path: niptviewer
           default-branch: master
-          extra-files: |
-             __init__.py
 
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}
