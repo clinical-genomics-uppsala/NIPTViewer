@@ -41,12 +41,11 @@ RUN apt-get update \
 
 
 COPY pyproject.toml /pyproject.toml
-RUN  grep version /pyproject.toml  | perl -ne '/"([0-9.]+)"/ && print $1' > /tempversion && rm /pyproject.toml
 
 COPY ./docker/dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
-RUN VARIABLE=$(cat /tempversion) && sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/${VARIABLE}/" -i $APP_HOME/niptviewer/__init__.py && rm /tempversion
+RUN sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/${VERSION}/" -i $APP_HOME/niptviewer/__init__.py
 
 COPY requirements.prod.txt $APP_HOME
 RUN pip install --no-cache-dir -r $APP_HOME/requirements.prod.txt  \
