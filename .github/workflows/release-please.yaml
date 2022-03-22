@@ -27,7 +27,7 @@ jobs:
           python-version: '3.x'
           
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@2.16
+        uses: elgohr/Publish-Docker-Github-Action@3.04
         if: ${{ steps.release.outputs.release_created }}
         with:
           name: smeds84/niptviewer
