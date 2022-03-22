@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.2...v1.7.0) (2022-03-22)
+
+
+### Features
+
+* provide version to docker build during release ([f8e6b27](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/f8e6b271b409defe6cf3b52840c21d43949edec8))
+
 ### [1.6.2](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.1...v1.6.2) (2022-03-21)
 
 
