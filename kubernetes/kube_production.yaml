@@ -27,7 +27,7 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
   - name: web
-    image: smeds84/niptviewer:v1.4.1
+    image: smeds84/niptviewer:v1.8.0
     env:
     - name: DJANGO_ALLOWED_HOSTS
       value: gollum.lul.se 127.0.0.1 localhost
@@ -42,9 +42,9 @@ spec:
     - name: "SQL_HOST"
       value: "SQLH-DB-19"
     - name: "SQL_USER"
-      value: "username"
+      value: "username_secret"
     - name: "SQL_PASSWORD"
-      value: "password"
+      value: "password_secret"
     envFrom:
     - secretRef:
         name: user_secret
