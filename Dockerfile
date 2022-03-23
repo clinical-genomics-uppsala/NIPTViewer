@@ -1,9 +1,9 @@
-ARG VERSION="master"
-
 FROM ubuntu:20.04
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 LABEL maintainer="patrik.smeds@scilifelab.uu.se"
 LABEL version=$VERSION
+
+ARG VERSION="master"
 
 ENV LANG C.UTF-8
 ENV TZ=Europe/Stockholm
@@ -45,7 +45,7 @@ COPY pyproject.toml /pyproject.toml
 COPY ./docker/dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
-RUN sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/${VERSION}/" -i $APP_HOME/niptviewer/__init__.py
+RUN sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/$VERSION/" -i $APP_HOME/niptviewer/__init__.py
 
 COPY requirements.prod.txt $APP_HOME
 RUN pip install --no-cache-dir -r $APP_HOME/requirements.prod.txt  \

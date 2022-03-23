@@ -11,10 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - run: echo "GITHUB_BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+    - run: echo "$GITHUB_BRANCH"
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@2.16
       with:
         name: smeds84/niptviewer
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
-        buildargs: "VERSION=${GITHUB_REF##*/}"
+        buildargs: "VERSION=${{ env.GITHUB_BRANCH }}"
