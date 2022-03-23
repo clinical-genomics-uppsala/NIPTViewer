@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.7.1...v1.8.0) (2022-03-23)
+
+
+### Features
+
+* change to master tag ([#138](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/138)) ([cf157c1](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/cf157c1ccea9d8966add570bf44a93c3b1a18119))
+
 ### [1.7.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.7.0...v1.7.1) (2022-03-23)
 
 
