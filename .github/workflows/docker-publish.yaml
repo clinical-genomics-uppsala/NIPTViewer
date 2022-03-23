@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - run: echo ${{ GITHUB_BASE_REF }}
+    - run: echo $GITHUB_BASE_REF
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@2.16
       with:
         name: smeds84/niptviewer
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
-        buildargs: VERSION=${{ GITHUB_BASE_REF }}
+        buildargs: VERSION=$GITHUB_BASE_REF
