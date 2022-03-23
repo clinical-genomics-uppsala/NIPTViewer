@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'reportvisualiser',
     'dataprocessor',
     'users',
-    'wkhtmltopdf'
+    'wkhtmltopdf',
 ]
 
 MIDDLEWARE = [
