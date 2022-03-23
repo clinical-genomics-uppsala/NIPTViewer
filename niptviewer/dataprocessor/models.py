@@ -21,6 +21,7 @@ class Flowcell(models.Model):
         else:
             flowcell = Flowcell.objects.create(uploading_user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
             flowcell.created = datetime.datetime.strptime(upload_date, '%Y-%m-%d %H:%M:%S.%f+00:00')
+            flowcell.save(update_fields=['created'])
             return flowcell
 
     def get_flowcell(flowcell_barcode):

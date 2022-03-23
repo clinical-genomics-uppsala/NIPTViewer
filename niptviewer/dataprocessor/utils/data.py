@@ -369,32 +369,33 @@ def import_flowcell_export(file_handle):
     def compare_flowcell(flowcell, columns, header_map, user_information):
         if flowcell.uploading_user.username == user_information[columns[header_map["UserName"]]].username and \
            flowcell.flowcell_barcode == columns[header_map["Flowcell"]] and \
-           flowcell.run_date == columns[header_map["RunDate"]] and \
-           flowcell.created == datetime.datetime.strptime(columns[header_map["Created"]], '%Y-%m-%d %H:%M:%S.%f+00:00'):
+           flowcell.run_date.strftime('%Y-%m-%d') == datetime.datetime.strptime(columns[header_map["RunDate"]], '%Y-%m-%d %H:%M:%S+00:00').strftime('%Y-%m-%d') and \
+           flowcell.created.strftime('%Y-%m-%d') == datetime.datetime.strptime(columns[header_map["Created"]], '%Y-%m-%d %H:%M:%S.%f+00:00').strftime('%Y-%m-%d'):
             pass
         else:
             raise Exception("flowcell information inconsistent for flowcell: " + columns[header_map['Flowcell']] +
                             "\n" +
                             str([(flowcell.uploading_user.username, user_information[columns[header_map["UserName"]]]),
                                 (flowcell.flowcell_barcode, columns[header_map["Flowcell"]]),
-                                (flowcell.run_date, columns[header_map["RunDate"]]),
-                                (flowcell.created, datetime.datetime.strptime(columns[header_map["Created"]],
-                                                                              '%Y-%m-%d %H:%M:%S.%f+00:00'))
+                                str(flowcell.run_date),
+                                columns[header_map["RunDate"]],
+                                str(flowcell.created),
+                                columns[header_map["Created"]]
                                  ]
                                 )
                             )
 
     def compare_batch(batch, columns, header_map):
-        if (batch.median_13 == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.median_18 == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.median_21 == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.median_x == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.median_y == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.stdev_13 == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.stdev_18 == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.stdev_21 == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.stdev_X == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and  # noqa
-           batch.stdev_Y == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+        if (str(batch.median_13) == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.median_18) == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.median_21) == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.median_x) == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.median_y) == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.stdev_13) == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.stdev_18) == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.stdev_21) == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.stdev_X) == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and  # noqa
+           str(batch.stdev_Y) == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
            batch.software_version == columns[header_map["SoftwareVersion"]]):
             pass
         else:
@@ -413,9 +414,10 @@ def import_flowcell_export(file_handle):
                                  (batch.software_version, columns[header_map["SoftwareVersion"]])])
                             )
 
-    def create_sample(columns):
+    def create_sample(columns, flowcell):
         type = SampleType.get_sample_type(columns[header_map["SampleType"]])
         index = Index.get_index(columns[header_map["IndexID"]], columns[header_map["Index"]])
+
         SamplesRunData.create_sample_data(
             flowcell_id_entry=flowcell,
             sample_type_entry=type,
@@ -536,6 +538,7 @@ def import_flowcell_export(file_handle):
     flowcell = None
 
     header_line = next(file_handle)
+    header_line = header_line.rstrip().strip('"')
     if not header_line.rstrip() == "#" + ",".join(csv_header_flowcell[version]):
         raise Exception("Flowcell columns mismatch, found\n" +
                         header_line +
@@ -551,7 +554,8 @@ def import_flowcell_export(file_handle):
         columns = line.rstrip().split(",")
         if len(columns) == 0:
             return
-        if flowcell is None or columns[header_map["Flowcell"]] != flowcell.flowcell_barcode:
+        flowcell = Flowcell.objects.filter(flowcell_barcode=columns[header_map["Flowcell"]]).first()
+        if flowcell is None:
             flowcell = Flowcell.create_flowcell(
                 user=user_information[columns[header_map["UserName"]]],
                 flowcell_barcode=columns[header_map["Flowcell"]],
@@ -572,11 +576,12 @@ def import_flowcell_export(file_handle):
                 stdev_Y=columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0,
                 software_version=columns[header_map["SoftwareVersion"]]
             )
-            create_sample(columns)
+            create_sample(columns, flowcell)
         else:
             compare_flowcell(flowcell, columns, header_map, user_information)
+            batch = BatchRun.objects.get(flowcell_id=flowcell)
             compare_batch(batch, columns, header_map)
-            create_sample(columns)
+            create_sample(columns, flowcell)
     create_trendlines()
 
 
