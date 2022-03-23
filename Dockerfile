@@ -45,7 +45,7 @@ COPY pyproject.toml /pyproject.toml
 COPY ./docker/dockerfiles/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
-RUN sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/${VERSION}/" -i $APP_HOME/niptviewer/__init__.py
+RUN sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/$VERSION/" -i $APP_HOME/niptviewer/__init__.py
 
 COPY requirements.prod.txt $APP_HOME
 RUN pip install --no-cache-dir -r $APP_HOME/requirements.prod.txt  \
