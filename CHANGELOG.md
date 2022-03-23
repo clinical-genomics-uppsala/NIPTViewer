@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.8.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.8.0...v1.8.1) (2022-03-23)
+
+
+### Bug Fixes
+
+* add missing admin templates. ([#142](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/142)) ([a2d5288](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/a2d52889ac3e2c16d0b66163168a4e41d60d76a9))
+* add missing admin templates. ([#143](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/143)) ([c5d1b96](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/c5d1b96583e562c5ebe2293f502ead2f3f4b56d9))
+* turn of debug on produktion files ([1e566c8](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/1e566c80583ba3ffdd8054b8a2dc2c33e8ac18c5))
+* update readme ([70b9ed0](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/70b9ed0d9f5cc3b297f88500adeb61df0c0f2115))
+* update readme ([#144](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/144)) ([55d1a8d](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/55d1a8d5325882b308619e01f92f3769303d513d))
+* update readme ([#147](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/147)) ([417a28a](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/417a28af9dc5c1e0809adde24dd2d6e2c93bf22d))
+
 ## [1.8.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.7.1...v1.8.0) (2022-03-23)
 
 

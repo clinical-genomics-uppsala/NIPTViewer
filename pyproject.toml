@@ -1,7 +1,7 @@
 [project]
 name = "niptviewer"
 description = "web page use to view nipt data from Illumina"
-version = "1.8.0"
+version = "1.8.1"
 authors = [
     { name = "Patrik Smeds", email = "patrik.smeds@scilifelab.uu.se" }
 ]
