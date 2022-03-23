@@ -1,9 +1,9 @@
-ARG VERSION="master"
-
 FROM ubuntu:20.04
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 LABEL maintainer="patrik.smeds@scilifelab.uu.se"
 LABEL version=$VERSION
+
+ARG VERSION="master"
 
 ENV LANG C.UTF-8
 ENV TZ=Europe/Stockholm
