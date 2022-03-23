@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="importdata" class="grp-state-focus addlink">Upload</a>
+    </li>
+    <li>
+        <a href="exportdata" class="grp-state-focus addlink">Export</a>
+    </li>
+{% endblock %}
