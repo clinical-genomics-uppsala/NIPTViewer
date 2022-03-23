@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.7.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.7.0...v1.7.1) (2022-03-23)
+
+
+### Bug Fixes
+
+* make sure branch name is added to image version variable ([f4d0785](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/f4d0785c1501041d3508e25c12c60d54d9625f4c))
+
 ## [1.7.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.2...v1.7.0) (2022-03-22)
 
 
