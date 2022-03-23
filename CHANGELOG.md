@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.8.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.7.1...v1.8.0) (2022-03-23)
+
+
+### Features
+
+* change to master tag ([#138](https://github.com/clinical-genomics-uppsala/NIPTViewer/issues/138)) ([cf157c1](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/cf157c1ccea9d8966add570bf44a93c3b1a18119))
+
+### [1.7.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.7.0...v1.7.1) (2022-03-23)
+
+
+### Bug Fixes
+
+* make sure branch name is added to image version variable ([f4d0785](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/f4d0785c1501041d3508e25c12c60d54d9625f4c))
+
+## [1.7.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.2...v1.7.0) (2022-03-22)
+
+
+### Features
+
+* provide version to docker build during release ([f8e6b27](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/f8e6b271b409defe6cf3b52840c21d43949edec8))
+
+### [1.6.2](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.1...v1.6.2) (2022-03-21)
+
+
+### Bug Fixes
+
+* use version from build workflow ([85f1bca](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/85f1bca2de5139c8bb9365ee0aa60ab0e02b7ee3))
+
+### [1.6.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.6.0...v1.6.1) (2022-03-21)
+
+
+### Bug Fixes
+
+* update how version is set. ([abe5a43](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/abe5a4373475b2b025483c3cb073270ecc9b532d))
+
 ### [1.4.1](https://www.github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.4.0...v1.4.1) (2022-03-16)
 
 
