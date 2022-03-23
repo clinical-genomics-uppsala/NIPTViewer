@@ -369,8 +369,10 @@ def import_flowcell_export(file_handle):
     def compare_flowcell(flowcell, columns, header_map, user_information):
         if flowcell.uploading_user.username == user_information[columns[header_map["UserName"]]].username and \
            flowcell.flowcell_barcode == columns[header_map["Flowcell"]] and \
-           flowcell.run_date.strftime('%Y-%m-%d') == datetime.datetime.strptime(columns[header_map["RunDate"]], '%Y-%m-%d %H:%M:%S+00:00').strftime('%Y-%m-%d') and \
-           flowcell.created.strftime('%Y-%m-%d') == datetime.datetime.strptime(columns[header_map["Created"]], '%Y-%m-%d %H:%M:%S.%f+00:00').strftime('%Y-%m-%d'):
+           flowcell.run_date.strftime('%Y-%m-%d') == \
+           datetime.datetime.strptime(columns[header_map["RunDate"]], '%Y-%m-%d %H:%M:%S+00:00').strftime('%Y-%m-%d') and \
+           flowcell.created.strftime('%Y-%m-%d') == \
+           datetime.datetime.strptime(columns[header_map["Created"]], '%Y-%m-%d %H:%M:%S.%f+00:00').strftime('%Y-%m-%d'):
             pass
         else:
             raise Exception("flowcell information inconsistent for flowcell: " + columns[header_map['Flowcell']] +
