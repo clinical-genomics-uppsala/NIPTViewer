@@ -43,9 +43,9 @@ nnc_per_batch_scoring_metrics = ['Median_13', 'Median_18', 'Median_21',
                                  'Stdev_13', 'Stdev_18', 'Stdev_21',
                                  'Stdev_X', 'Stdev_Y']
 
-current_version = "v1"
+current_version = "v2"
 
-csv_header_flowcell = {"v1": [
+csv_header_flowcell = {current_version: [
     "UserID", "UserName", "SoftwareVersion",
     "SampleID", "SampleType", "Flowcell", "Created", "RunDate", "Description",
     "SampleProject", "IndexID", "Index", "Well",
@@ -388,16 +388,16 @@ def import_flowcell_export(file_handle):
                             )
 
     def compare_batch(batch, columns, header_map):
-        if (str(batch.median_13) == (columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.median_18) == (columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.median_21) == (columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.median_x) == (columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.median_y) == (columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.stdev_13) == (columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.stdev_18) == (columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.stdev_21) == (columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.stdev_X) == (columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0) and  # noqa
-           str(batch.stdev_Y) == (columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0) and  # noqa
+        if (abs(float(batch.median_13) - float(columns[header_map["Median_13"]] if columns[header_map["Median_13"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.median_18) - float(columns[header_map["Median_18"]] if columns[header_map["Median_18"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.median_21) - float(columns[header_map["Median_21"]] if columns[header_map["Median_21"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.median_x) - float(columns[header_map["Median_X"]] if columns[header_map["Median_X"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.median_y) - float(columns[header_map["Median_Y"]] if columns[header_map["Median_Y"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.stdev_13) - float(columns[header_map["Stdev_13"]] if columns[header_map["Stdev_13"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.stdev_18) - float(columns[header_map["Stdev_18"]] if columns[header_map["Stdev_18"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.stdev_21) - float(columns[header_map["Stdev_21"]] if columns[header_map["Stdev_21"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.stdev_X) - float(columns[header_map["Stdev_X"]] if columns[header_map["Stdev_X"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
+           abs(float(batch.stdev_Y) - float(columns[header_map["Stdev_Y"]] if columns[header_map["Stdev_Y"]] not in ["nan", "NaN"] else 0)) < 0.00000001 and  # noqa
            batch.software_version == columns[header_map["SoftwareVersion"]]):
             pass
         else:
