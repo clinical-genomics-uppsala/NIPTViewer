@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.8.2](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.8.1...v1.8.2) (2022-03-24)
+
+
+### Bug Fixes
+
+* handle migration between different database better. ([7bd0cdc](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/7bd0cdc6be525bdb2d5f2032fe5d4a8ff67c0428))
+
 ### [1.8.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.8.0...v1.8.1) (2022-03-23)
 
 
