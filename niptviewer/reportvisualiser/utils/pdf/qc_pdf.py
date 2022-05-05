@@ -1,4 +1,5 @@
 from dataprocessor.models import Flowcell, SamplesRunData, BatchRun, SampleType
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from reportvisualiser.utils import plots
@@ -28,8 +29,8 @@ class QCReportPDF(PDFTemplateView):
 
         flowcell = Flowcell.get_flowcell(flowcell_barcode=context['barcode'])
 
-        previous_time = flowcell.run_date + relativedelta(months=-12)
-        next_time = flowcell.run_date + relativedelta(months=+12)
+        previous_time = flowcell.run_date + relativedelta(months=-settings.DEFAULT_TIME_SELECTION_QC_REPORT)
+        next_time = flowcell.run_date + relativedelta(months=+settings.DEFAULT_TIME_SELECTION_QC_REPORT)
 
         samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
         flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell, start_time=previous_time, stop_time=next_time)

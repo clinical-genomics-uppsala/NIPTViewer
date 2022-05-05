@@ -28,4 +28,5 @@ urlpatterns = [
     path('viewer/', include('reportvisualiser.urls')),
     path('api', include('dataprocessor.urls')),
     path('admin/', include('users.urls')),
+    #  path('__debug__/', include('debug_toolbar.urls')),
 ]
