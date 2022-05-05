@@ -2,6 +2,7 @@ from .forms import UploadFileForm, SearchResult
 from .utils import plots, colors, data
 from dataprocessor.models import Flowcell, SamplesRunData, BatchRun, SampleType
 from dataprocessor.utils.data import import_data_into_database
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -13,7 +14,7 @@ import math
 
 
 @login_required
-def index(request, active_page=1, time_selection="9999"):
+def index(request, active_page=1, time_selection=settings.DEFAULT_TIME_SELECTION):
     """
             Information page showing flowcells that have been run and plot
             showing fetal fraction over time and NCV over time for controls
@@ -25,7 +26,7 @@ def index(request, active_page=1, time_selection="9999"):
     if time_selection == 9999:
         flowcells = Flowcell.objects.all()
         sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
-            '-flowcell_id__run_date')
+            '-flowcell_id__run_date').select_related()
         flowcell_run_data = BatchRun.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
             '-flowcell_id__run_date')
     else:
@@ -66,13 +67,13 @@ def index(request, active_page=1, time_selection="9999"):
 def sample_report(request, barcode, sample):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     flowcell_run_data = SamplesRunData.objects. \
-        filter(flowcell_id=flowcell).exclude(sample_id=sample)
+        filter(flowcell_id=flowcell).exclude(sample_id=sample).select_related()
     flowcell_controls = SamplesRunData.objects. \
-        filter(flowcell_id=flowcell, sample_type=SampleType.objects.get(name="Control"))
+        filter(flowcell_id=flowcell, sample_type=SampleType.objects.get(name="Control")).select_related()
     sample_run_data = SamplesRunData.objects. \
-        filter(flowcell_id=flowcell, sample_id=sample)
+        filter(flowcell_id=flowcell, sample_id=sample).select_related()
     previous_samples = SamplesRunData.objects.all(). \
-        exclude(flowcell_id=flowcell)
+        exclude(flowcell_id=flowcell).select_related()
 
     samples_info = data.extract_info_samples(previous_samples, data.sample_info(), size=0.5, label=lambda x: 'other',
                                              color=colors.hist)
@@ -119,7 +120,8 @@ def sample_report(request, barcode, sample):
 
 
 @login_required
-def report(request, barcode, time_selection="9999"):
+def report(request, barcode, time_selection=settings.DEFAULT_TIME_SELECTION):
+
     time_selection = int(time_selection)
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)

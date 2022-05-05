@@ -2,6 +2,7 @@ from wkhtmltopdf.views import PDFTemplateView
 from dataprocessor.models import Flowcell, SamplesRunData
 from reportvisualiser.utils.plots import extract_data, data_structure_generator
 from reportvisualiser.utils import colors, data
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
@@ -28,8 +29,8 @@ class SampleReportPDF(PDFTemplateView):
 
         flowcell = Flowcell.get_flowcell(flowcell_barcode=context['barcode'])
 
-        previous_time = flowcell.run_date + relativedelta(months=-24)
-        next_time = flowcell.run_date + relativedelta(months=+24)
+        previous_time = flowcell.run_date + relativedelta(months=-settings.DEFAULT_TIME_SELECTION_SAMPLE_REPORT)
+        next_time = flowcell.run_date + relativedelta(months=+settings.DEFAULT_TIME_SELECTION_SAMPLE_REPORT)
 
         flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell)
 
