@@ -321,22 +321,23 @@ class SamplesRunData(models.Model):
 
     def get_samples(flowcell, sample=None):
         if sample is None:
-            return SamplesRunData.objects.filter(flowcell_id=flowcell)
+            return SamplesRunData.objects.filter(flowcell_id=flowcell).select_related()
         else:
-            return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample)
+            return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample).select_related()
 
     def get_samples_not_included(flowcell, start_time=None, stop_time=None, sample=None):
         if start_time is not None or stop_time is not None:
             flowcells = Flowcell.objects.filter(run_date__lte=stop_time, run_date__gte=start_time)
             if sample is None:
-                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell)
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell).select_related()
             else:
-                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell, sample_id=sample)
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells). \
+                       exclude(flowcell_id=flowcell, sample_id=sample).select_related()
         else:
             if sample is None:
-                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell)
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell).select_related()
             else:
-                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample)
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample).select_related()
 
 
 class Line(models.Model):

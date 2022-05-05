@@ -28,6 +28,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY", None if DEBUG == 0 else "DUMMY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+DEFAULT_TIME_SELECTION = os.environ.get("TIME_SELECTION", 9999)
+DEFAULT_TIME_SELECTION_SAMPLE_REPORT = os.environ.get("SELECTION_SAMPLE_REPORT", 24)
+DEFAULT_TIME_SELECTION_QC_REPORT = os.environ.get("TIME_SELECTION_QC_REPORT", 12)
 
 # Application definition
 
@@ -197,4 +200,3 @@ LOGGING_CONFIG = None
 #
 # # Get loglevel from env
 LOGLEVEL = os.getenv('DJANGO_LOGLEVEL', 'debug').upper()
-#

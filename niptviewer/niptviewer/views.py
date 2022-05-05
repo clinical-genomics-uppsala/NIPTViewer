@@ -1,4 +1,5 @@
 from dataprocessor.models import BatchRun, Flowcell, SamplesRunData, SampleType
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -37,7 +38,7 @@ def login(request):
 
 
 @login_required
-def index(request, time_selection="9999"):
+def index(request, time_selection=settings.DEFAULT_TIME_SELECTION):
     now = datetime.datetime.now()
     time_selection = int(time_selection)
     previous_time = now + relativedelta(months=-time_selection)
@@ -55,12 +56,11 @@ def index(request, time_selection="9999"):
         total_num_samples = SamplesRunData.objects.count()
     else:
         flowcells = Flowcell.objects.all().order_by('-run_date')
-        sample_run_data = SamplesRunData.objects.all().order_by(
-            '-flowcell_id__run_date')
-        control_flowcell_data = SamplesRunData.objects.select_related(). \
-            filter(sample_type=SampleType.objects.get(name="Control")).order_by('-flowcell_id__run_date')
-        num_flowcells = total_num_flowcells = len(flowcells)
-        num_samples = total_num_samples = len(sample_run_data)
+        sample_run_data = SamplesRunData.objects.all().order_by('-flowcell_id__run_date').select_related()
+        control_flowcell_data = SamplesRunData.objects.filter(sample_type=SampleType.objects.get(name="Control")). \
+            order_by('-flowcell_id__run_date').select_related()
+        num_flowcells = total_num_flowcells = Flowcell.objects.count()
+        num_samples = total_num_samples = SamplesRunData.objects.count()
 
     context = {
         'total_num_flowcells': total_num_flowcells,

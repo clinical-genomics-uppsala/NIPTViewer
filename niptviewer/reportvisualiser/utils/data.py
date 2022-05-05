@@ -44,8 +44,7 @@ def extract_data(data, info, label=lambda x: x.sample_type.name, shape='circle',
             try:
                 entry = {'x': x_format(getattr(item, info[key]['fields'][0])),
                          'y': y_format(getattr(item, info[key]['fields'][1])),
-                         'shape': shape, 'size': size, 'color': color}
-                entry.update(extra_info(item))
+                         'shape': shape, 'size': size, 'color': color, **extra_info(item)}
             except TypeError as err:
                 if getattr(item, info[key]['fields'][0]) is None or getattr(item, info[key]['fields'][1]) is None:
                     if replace_NA_with is not None:
