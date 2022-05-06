@@ -7,14 +7,14 @@ metadata:
   name: niptviewer
 spec:
   containers:
-  - name: nginx
+  - name: nginx-dev
     image: smeds84/nginx:1.1.0
     ports:
     - containerPort: 80
-      hostport: 80
+      hostport: 8001
       protocol: TCP
     - containerPort: 443
-      hostport: 443
+      hostport: 4443
       protocol: TCP
     volumeMounts:
      - name: staticfiles
@@ -26,7 +26,7 @@ spec:
       privileged: false
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
-  - name: web
+  - name: web-dev
     image: smeds84/niptviewer:v1.8.3
     env:
     - name: DJANGO_ALLOWED_HOSTS
@@ -51,9 +51,9 @@ spec:
     - secretRef:
         name: password_secret
     volumeMounts:
-     - name: staticfiles
+     - name: staticfiles-dev
        mountPath: /home/app/web/staticfiles
-     - name: staticfiles
+     - name: staticfiles-dev
        mountPath: /staticfiles
     resources: {}
     securityContext:
@@ -63,9 +63,9 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
   volumes:
-    - name: staticfiles
+    - name: staticfiles-dev
       persistentVolumeClaim:
-        claimName: niptviewer-staticfiles
+        claimName: niptviewer-dev-staticfiles
   restartPolicy: Always
 
 
