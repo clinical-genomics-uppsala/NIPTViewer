@@ -3,21 +3,21 @@ kind: Pod
 metadata:
   creationTimestamp: 2021-10-25T10:42:09Z
   labels:
-    app: niptviewer
-  name: niptviewer
+    app: niptviewer-dev
+  name: niptviewer-dev
 spec:
   containers:
   - name: nginx-dev
     image: smeds84/nginx:1.1.0
     ports:
     - containerPort: 80
-      hostport: 8001
+      hostport: 8002
       protocol: TCP
     - containerPort: 443
       hostport: 4443
       protocol: TCP
     volumeMounts:
-     - name: staticfiles
+     - name: staticfiles-dev
        mountPath: /home/app/web/staticfiles
     resources: {}
     securityContext:
@@ -29,8 +29,10 @@ spec:
   - name: web-dev
     image: smeds84/niptviewer:v1.9.0
     env:
+    - name: SECRET_KEY
+      value: kelAqT8nYZs8UYHNnjxqV3Jiocg5ug
     - name: DJANGO_ALLOWED_HOSTS
-      value: gollum.lul.se 127.0.0.1 localhost
+      value: gollum.lul.se gollum.lul.se:4443 127.0.0.1 localhost
     - name: DEBUG
       value: 0
     - name: "DATABASE"
