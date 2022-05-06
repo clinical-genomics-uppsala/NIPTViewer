@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.9.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.8.2...v1.9.0) (2022-05-06)
+
+
+### Features
+
+* add test kube files and update nginx image ([fd85205](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/fd852051a044594c378c6edb601199868c35bb6f))
+
+
+### Bug Fixes
+
+* update Dockerfile to handle missing version of curl ([cfb048d](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/cfb048de44abbb6f9c29d8a4f676f1d82bde688a))
+* update nginx ([f192433](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/f1924336d7b1c8e84a9e006b866aa0c01942fc47))
+
 ### [1.8.2](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.8.1...v1.8.2) (2022-03-24)
 
 
