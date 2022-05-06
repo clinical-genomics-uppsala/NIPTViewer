@@ -27,7 +27,7 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
   - name: web-dev
-    image: smeds84/niptviewer:v1.8.3
+    image: smeds84/niptviewer:v1.9.0
     env:
     - name: DJANGO_ALLOWED_HOSTS
       value: gollum.lul.se 127.0.0.1 localhost
