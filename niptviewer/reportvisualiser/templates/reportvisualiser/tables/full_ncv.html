@@ -34,10 +34,10 @@
       <td>
         {{ f.sample_id }}
       </td>
-      <td { flag_sample f.ncv_13 'ncv_13' %}>
+      <td {% flag_sample f.ncv_13 'ncv_13' %}>
         {{ f.ncv_13|stringformat_custom:".3f" }}
       </td>
-      <td { flag_sample f.ncv_18  'ncv_18' %}>
+      <td {% flag_sample f.ncv_18  'ncv_18' %}>
         {{ f.ncv_18|stringformat_custom:".3f" }}
       </td>
       <td {% flag_sample f.ncv_21 'ncv_21' %}>
