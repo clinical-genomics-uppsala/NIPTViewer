@@ -25,6 +25,7 @@ WORKDIR $APP_HOME
 RUN apt-get update \
     && apt-get install --no-install-recommends gnupg2=2.2.19-3ubuntu2.1 \
                                                build-essential=12.8ubuntu1.1 \
+                                               curl=7.68.0-1ubuntu2.11 \
                                                libpq-dev=12.10-0ubuntu0.20.04.1 \
                                                wkhtmltopdf=0.12.5-1build1 \
                                                vim=2:8.1.2269-1ubuntu5.7 \
