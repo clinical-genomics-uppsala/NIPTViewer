@@ -321,23 +321,51 @@ class SamplesRunData(models.Model):
 
     def get_samples(flowcell, sample=None):
         if sample is None:
-            return SamplesRunData.objects.filter(flowcell_id=flowcell).select_related()
+            return SamplesRunData.objects.filter(flowcell_id=flowcell). \
+                select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
+                                        'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
+                                        'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
+                                        'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+                                        'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+                                        'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+                                        'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure',
+                                        'qc_warning',  'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9',
+                                        'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19',
+                                        'chr20', 'chr21', 'chr22', 'Chrx', 'chry')
         else:
-            return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample).select_related()
+            return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_id=sample). \
+                select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
+                                        'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
+                                        'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
+                                        'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+                                        'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+                                        'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+                                        'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure',
+                                        'qc_warning',  'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9',
+                                        'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19',
+                                        'chr20', 'chr21', 'chr22', 'Chrx', 'chry')
 
     def get_samples_not_included(flowcell, start_time=None, stop_time=None, sample=None):
         if start_time is not None or stop_time is not None:
             flowcells = Flowcell.objects.filter(run_date__lte=stop_time, run_date__gte=start_time)
             if sample is None:
-                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell).select_related()
+                return SamplesRunData.objects.filter(flowcell_id__in=flowcells).exclude(flowcell_id=flowcell). \
+                    select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode',
+                                            'sample_id', 'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y')
             else:
                 return SamplesRunData.objects.filter(flowcell_id__in=flowcells). \
-                       exclude(flowcell_id=flowcell, sample_id=sample).select_related()
+                       exclude(flowcell_id=flowcell, sample_id=sample). \
+                       select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode',
+                                               'sample_id', 'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y')
         else:
             if sample is None:
-                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell).select_related()
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell). \
+                    select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode',
+                                            'sample_id', 'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y')
             else:
-                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample).select_related()
+                return SamplesRunData.objects.all().exclude(flowcell_id=flowcell, sample_id=sample). \
+                    select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode',
+                                            'sample_id', 'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y')
 
 
 class Line(models.Model):

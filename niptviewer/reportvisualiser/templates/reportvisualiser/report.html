@@ -97,7 +97,7 @@
         </tr>
       </thead>
       <tbody>
-      {% for row in flowcell_run_data|safe %}
+      {% for row in flowcell_run_data %}
         <tr><td>{{ row.sample_id }}</td><td {% flag_sample row.ncv_13 %}>{{ row.ncv_13 }}</td><td {% flag_sample row.ncv_18 %}>{{ row.ncv_18 }}</td><td {% flag_sample row.ncv_21 %}>{{ row.ncv_21 }}</td><td {% flag_sample row.ncv_X %}>{{ row.ncv_X }}</td><td {% flag_sample row.ncv_Y %}>{{ row.ncv_Y }}</td><td colspan="2">{{ row.ff_formatted }}</td></tr>
       {% endfor %}
       </tbody>

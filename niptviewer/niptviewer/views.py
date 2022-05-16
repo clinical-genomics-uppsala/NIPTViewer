@@ -45,20 +45,27 @@ def index(request, time_selection=settings.DEFAULT_TIME_SELECTION):
 
     if time_selection < 9999:
         flowcells = Flowcell.objects.filter(run_date__lte=now, run_date__gte=previous_time).order_by('-run_date')
-        sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
-            '-flowcell_id__run_date')
+        sample_run_data = SamplesRunData.objects.filter(flowcell_id__in=flowcells).order_by(
+            '-flowcell_id__run_date').select_related().values('ff_formatted', 'flowcell_id__run_date',
+                                                              'flowcell_id__flowcell_barcode', 'sample_id', 'sample_type__name')
         control_flowcell_data = SamplesRunData.objects.select_related(). \
             filter(flowcell_id__in=flowcells, sample_type=SampleType.objects.get(name="Control")). \
-            order_by('-flowcell_id__run_date')
+            order_by('-flowcell_id__run_date').values('sample_type__name', 'flowcell_id__run_date',
+                                                      'flowcell_id__flowcell_barcode', 'ncd_13', 'ncd_18', 'ncd_21', 'ncd_x',
+                                                      'ncd_y', 'sample_id', 'sample_type__name')
         num_flowcells = len(flowcells)
         num_samples = len(sample_run_data)
         total_num_flowcells = Flowcell.objects.count()
         total_num_samples = SamplesRunData.objects.count()
     else:
         flowcells = Flowcell.objects.all().order_by('-run_date')
-        sample_run_data = SamplesRunData.objects.all().order_by('-flowcell_id__run_date').select_related()
+        sample_run_data = SamplesRunData.objects.all().order_by('-flowcell_id__run_date').select_related(). \
+            values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id', 'sample_type__name')
         control_flowcell_data = SamplesRunData.objects.filter(sample_type=SampleType.objects.get(name="Control")). \
-            order_by('-flowcell_id__run_date').select_related()
+            select_related().order_by('-flowcell_id__run_date').values('sample_type__name', 'flowcell_id__run_date',
+                                                                       'flowcell_id__flowcell_barcode', 'ncd_13', 'ncd_18',
+                                                                       'ncd_21', 'ncd_x', 'ncd_y', 'sample_id',
+                                                                       'sample_type__name')
         num_flowcells = total_num_flowcells = Flowcell.objects.count()
         num_samples = total_num_samples = SamplesRunData.objects.count()
 

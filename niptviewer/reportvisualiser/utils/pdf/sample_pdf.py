@@ -32,14 +32,15 @@ class SampleReportPDF(PDFTemplateView):
         previous_time = flowcell.run_date + relativedelta(months=-settings.DEFAULT_TIME_SELECTION_SAMPLE_REPORT)
         next_time = flowcell.run_date + relativedelta(months=+settings.DEFAULT_TIME_SELECTION_SAMPLE_REPORT)
 
-        flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell)
+        flowcell_run_data = SamplesRunData.objects.filter(flowcell_id=flowcell).select_related(). \
+            values('sample_id', 'ff_formatted', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y')
 
         samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
         flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell, start_time=previous_time, stop_time=next_time)
 
         sample_info = data.extract_info_samples(flowcell_other, data.sample_info(), size=0.5, label=lambda x: 'other',
                                                 color=colors.hist)
-        color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id,
+        color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x['sample_id'],
                                                              size=1.0, shape="circle", colors=colors.samples)
         context.update(data_structure_generator(sample_info))
 
@@ -49,7 +50,7 @@ class SampleReportPDF(PDFTemplateView):
 
         context.update({
              'today': datetime.date.today().strftime("%Y-%m-%d"),
-             'samples': [d.sample_id for d in samples_run_data],
+             'samples': [d['sample_id'] for d in samples_run_data],
              'flowcell':  flowcell,
              'flowcell_run_data': flowcell_run_data,
              'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
