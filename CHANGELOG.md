@@ -1,5 +1,20 @@
 # Changelog
 
+### [1.9.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.9.0...v1.9.1) (2022-05-16)
+
+
+### Bug Fixes
+
+* add missing % sign ([d8c5b9b](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/d8c5b9b43ebb87b4c653bcf11f5d37a91db69794))
+* minor modifications for test env. ([64a6edc](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/64a6edc22b1490828ccf9e7ef01a1b94dd5f594c))
+* revert curl removal ([b42c509](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/b42c509df39f80ca98e9df1ac1bee73eea7cb2d9))
+* skip curl, prevents container from building ([75fd50e](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/75fd50e70ea65c4b2f5a6a643b3943e32f4c6e68))
+
+
+### Performance Improvements
+
+* update code to improve performance during report generation ([326ba9a](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/326ba9a4f073836c777e2e2d2ae64ef1df2ce371))
+
 ## [1.9.0](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.8.2...v1.9.0) (2022-05-06)
 
 
