@@ -19,13 +19,12 @@
   </thead>
   <tbody>
     <tr>
-
       {% for f in data %}
       {% lookup color_dict f.sample_id as hex_color %}
       {% hex_to_rgb hex_color 1.0 as rgba_color_border%}
       {% hex_to_rgb hex_color 0.5 as rgba_color%}
-      {% model_lookup f field_1 as value_1 %}
-      {% model_lookup f field_2 as value_2 %}
+      {% lookup f field_1 as value_1 %}
+      {% lookup f field_2 as value_2 %}
       <td style="border: 10px solid rgba({{ rgba_color_border }});background:rgba{{ rgba_color }};">
         <b>{{ f.sample_id }}</b>
       </td>

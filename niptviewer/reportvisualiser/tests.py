@@ -18,7 +18,7 @@ class UtilDataTestTestsCase(TestCase):
     def test_extract_qc_status(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.get_samples(Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
         from .utils.data import extract_qc_status
         qc_failure, qc_warning = extract_qc_status(samples)
         self.assertEqual(qc_failure, [('120AB-1', 'NCC;'), ('MN20-1234-BM', 'NCD_21;NCD_18')])
@@ -27,7 +27,7 @@ class UtilDataTestTestsCase(TestCase):
     def test_extra_info_samples(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.get_samples(Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
         from .utils.data import extract_info_samples, sample_info
         data = extract_info_samples(samples, sample_info())
 
@@ -118,7 +118,7 @@ class UtilDataTestTestsCase(TestCase):
     def test_extra_info_per_samples(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.get_samples(Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
         from .utils.data import extra_info_per_sample, sample_info
         from .utils.colors import samples as colors
         colors, data = extra_info_per_sample(samples, sample_info(), colors=colors[:3])
@@ -229,7 +229,7 @@ class UtilPlotsTestTestsCase(TestCase):
     def test_chromosome_percentage_reads(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.get_samples(Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
         from .utils.plots import chromosome_percentage_reads
 
         data = chromosome_percentage_reads(samples)
@@ -413,7 +413,7 @@ class UtilPlotsTestTestsCase(TestCase):
     def test_chromosome_coverage(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.get_samples(Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
         from .utils.plots import chromosome_coverage
 
         data = chromosome_coverage(samples)
@@ -659,7 +659,9 @@ class UtilPlotsTestTestsCase(TestCase):
     def test_median_coverage(self):
         from dataprocessor.models import Flowcell, BatchRun
 
-        samples = BatchRun.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = BatchRun.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI")). \
+            select_related().values('flowcell_id__flowcell_barcode', 'flowcell_id__run_date', 'median_13', 'median_18',
+                                    'median_21', 'median_x', 'median_y')
         from .utils.plots import median_coverage
 
         data = median_coverage(samples)
@@ -687,7 +689,9 @@ class UtilPlotsTestTestsCase(TestCase):
     def test_ncd(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI")). \
+            values('sample_type__name', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'ncd_13', 'ncd_18', 'ncd_21',
+                   'ncd_x', 'ncd_y', 'sample_id', 'sample_type__name')
         from .utils.plots import ncd_data
 
         data = ncd_data(samples)
@@ -770,7 +774,9 @@ class UtilPlotsTestTestsCase(TestCase):
     def test_fetal_fraction(self):
         from dataprocessor.models import Flowcell, SamplesRunData
 
-        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI"))
+        samples = SamplesRunData.objects.filter(flowcell_id=Flowcell.objects.get(flowcell_barcode="ABCDEFGHI")). \
+            select_related().values('flowcell_id__flowcell_barcode', 'flowcell_id__run_date', 'ff_formatted', 'sample_id',
+                                    'sample_type__name')
         from .utils.plots import fetal_fraction
 
         data = fetal_fraction(samples)
