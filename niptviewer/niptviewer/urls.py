@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.urls import include, path, re_path
-
+from django.conf import settings
 from . import views
 
 urlpatterns = [
@@ -28,5 +28,7 @@ urlpatterns = [
     path('viewer/', include('reportvisualiser.urls')),
     path('api', include('dataprocessor.urls')),
     path('admin/', include('users.urls')),
-    #  path('__debug__/', include('debug_toolbar.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns.append(path('__debug__/', include('debug_toolbar.urls')))

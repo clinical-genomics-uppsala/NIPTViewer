@@ -25,15 +25,18 @@ def index(request, active_page=1, time_selection=settings.DEFAULT_TIME_SELECTION
 
     if time_selection == 9999:
         flowcells = Flowcell.objects.all()
-        sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
-            '-flowcell_id__run_date').select_related()
+        sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells). \
+            order_by('-flowcell_id__run_date').select_related().values('ff_formatted', 'flowcell_id__run_date',
+                                                                       'flowcell_id__flowcell_barcode', 'sample_id',
+                                                                       'sample_type__name')
         flowcell_run_data = BatchRun.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
             '-flowcell_id__run_date')
     else:
         previous_time = now + relativedelta(months=-time_selection)
         flowcells = Flowcell.objects.filter(run_date__lte=now, run_date__gte=previous_time)
         sample_run_data = SamplesRunData.objects.select_related(). \
-            filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date')
+            filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date'). \
+            values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id', 'sample_type__name')
         flowcell_run_data = BatchRun.objects.select_related().filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date')
 
     control_type = SampleType.objects.get(name="Control")
@@ -126,7 +129,8 @@ def report(request, barcode, time_selection=settings.DEFAULT_TIME_SELECTION):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
     if time_selection == 9999:
-        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)
+        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell). \
+            values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id', 'sample_type__name')
     else:
         start_time = flowcell.run_date + relativedelta(months=-time_selection)
         stop_time = flowcell.run_date + relativedelta(months=+time_selection)
@@ -135,14 +139,14 @@ def report(request, barcode, time_selection=settings.DEFAULT_TIME_SELECTION):
     sample_info = data.extract_info_samples(flowcell_other, data.sample_info(), size=0.5, label=lambda x: 'other',
                                             color=colors.hist)
 
-    color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x.sample_id,
+    color_dict, sample_info = data.extra_info_per_sample(samples_run_data, sample_info, label=lambda x: x['sample_id'],
                                                          size=1.0, shape="circle", colors=colors.samples)
 
     context = {
         'flowcell': flowcell,
         "time_selection": time_selection,
         'active_sample': None,
-        'samples': [d.sample_id for d in samples_run_data],
+        'samples': [d['sample_id'] for d in samples_run_data],
         'flowcell_barcode': barcode,
         'flowcell_run_data': samples_run_data,
         'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
