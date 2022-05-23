@@ -156,7 +156,7 @@
           <div class="icon-block">
             <h5 class="center">Latest samples</h5>
             {% for sample in latest_samples %}
-              <p class="center"><a class="black-text" href="{% url "viewer:sample_report" barcode=sample.flowcell_id__flowcell_barcode sample=sample.sample_id %}">{{ sample.sample_id }} ({{ sample.flowcell_id_flowcell_barcode }})</a></p>
+              <p class="center"><a class="black-text" href="{% url "viewer:sample_report" barcode=sample.flowcell_id__flowcell_barcode sample=sample.sample_id %}">{{ sample.sample_id }} ({{ sample.flowcell_id__flowcell_barcode }})</a></p>
             {% endfor %}
           </div>
         </div>
