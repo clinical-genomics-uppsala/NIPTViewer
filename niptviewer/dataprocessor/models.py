@@ -319,9 +319,33 @@ class SamplesRunData(models.Model):
                 chry=chry,
                 ff_formatted=ff_formatted if not pandas.isna(ff_formatted) else None)
 
-    def get_samples(flowcell, sample=None):
+    def get_samples(flowcell, sample=None, exclude_sample=None, sample_type=None):
         if sample is None:
             return SamplesRunData.objects.filter(flowcell_id=flowcell). \
+                select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
+                                        'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
+                                        'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
+                                        'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+                                        'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+                                        'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+                                        'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure',
+                                        'qc_warning',  'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9',
+                                        'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19',
+                                        'chr20', 'chr21', 'chr22', 'Chrx', 'chry')
+        elif exclude_sample:
+            return SamplesRunData.objects.filter(flowcell_id=flowcell).exclude(exclude_sample). \
+                select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
+                                        'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
+                                        'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
+                                        'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+                                        'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+                                        'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+                                        'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure',
+                                        'qc_warning',  'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9',
+                                        'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19',
+                                        'chr20', 'chr21', 'chr22', 'Chrx', 'chry')
+        elif sample_type:
+            return SamplesRunData.objects.filter(flowcell_id=flowcell, sample_type=sample_type). \
                 select_related().values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
                                         'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
                                         'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
