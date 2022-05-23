@@ -69,25 +69,21 @@ def index(request, active_page=1, time_selection=settings.DEFAULT_TIME_SELECTION
 @login_required
 def sample_report(request, barcode, sample):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
-    flowcell_run_data = SamplesRunData.objects. \
-        filter(flowcell_id=flowcell).exclude(sample_id=sample).select_related()
-    flowcell_controls = SamplesRunData.objects. \
-        filter(flowcell_id=flowcell, sample_type=SampleType.objects.get(name="Control")).select_related()
-    sample_run_data = SamplesRunData.objects. \
-        filter(flowcell_id=flowcell, sample_id=sample).select_related()
-    previous_samples = SamplesRunData.objects.all(). \
-        exclude(flowcell_id=flowcell).select_related()
+    flowcell_run_data = SamplesRunData.get_samples(flowcell=flowcell, exclude_sample=sample)
+    flowcell_controls = SamplesRunData.get_samples(flowcell=flowcell, sample_type=SampleType.objects.get(name="Control"))
+    sample_run_data = SamplesRunData.get_samples(flowcell=flowcell, sample=sample)
+    previous_samples = SamplesRunData.get_samples_not_included(flowcell=flowcell)
 
     samples_info = data.extract_info_samples(previous_samples, data.sample_info(), size=0.5, label=lambda x: 'other',
                                              color=colors.hist)
     samples_info = data.extract_info_samples(flowcell_run_data, samples_info, size=0.5, label=lambda x: 'same flowcell',
                                              color=colors.other_samples)
-    color_dict, samples_info = data.extra_info_per_sample(sample_run_data, samples_info, label=lambda x: x.sample_id,
+    color_dict, samples_info = data.extra_info_per_sample(sample_run_data, samples_info, label=lambda x: x['sample_id'],
                                                           size=1.0, shape="circle", colors=[colors.sample])
 
     context = {'today': datetime.date.today().strftime("%Y-%m-%d"),
                'active_sample': sample,
-               'samples': [d.sample_id for d in flowcell_run_data] + [sample_run_data[0].sample_id],
+               'samples': [d['sample_id'] for d in flowcell_run_data] + [sample_run_data[0]['sample_id']],
                'flowcell_barcode': barcode,
                'flowcell_run_data': sample_run_data,
                'flowcell_user': flowcell.uploading_user.first_name + " " + flowcell.uploading_user.last_name,
@@ -129,8 +125,7 @@ def report(request, barcode, time_selection=settings.DEFAULT_TIME_SELECTION):
     flowcell = Flowcell.get_flowcell(flowcell_barcode=barcode)
     samples_run_data = SamplesRunData.get_samples(flowcell=flowcell)
     if time_selection == 9999:
-        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell). \
-            values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id', 'sample_type__name')
+        flowcell_other = SamplesRunData.get_samples_not_included(flowcell=flowcell)
     else:
         start_time = flowcell.run_date + relativedelta(months=-time_selection)
         stop_time = flowcell.run_date + relativedelta(months=+time_selection)
