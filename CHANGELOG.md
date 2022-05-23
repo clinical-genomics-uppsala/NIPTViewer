@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.9.2](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.9.1...v1.9.2) (2022-05-23)
+
+
+### Bug Fixes
+
+* add missing data to report and make sample page load ([ae50904](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/ae50904fdaea4203eb9e1f773f009f7719788af4))
+
 ### [1.9.1](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.9.0...v1.9.1) (2022-05-16)
 
 
