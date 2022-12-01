@@ -26,9 +26,18 @@ def index(request, active_page=1, time_selection=settings.DEFAULT_TIME_SELECTION
     if time_selection == 9999:
         flowcells = Flowcell.objects.all()
         sample_run_data = SamplesRunData.objects.select_related().filter(flowcell_id__in=flowcells). \
-            order_by('-flowcell_id__run_date').select_related().values('ff_formatted', 'flowcell_id__run_date',
-                                                                       'flowcell_id__flowcell_barcode', 'sample_id',
-                                                                       'sample_type__name')
+            order_by('-flowcell_id__run_date').select_related().values(
+            'ff_formatted', 'flowcell_id__run_date',
+            'flowcell_id__flowcell_barcode', 'sample_id',
+            'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
+            'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
+            'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+            'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+            'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+            'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure',
+            'qc_warning',  'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9',
+            'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19',
+            'chr20', 'chr21', 'chr22', 'Chrx', 'chry')
         flowcell_run_data = BatchRun.objects.select_related().filter(flowcell_id__in=flowcells).order_by(
             '-flowcell_id__run_date')
     else:
@@ -36,12 +45,32 @@ def index(request, active_page=1, time_selection=settings.DEFAULT_TIME_SELECTION
         flowcells = Flowcell.objects.filter(run_date__lte=now, run_date__gte=previous_time)
         sample_run_data = SamplesRunData.objects.select_related(). \
             filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date'). \
-            values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id', 'sample_type__name')
+            values('ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
+                   'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'chr1_coverage',
+                   'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage', 'chr6_coverage',
+                   'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+                   'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+                   'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+                   'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure',
+                   'qc_warning',  'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9',
+                   'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19',
+                   'chr20', 'chr21', 'chr22', 'Chrx', 'chry')
         flowcell_run_data = BatchRun.objects.select_related().filter(flowcell_id__in=flowcells).order_by('-flowcell_id__run_date')
 
     control_type = SampleType.objects.get(name="Control")
     control_flowcell_data = SamplesRunData.objects.filter(flowcell_id__in=flowcells).select_related(). \
-        filter(sample_type=control_type).order_by('-flowcell_id__run_date')
+        filter(sample_type=control_type). \
+        order_by('-flowcell_id__run_date').values(
+            'ff_formatted', 'flowcell_id__run_date', 'flowcell_id__flowcell_barcode', 'sample_id',
+            'sample_type__name', 'ncv_13', 'ncv_18', 'ncv_21', 'ncv_X', 'ncv_Y', 'ncd_13', 'ncd_18', 'ncd_21',
+            'ncd_x', 'ncd_y', 'chr1_coverage', 'chr2_coverage', 'chr3_coverage', 'chr4_coverage', 'chr5_coverage',
+            'chr6_coverage', 'chr7_coverage', 'chr8_coverage', 'chr9_coverage', 'chr10_coverage', 'chr11_coverage',
+            'chr12_coverage', 'chr13_coverage', 'chr14_coverage', 'chr15_coverage', 'chr16_coverage',
+            'chr17_coverage', 'chr18_coverage', 'chr19_coverage', 'chr20_coverage', 'chr21_coverage',
+            'chr22_coverage', 'chrx_coverage', 'chry_coverage', 'qc_flag', 'qc_failure', 'qc_warning',
+            'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12',
+            'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chr20', 'chr21', 'chr22', 'Chrx',
+            'chry')
 
     num_flowcells = len(flowcells)
     active_page = int(active_page)
