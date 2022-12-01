@@ -23,7 +23,7 @@ WORKDIR $APP_HOME
 
 # install dependencies
 RUN apt-get update \
-    && apt-get install --no-install-recommends gnupg2=2.2.19-3ubuntu2.1 \
+    && apt-get install --no-install-recommends gnupg2=2.2.19-3ubuntu2.2 \
                                                build-essential=12.8ubuntu1.1 \
                                                curl=7.68.0-1ubuntu2.11 \
                                                libpq-dev=12.10-0ubuntu0.20.04.1 \
