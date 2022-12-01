@@ -5,10 +5,11 @@ on:
     branches:
       - dev
       - master
+  workflow_dispatch:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v3
     - run: echo "GITHUB_BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
