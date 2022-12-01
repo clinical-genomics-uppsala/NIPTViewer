@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.3](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.9.2...v1.9.3) (2022-12-01)
+
+
+### Bug Fixes
+
+* add missing value ([694685f](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/694685f9be9d40879897dc7770f827afe9d7bccf))
+* update gnupg2 dependency in dockerfile ([22596db](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/22596dbfcc8e3879ef06aa8ef11c60640dba34db))
+* update libpq-dev and vim dependency in dockerfile ([860a086](https://github.com/clinical-genomics-uppsala/NIPTViewer/commit/860a086d79a70a54221085f7733f45b240220223))
+
 ### [1.9.2](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.9.1...v1.9.2) (2022-05-23)
 
 
