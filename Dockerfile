@@ -25,10 +25,10 @@ WORKDIR $APP_HOME
 RUN apt-get update \
     && apt-get install --no-install-recommends gnupg2=2.2.19-3ubuntu2.2 \
                                                build-essential=12.8ubuntu1.1 \
-                                               curl=7.68.0-1ubuntu2.11 \
-                                               libpq-dev=12.10-0ubuntu0.20.04.1 \
+                                               curl=7.68.0-1ubuntu2.14 \
+                                               libpq-dev=12.12-0ubuntu0.20.04.1 \
                                                wkhtmltopdf=0.12.5-1build1 \
-                                               vim=2:8.1.2269-1ubuntu5.7 \
+                                               vim=2:8.1.2269-1ubuntu5.9 \
                                                python3-dev=3.8.2-0ubuntu2 \
                                                python3-pip=20.0.2-5ubuntu1.6 \
                                                wget=1.20.3-1ubuntu2 -y \
