@@ -4,13 +4,12 @@ services:
   nipt-nginx-service:
     build:
       context: .
-      dockerfile: ./dockerfiles/nginx.dev.dockerfile
+      dockerfile: ./docker/dev/nginx.dev.dockerfile
     image: cgu/nginx_dev:0.5.2
     ports:
-      - 80:80
+      - 8000:80
     volumes:
       - static_volume:/home/app/web/staticfiles
-      - ./dockerfiles/nginx-test.conf:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - nipt-web-service
     networks:
@@ -18,18 +17,18 @@ services:
   nipt-web-service:
     build:
       context: .
-      dockerfile: ./dockerfiles/development.dockerfile
+      dockerfile: ./docker/dev/development.dockerfile
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./niptviewer:/usr/src/app:Z
-      - static_volume:/home/app/web/staticfiles
+      - static_volume:/usr/src/app/staticfiles:rw
     expose:
       - 8000
     environment:
       - DEBUG=1
       - DJANGO_SETTINGS_MODULE=niptviewer.settingsdev
     env_file:
-      - ./.env.dev
+      - ./docker/dev/.env_web
     depends_on:
       - nipt-db-service
     networks:
@@ -39,7 +38,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ./.env.dev.db
+      - ./docker/dev/.env_db
     networks:
       - private
 

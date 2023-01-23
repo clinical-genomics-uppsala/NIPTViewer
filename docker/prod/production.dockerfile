@@ -31,7 +31,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-pFROM ubuntu:20.04
+FROM ubuntu:20.04
 
 ENV LANG C.UTF-8
 ENV TZ=Europe/Stockholm
@@ -51,7 +51,7 @@ RUN mkdir $APP_HOME/staticfiles
 WORKDIR $APP_HOME
 
 # install dependencies
-RUN apt update && apt install curl gnupg2 -y
+RUN apt update && apt install curl gnupg2 netcat -y
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
 RUN apt update && ACCEPT_EULA=Y  apt install unixodbc-dev build-essential libpq-dev wkhtmltopdf vim wget msodbcsql17 -y
@@ -60,7 +60,7 @@ COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.prod.txt .
 RUN pip install --no-cache /wheels/*
 
-COPY ./dockerfiles/entrypoint.sh /home/app/
+COPY ./docker/prod/entrypoint.sh /home/app/
 
 COPY ./niptviewer $APP_HOME
 RUN apt purge build-essential unixodbc-dev -y

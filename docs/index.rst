@@ -1,4 +1,0 @@
-NIPTViewer
-===========
-
-Welcome to!!!
