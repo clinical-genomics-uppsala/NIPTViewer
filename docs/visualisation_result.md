@@ -1,0 +1,1 @@
+The main purpose of NIPTViewer is to make it easy to visualise data and comparing it against historical data.
