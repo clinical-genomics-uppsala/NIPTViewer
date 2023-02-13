@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, x_min_current_run=null, x_max_current_run=null, y_min_current_run=null, y_max_current_run=null, slope=null, intercept=null, stdev=null, x_ticks = null, y_ticks = null}) {
+function scatterChart({data,id, x_label, y_label, x_format, y_format, limits=null, highlight_area=null, x_min=null, x_max=null, y_min=null, y_max=null, x_min_current_run=null, x_max_current_run=null, y_min_current_run=null, y_max_current_run=null, slope=null, intercept=null, stdev=null, x_ticks = null, y_ticks = null}) {
     var chart = nv.models.scatterChart()
                   .showLegend(true)
                   .showDistX(true)
@@ -159,6 +159,10 @@ function scatterChartTime({data,id, x_label, y_label, x_format, y_format, x_min=
 
   if(x_min !== null && x_max !== null){chart.xDomain([x_min,x_max])}
   if(y_min !== null && y_max !== null ){chart.yDomain([y_min,y_max])}
+
+
+  console.log("TESTAR");
+
 
   chart.tooltip.contentGenerator(function(key) {
     return "<table><tr><td>Flowcell:</td><td><b>" + key.point.flowcell + "</td></tr><tr><td>Type:</td><td><b>" + key.point.type + "</td></tr><tr><td>Sample:</td><td><b>" + key.point.sample + "</td></tr><tr><td>y:</td><td><b>" + d3.format(y_format)(key.point.y) + "</b></td></tr><tr><td>x:</td><td><b>" + d3.time.format('%y-%m-%d')(new Date(key.point.x)) + "</b></td></tr></table>";

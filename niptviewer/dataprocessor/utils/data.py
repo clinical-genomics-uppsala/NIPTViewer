@@ -78,20 +78,27 @@ def decimal_from_value(value):
 
 
 def parse_niptool_csv(file=None, sep=","):
+    print("P-1")
     run_date = re.search('^([0-9]+)_', os.path.basename(file.name))
+    print("P-2")
     if run_date:
+        print("P-3")
         run_date = datetime.datetime.strptime(run_date[1], "%y%m%d")
+    print("P0")
     data = read_csv(file, sep=sep, comment='#', decimal=".", float_precision='high',
                     converters={'Library_nM': decimal_from_value})
+    print("P1")
     data.set_index('SampleID', drop=False)
     for sample in data['SampleID']:
         if "#" in sample and "version" in sample:
             version = re.search('Software[ ]version:[ ]([0-9.]+);', sample)[1]
+    print("P2")
     data = data[["#" not in sample for sample in data['SampleID']]]
     data['Description'] = data['Description'].fillna("")
     data['QCFailure'] = data['QCFailure'].fillna("")
     data['QCWarning'] = data['QCWarning'].fillna("")
     data['SampleProject'] = data['SampleProject'].fillna("")
+    print("P3")
     data['FF_Formatted'] = data['FF_Formatted'].apply(
         lambda x: int(x.replace('%', '').replace('<', '')) / 100 if isinstance(x, str) else x)
     columns_to_process = nnc_per_samplesheet + \
@@ -104,12 +111,14 @@ def parse_niptool_csv(file=None, sep=","):
 
 
 def import_data_into_database(user, file, skip_samples=False):
+    print("IMPORT")
     version, run_date, data = parse_niptool_csv(file)
     num_imported_samples = 0
+    print("IMPORTING")
     try:
         with transaction.atomic():
             rundata = data.loc[:, ['Flowcell'] + nnc_per_batch_scoring_metrics]
-
+            print("PARSING FLOWELL")
             flowcell_barcode = set([row['Flowcell'] for index, row in rundata.iterrows()])
             if len(flowcell_barcode) > 1:
                 raise Exception(
@@ -119,15 +128,15 @@ def import_data_into_database(user, file, skip_samples=False):
             if len(flowcell_barcode) != 9:
                 raise Exception("Invalid Flowcell bardcode length, should be 9 chars, found: " + str(len(flowcell_barcode)))
             batch_data_error = []
-
+            print("Processing batch")
             for column in nnc_per_batch_scoring_metrics:
                 if len(set(rundata[column])) > 1:
                     batch_data_error.append(column)
 
             first_row = rundata.head(1)
-
+            print("Create flowcell")
             flowcell = Flowcell.create_flowcell(user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
-
+            print("Create batch")
             BatchRun.create_batch_run(flowcell_entry=flowcell,
                                       median_13=first_row['Median_13'].item(),
                                       median_18=first_row['Median_18'].item(),
@@ -150,6 +159,7 @@ def import_data_into_database(user, file, skip_samples=False):
                 if isnan(row['QCFlag']) and skip_samples:
                     continue
                 try:
+                    print("CREATE SAMPLES")
                     entry = SamplesRunData.create_sample_data(flowcell_id_entry=flowcell, sample_type_entry=sample_type,
                                                               sample_id=row['SampleID'], sample_project=row["SampleProject"],
                                                               index=index,

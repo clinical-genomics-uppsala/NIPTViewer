@@ -1,0 +1,3 @@
+jinja2==3.0.3
+mkdocs-simple-hooks==0.1.5
+mkdocs==1.4.2

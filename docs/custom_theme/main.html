@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block libs %}
+    <meta charset="utf-8">
+    {{ super() }}
+    
+    <script src="static/chromosome_line_chart.js"></script>
+    <script src="static/grouped_barchart.js" defer></script>
+    <script src="static/line_chart.js" defer></script>
+    <script src="static/scatter_chart.js" defer></script>
+
+    <script src="static/d3.min.js" charset="utf-8"></script>
+    <script src="static/nv.d3.min.js"></script>
+    
+    <link rel="stylesheet" href="static/nv.d3.min.css">
+
+{% endblock %}

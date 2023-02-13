@@ -1,5 +1,5 @@
 function horizontalGroupedBarChart({data,id}) {
-    nv.addGraph(function() { 
+    nv.addGraph(function() {
       stacked = true;
       if(data[0]['values'].length == 1){stacked=false;}
       chart = nv.models.multiBarChart()

@@ -99,7 +99,7 @@ if os.environ.get('DATABASE', "sqlite3") == "sqlite3":
 elif os.environ.get('DATABASE', "sqlite3") == "postgres":
     DATABASES = {
         "default": {
-            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
             "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
             "USER": os.environ.get("SQL_USER", "user"),
             "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
