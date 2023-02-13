@@ -13,3 +13,5 @@ mssql-django==1.0
 django-debug-toolbar
 django-debug-toolbar-line-profiling
 django-debug-toolbar-template-profiler
+jinja2<3.1.0
+mkdocs==1.4.2
