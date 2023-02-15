@@ -2,6 +2,7 @@ import os
 import requests
 import shutil
 
+
 def copy_plot_scripts(*args, **kwargs):
     script_list = [
         'chromosome_line_chart.js',

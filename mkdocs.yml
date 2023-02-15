@@ -6,13 +6,14 @@ nav:
   - Running/Deploying:
     - Development: development.md
     - Production: production.md
+    - Test Data: test_data.md
   - Configuration:
     - Server: server_configuration.md
     - User admininstration: user_configuration.md
   - Visualisation: 
     - Introduction: visualisation_introduction.md
-    - Result: visualisation_result.md
     - QC: visualisation_qc.md
+    - Result: visualisation_result.md
     - PDF: visualisation_pdf.md
   - About: 
     - about.md
@@ -20,11 +21,7 @@ theme:
   name: readthedocs
   custom_dir: "docs/custom_theme/"
 plugins:
-#  - search
+  - search
   - mkdocs-simple-hooks:
       hooks:
         on_pre_build: "docs.hooks:copy_plot_scripts"
-#  - static/chromosome_line_chart.js
-#  - static/grouped_barchart.js
-#  - static/line_chart.js
-#  - static/scatter_chart.js

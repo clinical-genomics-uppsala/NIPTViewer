@@ -46,17 +46,23 @@ COPY pyproject.toml /pyproject.toml
 
 COPY ./docker/prod/entrypoint.sh /home/app/
 
-RUN git clone https://github.com/clinical-genomics-uppsala/NIPTViewer.git /NIPT && \
-    cd /NIPT && git checkout $VERSION && \
-    pip install --no-cache-dir -r /NIPT/requirements.prod.txt && \
-    bash fetch_assets.sh && \
-    cd niptviewer && \
-    cp -r /NIPT/niptviewer/* $APP_HOME/ && \
-    sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/$VERSION/" -i $APP_HOME/niptviewer/__init__.py && \
+RUN git clone https://github.com/clinical-genomics-uppsala/NIPTViewer.git /NIPT
+
+WORKDIR /NIPT
     
+RUN git checkout $VERSION && \
+    pip install --no-cache-dir -r /NIPT/requirements.prod.txt && \
+    bash fetch_assets.sh
+
+WORKDIR /NIPT/niptviewer
+
+RUN cp -r /NIPT/niptviewer/* $APP_HOME/ && \
+    sed -E "s/[0-9]+\.[0-9]+\.[0-9]+/$VERSION/" -i $APP_HOME/niptviewer/__init__.py && \
     apt-get purge build-essential unixodbc-dev -y && \
     chown -R app:app $APP_HOME && \
     rm -r /NIPT
+
+WORKDIR $APP_HOME
 
 # change to the app user
 USER app

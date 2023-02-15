@@ -48,9 +48,16 @@ bash fetch_assets.sh
 # Build image and start container
 docker-compose -f docker-compose-development.yaml up --build
 
-# Create admin user
-docker exec -it {NIPT_WEB_CONTAINER_NAME_OR_ID} python manage.py createsuperuser
+NOTE: Downloading pdf from this test server will not work.
 
+# Create admin user
+export NIPT_WEB_CONTAINER_NAME_OR_ID=$(docker ps | grep nipt-web | awk '{print($1)}');
+docker exec -it ${NIPT_WEB_CONTAINER_NAME_OR_ID} python3 manage.py createsuperuser;
 ```
+
+To be able to download pdf from development docker setup you will have to modify the templates a bit, all static parts need to changed from ex: <br />
+`href="{{% static "css/nv.d3.min.1.8.6.css" %}}"` <br />
+to  <br />
+`"http://127.0.0.1:8000/staticfiles/css/nv.d3.min.1.8.6.css"` <br />
 
 The service should now be avaible at http://127.0.0.1:8000
