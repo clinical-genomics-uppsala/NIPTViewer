@@ -6,7 +6,7 @@ ENV TZ=Europe/Stockholm
 ENV DEBIAN_FRONTEND=noninteractive
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git wkhtmltopdf
 
 ENV APP_HOME=/usr/src/app
 RUN mkdir -p $APP_HOME

@@ -24,6 +24,7 @@ def data_structure_generator(samples_info):
             information['data_' + comparison + '_max_x'] = max(data_points, key=lambda v: v['x'])['x']
             information['data_' + comparison + '_min_y'] = min(data_points, key=lambda v: v['y'])['y']
             information['data_' + comparison + '_max_y'] = max(data_points, key=lambda v: v['y'])['y']
+        if len(data_points_current_run) > 0:
             information['data_' + comparison + '_min_x_current_run'] = min(data_points_current_run, key=lambda v: v['x'])['x']
             information['data_' + comparison + '_max_x_current_run'] = max(data_points_current_run, key=lambda v: v['x'])['x']
             information['data_' + comparison + '_min_y_current_run'] = min(data_points_current_run, key=lambda v: v['y'])['y']

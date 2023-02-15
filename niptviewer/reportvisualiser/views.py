@@ -184,11 +184,18 @@ def report(request, barcode, time_selection=settings.DEFAULT_TIME_SELECTION):
         context['data_coverage'] = plots.chromosome_coverage(data=samples_run_data)
         other_fetal = plots.fetal_fraction(data=flowcell_other)
         current_fetal = plots.fetal_fraction(data=samples_run_data, label=lambda x: barcode)
-        context['data_ff_time'] = other_fetal['data_ff_time'] + current_fetal['data_ff_time']
-        context['data_ff_time_min_x'] = min(other_fetal['data_ff_time_min_x'], current_fetal['data_ff_time_min_x'])
-        context['data_ff_time_min_y'] = min(other_fetal['data_ff_time_min_y'], current_fetal['data_ff_time_min_y'])
-        context['data_ff_time_max_x'] = max(other_fetal['data_ff_time_max_x'], current_fetal['data_ff_time_max_x'])
-        context['data_ff_time_max_y'] = max(other_fetal['data_ff_time_max_y'], current_fetal['data_ff_time_max_y'])
+        if 'data_ff_time_min_x' in other_fetal:
+            context['data_ff_time'] = other_fetal['data_ff_time'] + current_fetal['data_ff_time']
+            context['data_ff_time_min_x'] = min(other_fetal['data_ff_time_min_x'], current_fetal['data_ff_time_min_x'])
+            context['data_ff_time_min_y'] = min(other_fetal['data_ff_time_min_y'], current_fetal['data_ff_time_min_y'])
+            context['data_ff_time_max_x'] = max(other_fetal['data_ff_time_max_x'], current_fetal['data_ff_time_max_x'])
+            context['data_ff_time_max_y'] = max(other_fetal['data_ff_time_max_y'], current_fetal['data_ff_time_max_y'])
+        else:
+            context['data_ff_time'] = current_fetal['data_ff_time']
+            context['data_ff_time_min_x'] = current_fetal['data_ff_time_min_x']
+            context['data_ff_time_min_y'] = current_fetal['data_ff_time_min_y']
+            context['data_ff_time_max_x'] = current_fetal['data_ff_time_max_x']
+            context['data_ff_time_max_y'] = current_fetal['data_ff_time_max_y']
 
     qc_failure, qc_warning = data.extract_qc_status(samples_run_data)
     context['qc_warning'] = qc_warning
