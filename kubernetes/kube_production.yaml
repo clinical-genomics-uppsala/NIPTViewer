@@ -8,7 +8,7 @@ metadata:
 spec:
   containers:
   - name: nginx
-    image: smeds84/nginx:1.1.0
+    image: smeds84/niptviewernginx:1.0.0
     ports:
     - containerPort: 80
       hostport: 80
@@ -19,6 +19,12 @@ spec:
     volumeMounts:
      - name: staticfiles
        mountPath: /home/app/web/staticfiles
+     - name: key_file
+       mountPath: /etc/certs/private.key
+       readOnly: true
+     - name: crt_file
+       mountPath: /etc/certs/public.crt
+       readOnly: true
     resources: {}
     securityContext:
       allowPrivilegeEscalation: true
@@ -27,24 +33,26 @@ spec:
       readOnlyRootFilesystem: false
       seLinuxOptions: {}
   - name: web
-    image: smeds84/niptviewer:v1.9.0
+    image: smeds84/niptviewer:v1.9.3
     env:
+    - name: SECRET_KEY
+      value: REPLACE_WITH_A_SECRET_KEY
     - name: DJANGO_ALLOWED_HOSTS
-      value: gollum.lul.se 127.0.0.1 localhost
+      value: 127.0.0.1 localhost
     - name: DEBUG
       value: 0
-    - name: "DATABASE"
-      value: "mssql"
-    - name: "SQL_ENGINE"
-      value: "mssql"
-    - name: "SQL_DATABASE"
-      value: "niptviewer"
-    - name: "SQL_HOST"
-      value: "SQLH-DB-19"
-    - name: "SQL_USER"
-      value: "username_secret"
-    - name: "SQL_PASSWORD"
-      value: "password_secret"
+    # - name: "DATABASE"
+    #   value: "sqlite"
+    #- name: "SQL_ENGINE"
+    #  value: "django.db.backends.postgresql"
+    # - name: "SQL_DATABASE"
+    #   value: "hello_django_prod"
+    # - name: "SQL_HOST"
+    #   value: "localhost"
+    # - name: "SQL_USER"
+    #   value: "user_secret"
+    # - name: "SQL_PASSWORD"
+    #   value: "password_secret"
     envFrom:
     - secretRef:
         name: user_secret
@@ -66,6 +74,12 @@ spec:
     - name: staticfiles
       persistentVolumeClaim:
         claimName: niptviewer-staticfiles
+    - name: crt_file
+      hostpath:
+        path: nginx/SSL/nginx-selfsigned.crt
+    - name: key_file
+      hostpath:
+        path: nginx/SSL/nginx-selfsigned.key
   restartPolicy: Always
 
 

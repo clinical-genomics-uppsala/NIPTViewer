@@ -18,7 +18,7 @@ WORKDIR $APP_HOME
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY . .
+COPY requirements.prod.txt .
 
 # install dependencies
 RUN pip install --upgrade pip
@@ -30,7 +30,7 @@ RUN adduser app
 RUN apt update && apt install netcat libpq-dev wkhtmltopdf vim -y
 RUN pip install --no-cache /wheels/*
 
-COPY ./dockerfiles/entrypoint-dev.sh /entrypoint.sh
+COPY ./docker/dev/entrypoint-dev.sh /entrypoint.sh
 
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME
@@ -38,5 +38,8 @@ RUN chown -R app:app $APP_HOME
 WORKDIR $APP_HOME
 # change to the app user
 USER app
+
+RUN mkdir staticfiles
+
 ENV DEBUG=1
 ENTRYPOINT ["/entrypoint.sh"]

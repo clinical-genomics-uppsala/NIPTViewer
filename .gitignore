@@ -15,3 +15,5 @@ admin_settings.*
 secret_password.json
 secret_user.json
 certs
+SSL
+site

@@ -1,0 +1,27 @@
+site_name: NIPTViewer
+site_url: ""
+use_directory_urls: false
+nav:
+  - Introduction: index.md
+  - Running/Deploying:
+    - Development: development.md
+    - Production: production.md
+    - Test Data: test_data.md
+  - Configuration:
+    - Server: server_configuration.md
+    - User admininstration: user_configuration.md
+  - Visualisation: 
+    - Introduction: visualisation_introduction.md
+    - QC: visualisation_qc.md
+    - Result: visualisation_result.md
+    - PDF: visualisation_pdf.md
+  - About: 
+    - about.md
+theme:
+  name: readthedocs
+  custom_dir: "docs/custom_theme/"
+plugins:
+  - search
+  - mkdocs-simple-hooks:
+      hooks:
+        on_pre_build: "docs.hooks:copy_plot_scripts"
