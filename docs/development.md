@@ -1,7 +1,7 @@
 # Development/Testing
 
 ## Django development server
-The simplest way to try out the NIPTviewer is to spin up a [django development server](https://docs.djangoproject.com/en/4.1/intro/tutorial01/#the-development-server),
+The simplest way to try out NIPTviewer is to spin up a [django development server](https://docs.djangoproject.com/en/4.1/intro/tutorial01/#the-development-server),
 
 ```bash
 # Fetch js and css files
