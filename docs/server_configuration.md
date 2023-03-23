@@ -1,27 +1,27 @@
-NIPTViewer is developed using django and most changes to the server can be made by modifying [niptviewer/settings.py](https://github.com/clinical-genomics-uppsala/NIPTViewer/blob/dev/niptviewer/niptviewer/settings.py), for more information please visist [django homepage](https://docs.djangoproject.com/en/3.2/ref/settings/).
+NIPTviewer has been developed using django and most changes to the server can be made by modifying [niptviewer/settings.py](https://github.com/clinical-genomics-uppsala/NIPTviewer/blob/dev/niptviewer/niptviewer/settings.py), for more information please visist [django homepage](https://docs.djangoproject.com/en/3.2/ref/settings/).
 
-Some of NIPTViewer settings that can and should modified before running NIPTViewer in ant kind of production environment, by simply setting environment variables.
+Some of NIPTviewer settings that can and **should** be modified before running NIPTviewer in any kind of production environment. This can be accomplished by simply setting environment variables.
 
 # ENV config
 
 ## SECRET_KEY
-`SECRET_KEY`: key is used to provide cryptographic signing. This key is mostly used to sign session cookies.
+`SECRET_KEY` key is used to provide cryptographic signing. This key is mostly used to sign session cookies.
 
 ## Time selection
 Default time span can be set for the different parts of NIPTviewer
 
 ### Web page
-`DEFAULT_TIME_SELECTION`: number of month from today that should be shown, default 9999 -> show all data
+`DEFAULT_TIME_SELECTION` number of month from today that should be shown, default 9999 (show all data)
 
 ### Sample Report
-`DEFAULT_TIME_SELECTION_SAMPLE_REPORT`: number of month from today that should be shown in pdf report, default 24
+`DEFAULT_TIME_SELECTION_SAMPLE_REPORT` number of month from today that should be shown in pdf report, default 24
 
 ### QC Report
-`DEFAULT_TIME_SELECTION_QC_REPORT`: number of month from today that should be shown in pdf report, default 12
+`DEFAULT_TIME_SELECTION_QC_REPORT` number of month from today that should be shown in pdf report, default 12
 
 ## Database 
 
-Default setting file currenlty support 3 types of databases, sqlite3, postgres and mssql
+The default setting file currenlty support 3 types of databases, sqlite3, postgres and mssql
 
 Settable variables are:
 
@@ -33,7 +33,7 @@ Settable variables are:
 - HOST
 - PORT
 
-database section from the setting file
+the database section from the setting file
 ```python
 if os.environ.get('DATABASE', "sqlite3") == "sqlite3":
     DATABASES = {
@@ -73,5 +73,5 @@ elif os.environ.get('DATABASE', "sqlite3") == "mssql":
     }
 ```
 
-Support for more database can be added by modifying this section of settings.py
+Support for more database can easily be added by modifying this section of settings.py
 
