@@ -26,11 +26,11 @@ RUN apt-get update \
     && apt-get install --no-install-recommends gnupg2=2.2.19-3ubuntu2.2 \
                                                git=1:2.25.1-1ubuntu3.10 \
                                                build-essential=12.8ubuntu1.1 \
-                                               curl=7.68.0-1ubuntu2.16 \
-                                               libpq-dev=12.13-0ubuntu0.20.04.1 \
+                                               curl=7.68.0-1ubuntu2.18 \
+                                               libpq-dev=12.14-0ubuntu0.20.04.1 \
                                                netcat=1.206-1ubuntu1 \
                                                wkhtmltopdf=0.12.5-1build1 \
-                                               vim=2:8.1.2269-1ubuntu5.11 \
+                                               vim=2:8.1.2269-1ubuntu5.12 \
                                                python3-dev=3.8.2-0ubuntu2 \
                                                python3-pip=20.0.2-5ubuntu1.8 \
                                                wget=1.20.3-1ubuntu2 -y \
