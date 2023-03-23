@@ -1,7 +1,7 @@
 # Development/Testing
 
 ## Django development server
-The simples option for trying the niptviewer is to spin up a [django development server](https://docs.djangoproject.com/en/4.1/intro/tutorial01/#the-development-server),
+The simplest way to try out NIPTviewer is to spin up a [django development server](https://docs.djangoproject.com/en/4.1/intro/tutorial01/#the-development-server),
 
 ```bash
 # Fetch js and css files
@@ -30,14 +30,14 @@ DJANGO_SETTINGS_MODULE=niptviewer.settingsdev python3 manage.py runserver
 
 ```
 
-The service should now be avaible at http://127.0.0.1:8000
+The service should be avaible at http://127.0.0.1:8000
 
 ## Docker container
 
 The docker development setup will create a 3 container system with the following containers:
 
  - [nginx](https://www.nginx.com/) service
- - web service, with niptsource code, served by [gunicorn](https://gunicorn.org/)
+ - web service, with NIPTviewer source code, served by [gunicorn](https://gunicorn.org/)
  - postgres database service
 
 
@@ -55,9 +55,13 @@ export NIPT_WEB_CONTAINER_NAME_OR_ID=$(docker ps | grep nipt-web | awk '{print($
 docker exec -it ${NIPT_WEB_CONTAINER_NAME_OR_ID} python3 manage.py createsuperuser;
 ```
 
-To be able to download pdf from development docker setup you will have to modify the templates a bit, all static parts need to changed from ex: <br />
-`href="{{% static "css/nv.d3.min.1.8.6.css" %}}"` <br />
-to  <br />
-`"http://127.0.0.1:8000/staticfiles/css/nv.d3.min.1.8.6.css"` <br />
+To be able to download pdf, from development docker setup, you will have to modify the templates a bit. All static parts need to changed from ex: <br />
+```
+href="{{% static "css/nv.d3.min.1.8.6.css" %}}"
+```  
+to  
+```
+"http://127.0.0.1:8000/staticfiles/css/nv.d3.min.1.8.6.css"
+```  
 
-The service should now be avaible at http://127.0.0.1:8000
+The service should be avaible at http://127.0.0.1:8000

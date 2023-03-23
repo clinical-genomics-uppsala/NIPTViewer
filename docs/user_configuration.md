@@ -1,6 +1,9 @@
-Django have built in support to mange access to pages and make it possible to have different access levels of users, please read more are [django's homepage](https://docs.djangoproject.com/en/3.2/topics/auth/default/)
+Django have built-in support for managing access to pages and makes it possible to have different access levels of users, please read more are [django's homepage](https://docs.djangoproject.com/en/3.2/topics/auth/default/)
 
-We recommend that you set up at least two groups, admin and flowcell. Where admin have can change/add users and flowcell can delete uploaded flowcells.
+We recommend that you set up at least two groups, admin and flowcell. Where admin can: 
+
+- change/add users and flowcells
+- delete uploaded flowcells.
 
 | Name | Permission | Description |
 | :--- | :--- | : --- |

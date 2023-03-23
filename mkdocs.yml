@@ -20,6 +20,14 @@ nav:
 theme:
   name: readthedocs
   custom_dir: "docs/custom_theme/"
+extra_css: [custom_theme/extra.css]
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+      base_path: ["docs"]
 plugins:
   - search
   - mkdocs-simple-hooks:

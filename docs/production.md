@@ -4,7 +4,7 @@ For production usage it's recommended that [https](https://en.wikipedia.org/wiki
  - [letsencrypt](https://letsencrypt.org/)
  - self signed certifcates
 
-Self signed certificates can be generated using openssl. **Note **, to use self signed certificates you will have tweak your web browser to accept the certificate.
+Self signed certificates can be generated using openssl. **Note**: to use self signed certificates you will have tweak your web browser to accept the certificate.
 
 ## Nginx
 
@@ -56,7 +56,7 @@ podman build -f kubernetes/nginx/nginx.dockerfile --tag smeds84/niptviewernginx:
 ## Docker
 
 ### Config
-Make the following updates before deploying NIPTViewer in production using regular docker:
+Make the following updates before deploying NIPTviewer in production using regular docker:
 
 ** Certificates **  
 update certifcates path (key and crt) in docker-compose-production.yaml
@@ -69,8 +69,8 @@ services:
       - ./docker/prod/SSL/nginx-selfsigned.key:/etc/certs/private.key
 ```  
 
-** NIPTViewer **  
-Update `docker/prod/.env_web` to change NIPTViewer settings. As minimum the [SECRET_KEY](https://docs.djangoproject.com/en/dev/ref/settings/#secret-key) should be replaced with a uniq random string. In this file it's also possible to change database settings.
+** NIPTviewer **  
+Update `docker/prod/.env_web` to change NIPTviewer settings. As minimum the [SECRET_KEY](https://docs.djangoproject.com/en/dev/ref/settings/#secret-key) should be replaced with a uniq random string. In this file it's also possible to change database settings.
 
 ### Deploy and setup
 ```bash
@@ -99,7 +99,7 @@ The service should now be avaible at https://localhost:443
 ** Note ** the deployment has only been tested using podman
 
 ### Config
-Make the following updates before deploying NIPTViewer in production using podman/kuberenetes :
+Make the following updates before deploying NIPTviewer in production using podman/kuberenetes.
 
 ** certificates **  
 update certifcates part (crt and key) in kuberenets/kube_production.yaml
@@ -118,8 +118,8 @@ spec:
 ** domain settings **  
 Substituted localhost in `docker/prod/nginx.prod.dockerfile` with your domain, before building the nginx container.
 
-** NIPTViewer **  
-To update NIPTViewer settings ./docker/prod/.env_web must updated. As minimum the [SECRET_KEY](https://docs.djangoproject.com/en/dev/ref/settings/#secret-key) should be replaced with a uniq random string. In this file it's also possible to change database settings.
+** NIPTviewer **  
+To update NIPTviewer settings `./docker/prod/.env_web` must updated. As minimum the [SECRET_KEY](https://docs.djangoproject.com/en/dev/ref/settings/#secret-key) should be replaced with a uniq random string. In this file it's also possible to change database settings.
 
 
 ### Deploy container

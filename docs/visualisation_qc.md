@@ -1,10 +1,13 @@
 # QC
-There are two types of QC, historical and run data. Where historical data is used to look at trends, that Normalized Chromosome Denominators have similar values betweem runs, that fetal fraction have levels above 2%.
+There are two types of QC, historical and run data. Where historical data is used to look at trends:
+
+- Normalized Chromosome Denominators should have similar values between runs
+- fetal fraction must be 2% or higher
 
 ## Historical
 
-### Fetal fravtion (FF) over time
-The FF vs time plot show that we have some runs containing samples with low levels of FF, those samples aren't safe to report.
+### Fetal fraction over time
+The fetal fraction vs time plot show that we have some runs containing samples with low levels of ff, those samples aren't safe to report.
 
 <div id="scatter_chart_ff" style="width:100%;height:450px;">
     <svg style="width:100%;height:450px;" class="nvd3-svg"></svg>
@@ -15,9 +18,9 @@ The FF vs time plot show that we have some runs containing samples with low leve
 </script>
 
 <br />
-### Normalized Chromosome Denominator (NCD)
+### Normalized Chromosome Denominator
 
-One run have NCD values that seem to deviate from the other runs, at least for Chr Y. Could be appropriate to look a bit closer at that run.
+One run have NCD values that deviate from the other runs, at least for Chr Y. It could be appropriate to look a bit closer at that run.
 
 <div id="scatter_chart_ncd" style="width:100%;height:400px;">
     <svg style="width:100%;height:400px;" class="nvd3-svg"></svg>
@@ -29,9 +32,9 @@ One run have NCD values that seem to deviate from the other runs, at least for C
 
 ## Run
 
-### Reads per sample
+### Reads distribution per sample
 
-Plot displaying reads per sample and chrosomoe, make sure that the sample have about the same number of reads.
+Plot displaying reads per sample and chromosome, samples should have about the same amount of reads.
 
 <div id="read_coverage_chart" style="width:100%;height:450px;">
     <svg style="width:100%;height:450px;" class="nvd3-svg"></svg>
@@ -43,7 +46,7 @@ Plot displaying reads per sample and chrosomoe, make sure that the sample have a
 
   <br />
 
-### Fetal fravtion (FF) over time
+### Fetal fraction over time
 
 Same plot as the one showed for historical data with the current run being highlighted.
 
