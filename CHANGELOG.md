@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.10.0](https://github.com/clinical-genomics-uppsala/NIPTviewer/compare/v1.9.3...v1.10.0) (2023-12-15)
+
+
+### Features
+
+* docs setup ([547071c](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/547071c178d1788ab6b085b517e72501765558ec))
+* gitpage setup ([18054a3](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/18054a39672f6364ccb6e8c2984a1f6e583c8bb1))
+* more plots and pdf files ([c054402](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/c05440292745cdbd48640177d01053943ca74860))
+* second commit ([3b6fe33](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/3b6fe338ea6714b984a3e79cfa0a1cac3a19de28))
+* working plots ([807c9f9](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/807c9f9ee02b0e7388f114682013c47ea20b81dd))
+
+
+### Bug Fixes
+
+* add missing value ([98e5fb2](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/98e5fb26be75fc56a752dbab8a593426a3edba30))
+* minor bug fixes handling corner cases ([c9985e3](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/c9985e3ff12f0e4f0f2e706bc38e19b49867384b))
+* update docker env ([6dd5c69](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/6dd5c6945708a7c84dd3fe5cd5b6e91153436da5))
+* update git version ([aa38d7a](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/aa38d7a78b34f8cd40206ce4aac5be89fba9e660))
+* update version for curl, python3-pip and microsoft sql ([6bdb0ba](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/6bdb0ba44d58e9004f0948ddd7d025d3e41948fc))
+
+
+### Documentation
+
+* update name format in mkdocs ([15430c9](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/15430c94c536556dd4af00744ab78e0a627d6660))
+* update readme ([c8fbed6](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/c8fbed6eb3ba5513faa1fee9f2e94b52c78001d1))
+* update readthedocs ([bf4f855](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/bf4f85529504b3064389b922d8ecba38eedea5bb))
+
 ## [1.9.3](https://github.com/clinical-genomics-uppsala/NIPTViewer/compare/v1.9.2...v1.9.3) (2022-12-01)
 
 
