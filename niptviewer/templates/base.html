@@ -8,7 +8,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>{% block title %}NIPTViewer{% endblock %}</title>
+  <title>{% block title %}NIPTviewer{% endblock %}</title>
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -30,7 +30,7 @@
   <nav class="cyan darken-4 nav-extended" role="navigation">
     <div class="nav-wrapper container">
       <a id="logo-container" href="{% url 'index' %}" class="brand-logo">CGU</a>
-      <a class="right small" href="https://github.com/clinical-genomics-uppsala/NIPTViewer/releases/tag/v{{ niptviewer_version }}">v{{ niptviewer_version }}</a>
+      <a class="right small" href="https://github.com/clinical-genomics-uppsala/NIPTviewer/releases/tag/v{{ niptviewer_version }}">v{{ niptviewer_version }}</a>
       <ul class="right hide-on-med-and-down">
         {% if user.is_authenticated %}
         <li>

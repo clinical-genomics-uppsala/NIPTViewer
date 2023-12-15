@@ -109,7 +109,6 @@ def import_data_into_database(user, file, skip_samples=False):
     try:
         with transaction.atomic():
             rundata = data.loc[:, ['Flowcell'] + nnc_per_batch_scoring_metrics]
-
             flowcell_barcode = set([row['Flowcell'] for index, row in rundata.iterrows()])
             if len(flowcell_barcode) > 1:
                 raise Exception(
@@ -119,15 +118,12 @@ def import_data_into_database(user, file, skip_samples=False):
             if len(flowcell_barcode) != 9:
                 raise Exception("Invalid Flowcell bardcode length, should be 9 chars, found: " + str(len(flowcell_barcode)))
             batch_data_error = []
-
             for column in nnc_per_batch_scoring_metrics:
                 if len(set(rundata[column])) > 1:
                     batch_data_error.append(column)
 
             first_row = rundata.head(1)
-
             flowcell = Flowcell.create_flowcell(user=user, flowcell_barcode=flowcell_barcode, run_date=run_date)
-
             BatchRun.create_batch_run(flowcell_entry=flowcell,
                                       median_13=first_row['Median_13'].item(),
                                       median_18=first_row['Median_18'].item(),

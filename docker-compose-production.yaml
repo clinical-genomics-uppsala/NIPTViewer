@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  nipt-nginx-service:
+    build:
+      context: .
+      dockerfile: ./docker/prod/nginx.dockerfile
+    image: smeds84/niptviewernginx:${NIPTVIEWERNGINX_VERSION:-1.0.0}
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - ./docker/prod/SSL/nginx-selfsigned.crt:/etc/certs/public.crt
+      - ./docker/prod/SSL/nginx-selfsigned.key:/etc/certs/private.key
+    depends_on:
+      - nipt-web-service
+    networks:
+      - private
+  nipt-web-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        VERSION: v${NIPT_VERSION:-1.9.3}
+    image: smeds84/niptviewer:v${NIPT_VERSION:-1.9.3}
+    volumes:
+      - static_volume:/home/app/web/staticfiles:rw
+    # expose:
+    #   - 8000
+    env_file:
+      - ./docker/prod/.env_web
+    depends_on:
+      - nipt-db-service
+    networks:
+      - private
+
+  nipt-db-service:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./docker/prod/.env_db
+    networks:
+      - private
+
+
+volumes:
+  postgres_data:
+  static_volume:
+
+networks:
+  private:
