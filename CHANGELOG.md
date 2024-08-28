@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.10.1](https://github.com/clinical-genomics-uppsala/NIPTviewer/compare/v1.10.0...v1.10.1) (2024-08-28)
+
+
+### Bug Fixes
+
+* update version of libraries ([d7c8925](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/d7c8925738b6daaa3c7685870204c5cc5b67e44e))
+
+
+### Documentation
+
+* add licens ([6d2e9b4](https://github.com/clinical-genomics-uppsala/NIPTviewer/commit/6d2e9b47c2e3ba07c57025197c44adbe06d13dde))
+
 ## [1.10.0](https://github.com/clinical-genomics-uppsala/NIPTviewer/compare/v1.9.3...v1.10.0) (2023-12-15)
 
 
