@@ -32,6 +32,8 @@ DJANGO_SETTINGS_MODULE=niptviewer.settingsdev python3 manage.py runserver
 
 The service should be avaible at http://127.0.0.1:8000
 
+*Note:* Downloading pdf from this test server will not work.
+
 ## Docker container
 
 The docker development setup will create a 3 container system with the following containers:
@@ -48,12 +50,12 @@ bash fetch_assets.sh
 # Build image and start container
 docker-compose -f docker-compose-development.yaml up --build
 
-NOTE: Downloading pdf from this test server will not work.
-
 # Create admin user
 export NIPT_WEB_CONTAINER_NAME_OR_ID=$(docker ps | grep nipt-web | awk '{print($1)}');
 docker exec -it ${NIPT_WEB_CONTAINER_NAME_OR_ID} python3 manage.py createsuperuser;
 ```
+
+By default it will not be possible to download the pdf reports from the development server, but it is possible with some small changes.
 
 To be able to download pdf, from development docker setup, you will have to modify the templates a bit. All static parts need to changed from ex: <br />
 ```

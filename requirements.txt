@@ -1,8 +1,9 @@
 pycodestyle==2.6.0
 django==3.2
-scipy
-pandas
+scipy==1.9
+pandas==1.5.3
 pyaml
+numpy<2.0.0
 #reportlib==3.4.0
 django-wkhtmltopdf==3.3.0
 psycopg2-binary
