@@ -27,7 +27,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /wheels -r requirements.prod.
 RUN adduser app
 
 # install dependencies
-RUN apt update && apt install netcat libpq-dev wkhtmltopdf vim -y
+RUN apt update && apt install netcat-traditional libpq-dev wkhtmltopdf vim -y
 RUN pip install --no-cache /wheels/*
 
 COPY ./docker/dev/entrypoint-dev.sh /entrypoint.sh

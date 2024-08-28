@@ -1,11 +1,10 @@
 FROM ubuntu:20.04
+ARG VERSION="master"
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 LABEL maintainer="patrik.smeds@scilifelab.uu.se"
 LABEL version=$VERSION
 
-ARG VERSION="master"
-
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 ENV TZ=Europe/Stockholm
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
@@ -24,16 +23,16 @@ WORKDIR $APP_HOME
 # install dependencies
 RUN apt-get update \
     && apt-get install --no-install-recommends gnupg2=2.2.19-3ubuntu2.2 \
-                                               git=1:2.25.1-1ubuntu3.11 \
+                                               git=1:2.25.1-1ubuntu3.13 \
                                                build-essential=12.8ubuntu1.1 \
-                                               curl=7.68.0-1ubuntu2.21 \
-                                               libpq-dev=12.17-0ubuntu0.20.04.1 \
+                                               curl=7.68.0-1ubuntu2.23 \
+                                               libpq-dev=12.20-0ubuntu0.20.04.1 \
                                                netcat=1.206-1ubuntu1 \
                                                wkhtmltopdf=0.12.5-1build1 \
-                                               vim=2:8.1.2269-1ubuntu5.21 \
+                                               vim=2:8.1.2269-1ubuntu5.23 \
                                                python3-dev=3.8.2-0ubuntu2 \
                                                python3-pip=20.0.2-5ubuntu1.10 \
-                                               wget=1.20.3-1ubuntu2 -y \
+                                               wget=1.20.3-1ubuntu2.1 -y \
     && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list \
     && apt-get update \
